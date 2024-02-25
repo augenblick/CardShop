@@ -1,4 +1,4 @@
-﻿using CardShop.DbModels;
+﻿using CardShop.Repositories.Models;
 
 namespace CardShop.Interfaces
 {

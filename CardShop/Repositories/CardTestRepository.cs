@@ -1,7 +1,7 @@
 ﻿using Dapper;
-using CardShop.DbModels;
 using CardShop.Interfaces;
 using Microsoft.Data.Sqlite;
+using CardShop.Repositories.Models;
 
 namespace CardShop.Repositories
 {

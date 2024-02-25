@@ -1,5 +1,5 @@
-﻿using CardShop.DbModels;
-using CardShop.Interfaces;
+﻿using CardShop.Interfaces;
+using CardShop.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CardShop.Controllers
