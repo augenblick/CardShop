@@ -34,6 +34,7 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
         "DbConnectionString": "Data Source=CardTestDb",
+        "DbConnectionString-CardDump": "Data Source=./Repositories/Data/StarWarsCardDumpDb",
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080"
       },
