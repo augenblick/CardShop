@@ -30,5 +30,6 @@ namespace CardShop.Constants
         public const string Starter2 = "Starter2";
         public const string ThirdAnthology = "ThirdAnth";
         public const string Reflections1 = "Ref1";
+        public const string EntireSet = "Entire";
     }
 }
