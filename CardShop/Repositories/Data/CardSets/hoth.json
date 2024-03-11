@@ -5,6 +5,42 @@
   "name": "Hoth",
   "position": 3,
   "size": 162,
+
+  "products":[
+    {
+      "code": "03p",
+      "name": "Hoth Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 10},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 4}
+      ]
+    },
+    {
+      "code": "03b",
+      "name": "Hoth Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"03p",
+          "count": 36
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C1", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "C2", "Count": 2, "OverallRarity": "C"},
+    {"Rarity": "C3", "Count": 3, "OverallRarity": "C"},
+    {"Rarity": "U1", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "U2", "Count": 2, "OverallRarity": "U"},
+    {"Rarity": "R1", "Count": 1, "OverallRarity": "R"},
+    {"Rarity": "R2", "Count": 2, "OverallRarity": "R"}
+  ],
   
   "cards": [{
   "ability": 0,
