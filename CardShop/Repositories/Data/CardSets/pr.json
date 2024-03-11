@@ -8,8 +8,8 @@
   
   "products":[
     {
-      "code": "01001p",
-      "name": "Premiere Booster Pack (Limited)",
+      "code": "01p",
+      "name": "Premiere Booster Pack",
       "productType": "BoosterPack",
       "contents": [
         {"code": "C", "count": 10},
@@ -18,14 +18,14 @@
       ]
     },
     {
-      "code": "01001b",
-      "name": "Premiere Booster Box (Limited)",
+      "code": "01b",
+      "name": "Premiere Booster Box",
       "productType": "BoosterBox",
 
       "contents": [
         { 
           "code":"01001p",
-          "count": 35
+          "count": 36
         }
       ]
 
