@@ -6,6 +6,39 @@
   "position": 6,
   "size": 180,
   
+
+  "products":[
+    {
+      "code": "06p",
+      "name": "Jabba's Palace Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 5},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 3}
+      ]
+    },
+    {
+      "code": "06b",
+      "name": "Jabba's Palace Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"06p",
+          "count": 60
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "R", "Count": 1, "OverallRarity": "R"}
+  ],
+  
   "cards": [{
   "ability": 0,
   "armor": 0,
