@@ -8,9 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // This specifies which implementation to inject into classes whose constructor requires any of the following Implementations.
-builder.Services.AddSingleton<ICardTestRepository, CardTestRepository>();
 builder.Services.AddSingleton<ICardProductBuilder, CardProductBuilder>();
 builder.Services.AddSingleton<IShopManager, ShopManager>();
+builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
+builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 
 
 builder.Services.AddControllers();

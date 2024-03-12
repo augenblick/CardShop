@@ -25,9 +25,7 @@ namespace CardShop.Logic
 
         private readonly Random _randomizer = new Random();
 
-        private readonly ICardTestRepository _cardTestRepository;
-
-        public CardProductBuilder(ICardTestRepository cardTestRepository)
+        public CardProductBuilder()
         {
             _jsonSerializerSettings = new JsonSerializerSettings
                 {
@@ -61,9 +59,9 @@ namespace CardShop.Logic
             return returnList;
         }
 
-        public List<Product> GetProducts(ProductType productType, CardSetCode cardSetCode, int count = 1)
+        public List<KeyValuePair<Product, int>> GetProductsByProductType(ProductType productType, CardSetCode cardSetCode, int count = 1)
         {
-            var returnList = new List<Product>();
+            var returnList = new List<KeyValuePair<Product, int>>();
 
             var cardSet = GetCardSetByCardSetCode(cardSetCode);
 
@@ -73,10 +71,7 @@ namespace CardShop.Logic
 
             if (product != null)
             {
-                for (int i = 0; i < count; i++)
-                {
-                    returnList.Add(product);
-                }
+                returnList.Add(new KeyValuePair<Product, int>(product, count));
             }
 
             return returnList;

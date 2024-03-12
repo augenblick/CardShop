@@ -1,8 +1,11 @@
-﻿namespace CardShop.Interfaces
+﻿using CardShop.Repositories.Models;
+
+namespace CardShop.Interfaces
 {
     public interface IInventoryRepository
     {
-
+        Task<List<Inventory>> GetUserInventory(int userId);
+        Task<List<Inventory>> UpsertInventory(List<Inventory> inventoryItems);
         Task<bool> InsertInventory(string productCode, string setCode, int count, string userId);
     }
 }
