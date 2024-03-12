@@ -6,6 +6,38 @@
   "position": 4,
   "size": 180,
   
+  "products":[
+    {
+      "code": "04p",
+      "name": "Dagobah Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 5},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 3}
+      ]
+    },
+    {
+      "code": "04b",
+      "name": "Dagobah Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"04p",
+          "count": 60
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "R", "Count": 1, "OverallRarity": "R"}
+  ],
+
   "cards": [{
   "code": "04001",
   "destiny": 2,
