@@ -6,6 +6,40 @@
   "position": 7,
   "size": 324,
   
+  "products":[
+    {
+      "code": "07p",
+      "name": "Special Edition Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 5},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 3}
+      ]
+    },
+    {
+      "code": "07b",
+      "name": "Special Edition Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"07p",
+          "count": 30
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "R", "Count": 1, "OverallRarity": "R"},
+    {"Rarity": "F", "Count": 1, "OverallRarity": "F"}
+
+  ],
+
   "cards": [{
   "ability": 0,
   "armor": 0,
