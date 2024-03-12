@@ -8,7 +8,6 @@ namespace CardShop.Repositories.Models
         public Product Product { get; set; }
         public string SetCode { get; set; }
         public int Count { get; set; }
-        //TODO: withhold userId?
         public int UserId { get; set; }
     }
 }

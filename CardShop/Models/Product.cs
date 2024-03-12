@@ -12,7 +12,8 @@
     public enum ProductType
     {
         BoosterBox,
-        BoosterPack
+        BoosterPack,
+        Card
     }
 
     public class Content

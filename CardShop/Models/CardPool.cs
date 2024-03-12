@@ -53,7 +53,7 @@
             
             var card = DrawCard(false);
 
-            // Feels hacky.  needs testing
+            // TODO: perform check and refresh elsewhere
             if (card == null)
             {
                 RefreshPool();
