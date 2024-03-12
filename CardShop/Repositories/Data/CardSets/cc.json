@@ -6,6 +6,39 @@
   "position": 5,
   "size": 180,
   
+
+  "products":[
+    {
+      "code": "05p",
+      "name": "Cloud City Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 5},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 3}
+      ]
+    },
+    {
+      "code": "05b",
+      "name": "Cloud City Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"05p",
+          "count": 60
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "R", "Count": 1, "OverallRarity": "R"}
+  ],
+  
   "cards": [{
   "characteristics": "",
   "code": "05001",
