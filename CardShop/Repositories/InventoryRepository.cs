@@ -36,7 +36,7 @@ namespace CardShop.Repositories
             return inventory.AsList();
         }
 
-        public async Task<List<Inventory>> UpsertInventory(List<Inventory> inventoryItems)
+        public async Task<bool> UpsertInventory(List<Inventory> inventoryItems)
         {
             var returnInventory = new List<Inventory>();
 
@@ -73,18 +73,12 @@ namespace CardShop.Repositories
             {
                 _logger.LogError(ex, "An Error occurred while trying to insert or update inventory.", inventoryItems.ToArray());
                 transaction.Rollback();
+                return false;
             }
-
-            //TODO: fix the following:
-
-            // Retrieve upserted items based on the criteria used for upsert operation
-            //var upsertedItems = dbConnection.Query<Inventory>(@"
-            //SELECT * FROM Inventory 
-            //WHERE (ProductCode, SetCode, UserId) IN @Keys", new { Keys = inventoryItems.Select(x => (x.ProductCode, x.SetCode, x.UserId)) });
 
             transaction.Commit();
 
-            return new List<Inventory>(); // upsertedItems.ToList();
+            return true;
 
         } 
 

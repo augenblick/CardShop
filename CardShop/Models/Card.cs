@@ -208,13 +208,6 @@ namespace CardShop.Models
         [JsonProperty("warrior", NullValueHandling = NullValueHandling.Ignore)]
         public bool? Warrior { get; set; }
 
-        public Card GetCardCopy()
-        {
-            // TODO: temporary hack method
-
-            if (this == null) { return null; }
-            return JsonConvert.DeserializeObject<Card>(JsonConvert.SerializeObject(this));
-        }
     }
 
     public enum RarityCode { C, C1, C2, C3, F, Pm, Pm2, Pm3, Pm5, Pv, R, R1, R2, U, U1, U2, Ur, Xr };

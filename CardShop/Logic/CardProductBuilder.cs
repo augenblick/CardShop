@@ -1,18 +1,10 @@
-﻿using CardShop.Constants;
-using CardShop.Enums;
+﻿using CardShop.Enums;
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Repositories.Models;
 using Dapper;
-using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Timers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CardShop.Logic
 {
@@ -49,7 +41,6 @@ namespace CardShop.Logic
             return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
-        // TODO: update this to return counts per product, rather than actual separate items
         public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
             var returnProduct = new Product();
@@ -131,7 +122,7 @@ namespace CardShop.Logic
                 }
 
                 var poolStats = cardPool.GetPoolStatistics();
-                Console.WriteLine($"Total entries into pool: {cardPool.TotalCardCount}");
+                _logger.LogInformation($"Total entries into pool: {cardPool.TotalCardCount}");
 
                 poolStats.PrintStatistics();
             }

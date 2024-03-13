@@ -153,17 +153,16 @@
 
             public void PrintStatistics()
             {
-                Console.WriteLine($"Total Cards in pool: '{TotalCardCount}'");
+                StaticHelpers.Logger.LogInformation($"Total Cards in pool: '{TotalCardCount}'");
                 
                 foreach(var breakdown in GetStatBreakdown())
                 {
-                    Console.WriteLine(breakdown);
+                    StaticHelpers.Logger.LogInformation(breakdown.ToString());
                 }
 
-                Console.ForegroundColor = ConsoleColor.Green;
                 foreach (var entry in PerEntryStatistics)
                 {
-                    Console.WriteLine(entry);
+                    StaticHelpers.Logger.LogInformation(entry.ToString());
                 }
             }
 

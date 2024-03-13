@@ -25,11 +25,11 @@ namespace CardShop.Logic
             return await _inventoryRepository.GetUserInventory(userId);
         }
 
-        public async Task<List<Inventory>> AddInventory(List<KeyValuePair<Product, int>> productsToAdd, int userId)
+        public async Task<bool> AddInventory(List<KeyValuePair<Product, int>> productsToAdd, int userId)
         {
             if (productsToAdd == null || productsToAdd.Count < 1)
             {
-                return null;
+                return true;
             }
 
             var groupedProductToAdd = productsToAdd
@@ -76,7 +76,6 @@ namespace CardShop.Logic
         {
             var returnInventory = new List<InventoryItem>();
 
-            // TODO: test performance and optimize if necessary
             foreach (var inventoryItem in inventory)
             {
                 var product = _cardProductBuilder.GetProduct(inventoryItem);
