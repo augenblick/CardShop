@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CardShop.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class CardShop : ControllerBase
     {
@@ -25,7 +25,6 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        [Route("/CardShop/Shop/[action]")]
         public async Task<GetShopInventoryResponse> GetShopInventory()
         {
             var response = new GetShopInventoryResponse();
@@ -43,20 +42,5 @@ namespace CardShop.Controllers
 
             return response;
         }
-
-        [HttpPost]
-        [Route("Testing/[action]")]
-        public async Task InitializeShop()
-        {
-            _shopManager.Initialize();
-        }
-
-        [HttpPost]
-        [Route("Testing/[action]")]
-        public bool TestRarityPoolLogic(Enums.RarityCode rarityCode, int testCount, bool peekDontDraw = true, Enums.CardSetCode cardSetCode = Enums.CardSetCode.Premiere)
-        {
-            return _cardProductBuilder.TestCardSetRarityPool(Enums.CardSetCode.Premiere, rarityCode, testCount, peekDontDraw);
-        }
-
     }
 }

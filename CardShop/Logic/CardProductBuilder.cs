@@ -37,22 +37,22 @@ namespace CardShop.Logic
             _logger = logger;
         }
 
-        public List<Enums.CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
+        public List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
         {
             var availableSets = _cardSets.Where(x => cycleCodes.Contains(x.CycleCode)).Select(y => CardSetHelpers.GetCardSetCode(y.SetCode)).ToList();
 
             return availableSets;
         }
         
-        public List<Product> GetProducts(Inventory inventory)
+        public Product GetProduct(Inventory inventory)
         {
-            return GetProducts(inventory.ProductCode, inventory.SetCode, inventory.Count);
+            return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
         // TODO: update this to return counts per product, rather than actual separate items
-        public List<Product> GetProducts(string productCode, Enums.CardSetCode cardSetCode = Enums.CardSetCode.undefined, int count = 1)
+        public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
-            var returnList = new List<Product>();
+            var returnProduct = new Product();
 
             var cardSet = GetCardSetByCardSetCode(cardSetCode);
 
@@ -61,43 +61,39 @@ namespace CardShop.Logic
                 cardSet = _cardSets.FirstOrDefault(x => x.Products.Any(y => y.Code == productCode));
             }
 
-            if (cardSet == null) { return returnList; }
+            if (cardSet == null) { return returnProduct; }
 
             var product = cardSet.Products.FirstOrDefault(x => x.Code == productCode);
 
             if (product != null)
             {
                 // TODO: this is temporary until we define set code per product within the json
-                product.SetCode = product.SetCode == Enums.CardSetCode.undefined ? cardSetCode : product.SetCode;
-
-                for (int i = 0; i < count; i++)
-                {
-                    returnList.Add(product);
-                }
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                returnProduct = product;
             }
 
-            return returnList;
+            return returnProduct;
         }
 
-        public List<KeyValuePair<Product, int>> GetProductsByProductType(ProductType productType, Enums.CardSetCode cardSetCode, int count = 1)
+        public Product GetProductByProductType(ProductType productType, CardSetCode cardSetCode)
         {
-            var returnList = new List<KeyValuePair<Product, int>>();
+            var returnProduct = new Product();
 
             var cardSet = GetCardSetByCardSetCode(cardSetCode);
 
-            if (cardSet == null) { return returnList; }
+            if (cardSet == null) { return returnProduct; }
 
             var product = cardSet.Products.FirstOrDefault(x => x.ProductType == productType);
 
             if (product != null)
             {
                 // TODO: this is temporary until we define set code per product within the json
-                product.SetCode = product.SetCode == Enums.CardSetCode.undefined ? cardSetCode : product.SetCode;
-                
-                returnList.Add(new KeyValuePair<Product, int>(product, count));
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                returnProduct = product;
             }
 
-            return returnList;
+            return returnProduct;
         } 
 
         private CardSet GetCardSetByCardSetCode(Enums.CardSetCode cardSetCode)

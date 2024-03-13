@@ -7,5 +7,6 @@ namespace CardShop.Interfaces
         Task<List<Inventory>> GetUserInventory(int userId);
         Task<List<Inventory>> UpsertInventory(List<Inventory> inventoryItems);
         Task<bool> InsertInventory(string productCode, string setCode, int count, string userId);
+        bool DeleteUserInventory(int userId);
     }
 }

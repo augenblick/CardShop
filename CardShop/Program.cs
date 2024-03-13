@@ -2,7 +2,9 @@ using CardShop;
 using CardShop.Interfaces;
 using CardShop.Logic;
 using CardShop.Repositories;
-using Newtonsoft.Json;
+using Serilog.Events;
+using Serilog;
+using Serilog.Hosting;
 using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,18 @@ builder.Services.AddSingleton<IShopManager, ShopManager>();
 builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 
-builder.Services.AddLogging(builder => builder.AddConsole());
+
+var logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.File("Logs/DailyLog.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+builder.Services.AddLogging(builder => { 
+        builder.AddConsole();
+        builder.AddSerilog(logger);
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,7 +59,12 @@ await cardProductBuilder.InitializeCardSets();
 shopManager.Initialize();
 
 timer.Stop();
-Console.WriteLine($">>>>>>>>>>>>>> Initialization lasted {timer.ElapsedMilliseconds} ms.");
+
+var logThing = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<ShopManager>>();
+
+StaticHelpers.Logger = logThing;
+
+logThing.LogInformation($">>>>>>>>>>>>>> Initialization lasted {timer.ElapsedMilliseconds} ms.");
 
 app.Run();
 

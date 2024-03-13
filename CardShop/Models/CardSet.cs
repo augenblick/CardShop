@@ -1,6 +1,4 @@
-﻿using Azure.Identity;
-using CardShop.Constants;
-using CardShop.Repositories.Models;
+﻿using CardShop.Constants;
 using Newtonsoft.Json;
 
 namespace CardShop.Models
@@ -55,8 +53,7 @@ namespace CardShop.Models
 
                 if (cardPool == null || cardCount < 1)
                 {
-                    // TODO: handle error
-                    Console.WriteLine("The required card pool could not be found!");
+                    StaticHelpers.Logger.LogError($"When trying to insert cards into a card pool for set '{SetCode}', the card pool with overallRarity '{cardOverallRarity}' could not be found!");
                 }
 
                 cardPool?.AddCard(card, cardCount.GetValueOrDefault());
@@ -69,7 +66,7 @@ namespace CardShop.Models
 
             if (cardPool == null)
             {
-                Console.WriteLine($"No card pool in set '{Name}' with rarity code '{rarityCode}'");
+                StaticHelpers.Logger.LogError($"No card pool in set '{Name}' with rarity code '{rarityCode}'");
                 return null;
             }
 
@@ -102,7 +99,7 @@ namespace CardShop.Models
                     }
                     else
                     {
-                        Console.WriteLine("No matching product found while opening a product!");
+                        StaticHelpers.Logger.LogError("No matching product found while opening a product!");
                     }
                 }
             }
@@ -113,8 +110,6 @@ namespace CardShop.Models
         private List<Product> OpenBoosterPack(Product product)
         {
             var returnCardList = new List<Product>();
-
-            // TODO generalize this more if necessary
 
             var commonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.C);
             var uncommonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.U);
@@ -144,7 +139,7 @@ namespace CardShop.Models
 
                 if (chosenCards.Count < content.Count)
                 {
-                    Console.WriteLine("ERROR drawing enough cards!");
+                    StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{content.Code}', Count: '{content.Count}'");
                 }
 
                 returnCardList.AddRange(chosenCards);

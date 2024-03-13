@@ -2,6 +2,7 @@
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Repositories.Models;
+using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 
 namespace CardShop.Logic
@@ -12,15 +13,20 @@ namespace CardShop.Logic
         private readonly IInventoryManager _inventoryManager;
         private const string _shopKeeperUserName = "ShopKeeper";
         private const int _shopKeeperUserId = 0;
+        private readonly ILogger _logger;
 
-        public ShopManager(ICardProductBuilder cardProductBuilder, IInventoryManager inventoryManager)
+        public ShopManager(ICardProductBuilder cardProductBuilder, IInventoryManager inventoryManager, ILogger<ShopManager> logger)
         {
             _cardProductBuilder = cardProductBuilder;
             _inventoryManager = inventoryManager;
+            _logger = logger;
         }
 
         public async void Initialize()
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             var existingInventory = await GetShopInventory();
 
             var availableSets = _cardProductBuilder.GetAvailableCardSets(new List<string> { "full" });
@@ -57,15 +63,19 @@ namespace CardShop.Logic
 
             }
 
-
             var productList = new List<KeyValuePair<Product, int>>();
 
             foreach (var request in requestList)
             {
-                productList.AddRange(_cardProductBuilder.GetProductsByProductType(request.Item1, request.Item2, request.Item3));
+                var product = _cardProductBuilder.GetProductByProductType(request.Item1, request.Item2);
+                productList.Add(new KeyValuePair<Product, int>(product, request.Item3));
             }
 
             var inventoryAdd = await _inventoryManager.AddInventory(productList, _shopKeeperUserId);
+
+            stopWatch.Stop();
+
+            _logger.LogInformation($">>> Shop Initialization took '{stopWatch.ElapsedMilliseconds}'ms.");
         }
 
         public async Task<List<InventoryItem>> GetShopInventory()
@@ -75,6 +85,10 @@ namespace CardShop.Logic
             var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
 
             return _inventoryManager.InventoryItemsFromInventory(shopInventory);
+        }
+        public bool ClearShopInventory()
+        {
+            return _inventoryManager.ClearUserInventory(_shopKeeperUserId);
         }
     }
 }

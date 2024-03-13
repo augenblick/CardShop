@@ -105,6 +105,25 @@ namespace CardShop.Repositories
 
             return updatedRowCount > 0;
         }
+
+        public bool DeleteUserInventory(int userId)
+        {
+            // safety measure for now
+            // only allow to clear for ShopKeeper
+            if (userId != 0) { return false; }
+
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var updatedRowCount = dbConnection.ExecuteScalar<int>($@"
+                        DELETE FROM Inventory WHERE UserId = @UserId",
+
+                        new
+                        {
+                            UserId = userId
+                        });
+
+            return true;
+        }
     }
 
     // Define a custom type handler for Enums.CardSetCode

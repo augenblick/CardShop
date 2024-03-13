@@ -92,14 +92,13 @@
                             card.Duplicates--;
                         }
 
-                        // TODO: does returning a reference muck anything up?
                         return card.Card;
                     }
                 }
                 randomNumber -= card.Duplicates;
             }
 
-            // If no card can be drawn (pool is empty), return null
+            StaticHelpers.Logger.LogError("Unable to draw a card as requested.");
             return null;
         }
 

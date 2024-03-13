@@ -7,5 +7,6 @@ namespace CardShop.Interfaces
     {
         void Initialize();
         Task<List<InventoryItem>> GetShopInventory();
+        bool ClearShopInventory();
     }
 }

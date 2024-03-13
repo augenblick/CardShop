@@ -79,9 +79,9 @@ namespace CardShop.Logic
             // TODO: test performance and optimize if necessary
             foreach (var inventoryItem in inventory)
             {
-                var product = _cardProductBuilder.GetProducts(inventoryItem);
+                var product = _cardProductBuilder.GetProduct(inventoryItem);
 
-                if (product == null || product.Count < 1)
+                if (product == null)
                 {
                     _logger.LogError($"unable to find the product corresponding with a given inventory item! InventoryId: {inventoryItem.InventoryId}, ProductCode: {inventoryItem.ProductCode}");
                     break;
@@ -90,12 +90,17 @@ namespace CardShop.Logic
                 returnInventory.Add(new InventoryItem
                 {
                     InventoryId = inventoryItem.InventoryId,
-                    Product = product.First(),
+                    Product = product,
                     Count = inventoryItem.Count
                 });
             }
 
             return returnInventory;
+        }
+
+        public bool ClearUserInventory(int userId)
+        {
+            return _inventoryRepository.DeleteUserInventory(userId);
         }
     }
 }
