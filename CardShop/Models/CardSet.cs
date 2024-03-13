@@ -51,13 +51,12 @@ namespace CardShop.Models
                 var cardCount = cardRarity?.Count;
                 var cardOverallRarity = cardRarity?.OverallRarity;
 
-                // TODO: instead of using a substring, map this to overall rarity via set-defined rarity to overall rarity mapping
                 var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == cardOverallRarity);
 
                 if (cardPool == null || cardCount < 1)
                 {
                     // TODO: handle error
-                    Console.WriteLine("ERROR");
+                    Console.WriteLine("The required card pool could not be found!");
                 }
 
                 cardPool?.AddCard(card, cardCount.GetValueOrDefault());
@@ -138,7 +137,7 @@ namespace CardShop.Models
                         chosenCards = rarePool.PeekCards(content.Count);
                         break;
                     case "F":
-                        // TODO: will probably the option to add all fixed cards at once
+                        // TODO: will probably handle fixed cards a different way
                         chosenCards = fixedPool.PeekCards(content.Count);
                         break;
                 }

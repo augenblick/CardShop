@@ -6,6 +6,6 @@ namespace CardShop.Interfaces
     public interface IShopManager
     {
         void Initialize();
-        Task<List<Inventory>> GetShopInventory();
+        Task<List<InventoryItem>> GetShopInventory();
     }
 }

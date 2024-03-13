@@ -50,18 +50,9 @@
 
         public Card DrawCard()
         {
-            
             var card = DrawCard(false);
 
-            // TODO: perform check and refresh elsewhere
-            if (card == null)
-            {
-                RefreshPool();
-                card = DrawCard(false);
-            }
-
             return card;
-            
         }
 
         public Card PeekCard()
@@ -87,6 +78,8 @@
         {
             double totalWeight = _cards.Sum(card => card.Duplicates);
             double randomNumber = _random.NextDouble() * totalWeight;
+
+            if (_cards.Count < 1 ) { RefreshPool(); }
 
             foreach (CardPoolNode card in _cards)
             {

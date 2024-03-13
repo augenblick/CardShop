@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\CardPool\**" />
     <Compile Remove="Repositories\Data\Sets\**" />
+    <Content Remove="Models\CardPool\**" />
     <Content Remove="Repositories\Data\Sets\**" />
+    <EmbeddedResource Remove="Models\CardPool\**" />
     <EmbeddedResource Remove="Repositories\Data\Sets\**" />
+    <None Remove="Models\CardPool\**" />
     <None Remove="Repositories\Data\Sets\**" />
   </ItemGroup>
 
@@ -29,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\CardPool\" />
     <Folder Include="Models\Request\" />
   </ItemGroup>
 

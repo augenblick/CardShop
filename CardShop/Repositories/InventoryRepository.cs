@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 using CardShop.Repositories.Models;
+using System.Data;
 
 
 namespace CardShop.Repositories
@@ -18,6 +19,8 @@ namespace CardShop.Repositories
         public async Task<List<Inventory>> GetUserInventory(int userId)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            SqlMapper.AddTypeHandler(new CardSetCodeTypeHandler());
 
             var inventory = await dbConnection.QueryAsync<Inventory>($@"
                         SELECT *
@@ -41,9 +44,6 @@ namespace CardShop.Repositories
 
             var transaction = dbConnection.BeginTransaction();
 
-            // TODO: make setcode appear as string in DB
-            // TODO: make setcode reflect actual set
-
             try
             {
 
@@ -52,7 +52,7 @@ namespace CardShop.Repositories
                 {
                     dbConnection.Execute(@"
                 INSERT OR REPLACE INTO Inventory (ProductCode, SetCode, UserId) 
-                VALUES (@ProductCode, @SetCode, @UserId)", item);
+                VALUES (@ProductCode, @SetCode, @UserId)", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId });
                 }
 
                 // Update the Count column for the upserted items if needed
@@ -63,13 +63,13 @@ namespace CardShop.Repositories
                 SET Count = @Count 
                 WHERE ProductCode = @ProductCode 
                 AND SetCode = @SetCode 
-                AND UserId = @UserId", item);
+                AND UserId = @UserId", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId, Count = item.Count });
                 }
 
             }
             catch (Exception ex)
             {
-                // TODO: log error
+                Console.WriteLine("An error occurred while trying to add inventory.");
                 transaction.Rollback();
             }
 
@@ -102,6 +102,22 @@ namespace CardShop.Repositories
                         });
 
             return updatedRowCount > 0;
+        }
+    }
+
+    // Define a custom type handler for Enums.CardSetCode
+    class CardSetCodeTypeHandler : SqlMapper.TypeHandler<Enums.CardSetCode>
+    {
+        public override Enums.CardSetCode Parse(object value)
+        {
+            // Convert the string representation to the enum value
+            return Enum.Parse<Enums.CardSetCode>(value.ToString());
+        }
+
+        public override void SetValue(IDbDataParameter parameter, Enums.CardSetCode value)
+        {
+            // Set the parameter value as string
+            parameter.Value = value.ToString();
         }
     }
 }

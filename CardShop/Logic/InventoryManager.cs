@@ -10,10 +10,12 @@ namespace CardShop.Logic
     public class InventoryManager : IInventoryManager
     {
         private readonly IInventoryRepository _inventoryRepository;
+        private readonly ICardProductBuilder _cardProductBuilder;
 
-        public InventoryManager(IInventoryRepository inventoryRepository)
+        public InventoryManager(IInventoryRepository inventoryRepository, ICardProductBuilder cardProductBuilder)
         {
             _inventoryRepository = inventoryRepository;
+            _cardProductBuilder = cardProductBuilder;
         }
 
         public async Task<List<Inventory>> GetUserInventory(int userId)
@@ -25,7 +27,6 @@ namespace CardShop.Logic
         {
             if (productsToAdd == null || productsToAdd.Count < 1)
             {
-                // TODO: log error
                 return null;
             }
 
@@ -67,6 +68,32 @@ namespace CardShop.Logic
             }
             
             return await _inventoryRepository.UpsertInventory(inventoryToAdd);
+        }
+
+        public List<InventoryItem> InventoryItemsFromInventory(List<Inventory> inventory)
+        {
+            var returnInventory = new List<InventoryItem>();
+
+            // TODO: test performance and optimize if necessary
+            foreach (var inventoryItem in inventory)
+            {
+                var product = _cardProductBuilder.GetProducts(inventoryItem);
+
+                if (product == null || product.Count < 1)
+                {
+                    Console.WriteLine($"unable to find the product corresponding with a given inventory item! InventoryId: {inventoryItem.InventoryId}, ProductCode: {inventoryItem.ProductCode}");
+                    break;
+                }
+
+                returnInventory.Add(new InventoryItem
+                {
+                    InventoryId = inventoryItem.InventoryId,
+                    Product = product.First(),
+                    Count = inventoryItem.Count
+                });
+            }
+
+            return returnInventory;
         }
     }
 }

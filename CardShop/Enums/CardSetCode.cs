@@ -36,7 +36,7 @@ namespace CardShop.Enums
     {
         public static string GetCardSetCodeString(this CardSetCode cardSetCode)
         {
-            switch(cardSetCode)
+            switch (cardSetCode)
             {
                 case CardSetCode.Premiere:
                     return "pr";
@@ -115,5 +115,88 @@ namespace CardShop.Enums
 
             }
         }
+
+        public static CardSetCode GetCardSetCode(string cardSetCodeString)
+        {
+            switch (cardSetCodeString)
+            {
+                case "pr":
+                    return CardSetCode.Premiere;
+
+                case "anh": 
+                    return CardSetCode.ANewHope;
+
+                case "hoth" :
+                    return CardSetCode.Hoth;
+
+                case "dah":
+                    return CardSetCode.Dagobah;
+
+                case "cc":
+                    return CardSetCode.CloudCity;
+
+                case "jp":
+                    return CardSetCode.JabbasPalace;
+
+                case "se":
+                    return CardSetCode.SpecialEdition;
+
+                case "edr":
+                    return CardSetCode.Endor;
+
+                case "ds2":
+                    return CardSetCode.DeathStar2;
+
+                case "tat":
+                    return CardSetCode.Tatooine;
+
+                case "cor":
+                    return CardSetCode.Coruscant;
+
+                case "tp":
+                    return CardSetCode.TheedPalace;
+
+                case "2pp":
+                    return CardSetCode.PremiereTwoPlayer;
+
+                case "jpack":
+                    return CardSetCode.JediPack;
+
+                case "2pesb":
+                    return CardSetCode.EsbTwoPlayer;
+
+                case "rlp":
+                    return CardSetCode.RebelLeaders;
+
+                case "otsd":
+                    return CardSetCode.TournamentSealedDeck;
+
+                case "epp":
+                    return CardSetCode.EnhancedPremiere;
+
+                case "ecc":
+                    return CardSetCode.EnhancedCloudCity;
+
+                case "ejp":
+                    return CardSetCode.EnhancedJabbasPalace;
+
+                case "jpsd":
+                    return CardSetCode.JabbasSealedDeck;
+
+                case "ref2":
+                    return CardSetCode.Reflections2;
+
+                case "ta":
+                    return CardSetCode.ThirdAnthology;
+
+                case "ref3":
+                    return CardSetCode.Reflections3;
+
+                default:
+                    return CardSetCode.undefined;
+
+            }
+        }
     }
+    
 }

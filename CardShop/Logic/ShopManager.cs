@@ -21,11 +21,42 @@ namespace CardShop.Logic
 
         public async void Initialize()
         {
-            var requestList = new List<(ProductType, CardSetCode, int)>
+            var existingInventory = await GetShopInventory();
+
+            var availableSets = _cardProductBuilder.GetAvailableCardSets(new List<string> { "full" });
+            var requestList = new List<(ProductType, CardSetCode, int)>();
+            const int maxBoxCount = 5;
+            const int maxPackCount = 30;
+
+            foreach (var set in availableSets)
             {
-                // we will eventually build this dynamically
-                (ProductType.BoosterBox, CardSetCode.Premiere, 5),
-            };
+                var matchingBoxInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterBox);
+                var matchingPackInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterPack);
+
+                var currentBoxCount = matchingBoxInventory.Sum(x => x.Count);
+                var currentPackCount = matchingPackInventory.Sum(x => x.Count);
+
+                if (matchingBoxInventory == null)
+                {
+                    requestList.Add((ProductType.BoosterBox, set, maxBoxCount));
+                }
+                else if (currentBoxCount < (maxBoxCount * 0.3))
+                {
+                    requestList.Add((ProductType.BoosterBox, set, maxBoxCount - currentBoxCount));
+                }
+
+                if (matchingPackInventory == null)
+                {
+                    requestList.Add((ProductType.BoosterPack, set, maxPackCount));
+                }
+                else if (currentPackCount < (maxPackCount * 0.3))
+                {
+                    requestList.Add((ProductType.BoosterPack, set, maxPackCount - currentPackCount));
+                }
+
+
+            }
+
 
             var productList = new List<KeyValuePair<Product, int>>();
 
@@ -37,10 +68,13 @@ namespace CardShop.Logic
             var inventoryAdd = await _inventoryManager.AddInventory(productList, _shopKeeperUserId);
         }
 
-        public async Task<List<Inventory>> GetShopInventory()
+        public async Task<List<InventoryItem>> GetShopInventory()
         {
+            var returnInventory = new List<InventoryItem>();
+
             var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
-            return shopInventory;
+
+            return _inventoryManager.InventoryItemsFromInventory(shopInventory);
         }
     }
 }

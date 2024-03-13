@@ -33,6 +33,19 @@ namespace CardShop.Logic
                 };
         }
 
+        public List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
+        {
+            var availableSets = _cardSets.Where(x => cycleCodes.Contains(x.CycleCode)).Select(y => CardSetHelpers.GetCardSetCode(y.SetCode)).ToList();
+
+            return availableSets;
+        }
+        
+        public List<Product> GetProducts(Inventory inventory)
+        {
+            return GetProducts(inventory.ProductCode, inventory.SetCode, inventory.Count);
+        }
+
+        // TODO: update this to return a count, rather than actual separate items
         public List<Product> GetProducts(string productCode, CardSetCode cardSetCode = CardSetCode.undefined, int count = 1)
         {
             var returnList = new List<Product>();
@@ -50,6 +63,9 @@ namespace CardShop.Logic
 
             if (product != null)
             {
+                // TODO: this is temporary until we define set code per product within the json
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
                 for (int i = 0; i < count; i++)
                 {
                     returnList.Add(product);
@@ -71,6 +87,9 @@ namespace CardShop.Logic
 
             if (product != null)
             {
+                // TODO: this is temporary until we define set code per product within the json
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                
                 returnList.Add(new KeyValuePair<Product, int>(product, count));
             }
 
