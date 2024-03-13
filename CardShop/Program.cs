@@ -1,3 +1,4 @@
+using CardShop;
 using CardShop.Interfaces;
 using CardShop.Logic;
 using CardShop.Repositories;
@@ -13,6 +14,7 @@ builder.Services.AddSingleton<IShopManager, ShopManager>();
 builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 
+builder.Services.AddLogging(builder => builder.AddConsole());
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

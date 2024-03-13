@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Timers;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -24,16 +25,19 @@ namespace CardShop.Logic
         private List<CardSet> _cardSets;
 
         private readonly Random _randomizer = new Random();
+        private readonly ILogger _logger;
 
-        public CardProductBuilder()
+        public CardProductBuilder(ILogger<CardProductBuilder> logger)
         {
             _jsonSerializerSettings = new JsonSerializerSettings
                 {
                     Converters = { new ProductConverter() }
                 };
+
+            _logger = logger;
         }
 
-        public List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
+        public List<Enums.CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
         {
             var availableSets = _cardSets.Where(x => cycleCodes.Contains(x.CycleCode)).Select(y => CardSetHelpers.GetCardSetCode(y.SetCode)).ToList();
 
@@ -45,8 +49,8 @@ namespace CardShop.Logic
             return GetProducts(inventory.ProductCode, inventory.SetCode, inventory.Count);
         }
 
-        // TODO: update this to return a count, rather than actual separate items
-        public List<Product> GetProducts(string productCode, CardSetCode cardSetCode = CardSetCode.undefined, int count = 1)
+        // TODO: update this to return counts per product, rather than actual separate items
+        public List<Product> GetProducts(string productCode, Enums.CardSetCode cardSetCode = Enums.CardSetCode.undefined, int count = 1)
         {
             var returnList = new List<Product>();
 
@@ -64,7 +68,7 @@ namespace CardShop.Logic
             if (product != null)
             {
                 // TODO: this is temporary until we define set code per product within the json
-                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                product.SetCode = product.SetCode == Enums.CardSetCode.undefined ? cardSetCode : product.SetCode;
 
                 for (int i = 0; i < count; i++)
                 {
@@ -75,7 +79,7 @@ namespace CardShop.Logic
             return returnList;
         }
 
-        public List<KeyValuePair<Product, int>> GetProductsByProductType(ProductType productType, CardSetCode cardSetCode, int count = 1)
+        public List<KeyValuePair<Product, int>> GetProductsByProductType(ProductType productType, Enums.CardSetCode cardSetCode, int count = 1)
         {
             var returnList = new List<KeyValuePair<Product, int>>();
 
@@ -88,7 +92,7 @@ namespace CardShop.Logic
             if (product != null)
             {
                 // TODO: this is temporary until we define set code per product within the json
-                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                product.SetCode = product.SetCode == Enums.CardSetCode.undefined ? cardSetCode : product.SetCode;
                 
                 returnList.Add(new KeyValuePair<Product, int>(product, count));
             }
@@ -96,7 +100,7 @@ namespace CardShop.Logic
             return returnList;
         } 
 
-        private CardSet GetCardSetByCardSetCode(CardSetCode cardSetCode)
+        private CardSet GetCardSetByCardSetCode(Enums.CardSetCode cardSetCode)
         {
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
         }
@@ -118,13 +122,11 @@ namespace CardShop.Logic
 
         public bool TestCardSetRarityPool(CardSetCode cardSetCode, Enums.RarityCode rarityCode, int testCount, bool peekDontDraw)
         {
+            //var cardSetCodeName = cardSetCode.GetCardSetCodeString();
+            var cardSet = GetCardSetByCardSetCode(cardSetCode);
             try
             {
-                var cardSetCodeName = cardSetCode.GetCardSetCodeString();
-                var cardSet = GetCardSetByCardSetCode(cardSetCode);
-
                 // check null
-
                 var cardPool = new CardPool(Enums.RarityCode.F);
 
                 for (int i = 0; i < testCount; i++)
@@ -139,14 +141,14 @@ namespace CardShop.Logic
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex, $"Exception while drawing card into new pool for statistics check.", new[] { new { CardSet = cardSet, RarityCode = rarityCode } });
                 return false;
             }
 
             return true;
         }
 
-            public async Task InitializeCardSets()
+        public async Task InitializeCardSets()
         {
             var initTaskList = new List<Task>();
             
@@ -163,7 +165,7 @@ namespace CardShop.Logic
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, $"Exception while initializing the card sets.");
             }
         }
 

@@ -3,6 +3,6 @@
     public class BaseResponse
     {
         // TODO: more robust error scheme?
-        string? ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace CardShop.Enums
         ThirdAnthology,
         Reflections3
     }
-
+    
     public static class CardSetHelpers
     {
         public static string GetCardSetCodeString(this CardSetCode cardSetCode)

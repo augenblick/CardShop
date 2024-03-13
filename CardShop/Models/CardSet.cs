@@ -69,7 +69,7 @@ namespace CardShop.Models
 
             if (cardPool == null)
             {
-                Console.WriteLine($"No card pool in set '{Name}' with rarity code '{rarityCode.ToString()}'");
+                Console.WriteLine($"No card pool in set '{Name}' with rarity code '{rarityCode}'");
                 return null;
             }
 

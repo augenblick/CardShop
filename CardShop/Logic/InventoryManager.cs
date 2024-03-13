@@ -11,11 +11,13 @@ namespace CardShop.Logic
     {
         private readonly IInventoryRepository _inventoryRepository;
         private readonly ICardProductBuilder _cardProductBuilder;
+        private readonly ILogger _logger;
 
-        public InventoryManager(IInventoryRepository inventoryRepository, ICardProductBuilder cardProductBuilder)
+        public InventoryManager(IInventoryRepository inventoryRepository, ICardProductBuilder cardProductBuilder, ILogger<InventoryManager> logger)
         {
             _inventoryRepository = inventoryRepository;
             _cardProductBuilder = cardProductBuilder;
+            _logger = logger;
         }
 
         public async Task<List<Inventory>> GetUserInventory(int userId)
@@ -81,7 +83,7 @@ namespace CardShop.Logic
 
                 if (product == null || product.Count < 1)
                 {
-                    Console.WriteLine($"unable to find the product corresponding with a given inventory item! InventoryId: {inventoryItem.InventoryId}, ProductCode: {inventoryItem.ProductCode}");
+                    _logger.LogError($"unable to find the product corresponding with a given inventory item! InventoryId: {inventoryItem.InventoryId}, ProductCode: {inventoryItem.ProductCode}");
                     break;
                 }
 

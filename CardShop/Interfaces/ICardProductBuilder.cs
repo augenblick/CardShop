@@ -9,7 +9,6 @@ namespace CardShop.Interfaces
     {
         Task InitializeCardSets();
         List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes);
-        List<object> OpenPremiereProduct(Product product);
         List<Product> GetProducts(Inventory inventory);
         List<Product> GetProducts(string productCode, CardSetCode cardSetCode = CardSetCode.undefined, int count = 1);
         List<KeyValuePair<Product, int>> GetProductsByProductType(ProductType productType, CardSetCode cardSetCode, int count = 1);

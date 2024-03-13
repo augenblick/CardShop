@@ -10,10 +10,12 @@ namespace CardShop.Repositories
     public class InventoryRepository : IInventoryRepository
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public InventoryRepository(IConfiguration configuration)
+        public InventoryRepository(IConfiguration configuration, ILogger<InventoryRepository> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<List<Inventory>> GetUserInventory(int userId)
@@ -69,7 +71,7 @@ namespace CardShop.Repositories
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred while trying to add inventory.");
+                _logger.LogError(ex, "An Error occurred while trying to insert or update inventory.", inventoryItems.ToArray());
                 transaction.Rollback();
             }
 
