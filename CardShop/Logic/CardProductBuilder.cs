@@ -1,12 +1,10 @@
-﻿using CardShop.Constants;
+﻿using CardShop.Enums;
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Repositories.Models;
 using Dapper;
-using Microsoft.Identity.Client;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CardShop.Logic
 {
@@ -14,183 +12,202 @@ namespace CardShop.Logic
 
     public class CardProductBuilder : ICardProductBuilder
     {
-        private CardSet _premiereSet = new CardSet(CardSetConstants.Premiere);
-        private CardSet _newHopeSet = new CardSet(CardSetConstants.NewHope);
-        private CardSet _hothSet = new CardSet(CardSetConstants.Hoth);
-        private CardSet _dagobahSet = new CardSet(CardSetConstants.Dagobah);
-        private CardSet _cloudCitySet = new CardSet(CardSetConstants.CloudCity);
-        private CardSet _specialEditionSet = new CardSet(CardSetConstants.SpecialEdition);
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        private IEnumerable<Card> _cards;
+        private List<CardSet> _cardSets;
 
         private readonly Random _randomizer = new Random();
+        private readonly ILogger _logger;
 
-        private readonly ICardTestRepository _cardTestRepository;
-
-        public CardProductBuilder(ICardTestRepository cardTestRepository)
+        public CardProductBuilder(ILogger<CardProductBuilder> logger)
         {
-            _cardTestRepository = cardTestRepository;
+            _jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    Converters = { new ProductConverter() }
+                };
 
-            _cards = _cardTestRepository.GetCardSets();
-
-            _premiereSet.FillSet(_cards.Where(x => x.Set == CardSetConstants.Premiere));
-            _newHopeSet.FillSet(_cards.Where(x => x.Set == CardSetConstants.NewHope));
-            _hothSet.FillSet(_cards.Where(x => x.Set == CardSetConstants.Hoth));
-            _dagobahSet.FillSet(_cards.Where(x => x.Set == CardSetConstants.Dagobah));
-            _cloudCitySet.FillSet(_cards.Where(x => x.Set == CardSetConstants.CloudCity));
-            _specialEditionSet.FillSet(_cards.Where(x => x.Set == CardSetConstants.SpecialEdition));
+            _logger = logger;
         }
 
-        public IEnumerable<CardPack> GetCardPacks(int count, string cardSetName)
+        public List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes)
         {
-            
-            var cardPacks = new List<CardPack>();
-            if (count < 1) { return cardPacks; }
+            var availableSets = _cardSets.Where(x => cycleCodes.Contains(x.CycleCode)).Select(y => CardSetHelpers.GetCardSetCode(y.SetCode)).ToList();
 
-            for (int i = 0; i < count; i++)
-            {
-                cardPacks.Add(GetCardPack(cardSetName));
-            }
-
-            return cardPacks;
+            return availableSets;
+        }
+        
+        public Product GetProduct(Inventory inventory)
+        {
+            return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
-        private CardPack GetCardPack(string cardSetName)
+        public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
-            var cardPack = new CardPack();
+            var returnProduct = new Product();
 
-            if (cardSetName.ToLower().Contains("premiere")){
-                cardSetName = CardSetConstants.Premiere;
-            }
-            else if (cardSetName.ToLower().Contains("hoth")){
-                cardSetName = CardSetConstants.Hoth;
-            }
-            else if (cardSetName.ToLower().Contains("dagobah")){
-                cardSetName = CardSetConstants.Dagobah;
-            }
-            else if (cardSetName.ToLower().Contains("cloud")){
-                cardSetName = CardSetConstants.CloudCity;
-            }
-            else if (cardSetName.ToLower().Contains("special")){
-                cardSetName = CardSetConstants.SpecialEdition;
-            }
-            else if (cardSetName.ToLower().Contains("hope")){
-                cardSetName = CardSetConstants.NewHope;
-            }
+            var cardSet = GetCardSetByCardSetCode(cardSetCode);
 
-            if (cardSetName == CardSetConstants.Premiere || cardSetName == CardSetConstants.Hoth || cardSetName == CardSetConstants.NewHope) 
-            { 
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "R"));
-
-                cardPack.CardSet = cardSetName;
-            }
-            if (cardSetName == CardSetConstants.CloudCity || cardSetName == CardSetConstants.Dagobah || cardSetName == CardSetConstants.SpecialEdition)
+            if (cardSet == null)
             {
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "C"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "U"));
-                cardPack.CardList.Add(ChooseCardAndRemoveFromSet(cardSetName, "R"));
-
-                cardPack.CardSet = cardSetName;
+                cardSet = _cardSets.FirstOrDefault(x => x.Products.Any(y => y.Code == productCode));
             }
-                
-            return cardPack;
+
+            if (cardSet == null) { return returnProduct; }
+
+            var product = cardSet.Products.FirstOrDefault(x => x.Code == productCode);
+
+            if (product != null)
+            {
+                // TODO: this is temporary until we define set code per product within the json
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                returnProduct = product;
+            }
+
+            return returnProduct;
         }
 
-        private Card ChooseCardAndRemoveFromSet(string cardSetName, string overallRarity) 
+        public Product GetProductByProductType(ProductType productType, CardSetCode cardSetCode)
         {
-            var selectedSet = new CardSet();
+            var returnProduct = new Product();
 
-            switch (cardSetName)
+            var cardSet = GetCardSetByCardSetCode(cardSetCode);
+
+            if (cardSet == null) { return returnProduct; }
+
+            var product = cardSet.Products.FirstOrDefault(x => x.ProductType == productType);
+
+            if (product != null)
             {
-                case CardSetConstants.Premiere:
-                    selectedSet = _premiereSet;
-                    break;
-                case CardSetConstants.NewHope:
-                    selectedSet = _newHopeSet;
-                    break;
-                case CardSetConstants.Hoth:
-                    selectedSet = _hothSet;
-                    break;
-                case CardSetConstants.Dagobah:
-                    selectedSet = _dagobahSet;
-                    break;
-                case CardSetConstants.CloudCity:
-                    selectedSet = _cloudCitySet;
-                    break;
-                case CardSetConstants.SpecialEdition:
-                    selectedSet = _specialEditionSet;
-                    break;
-                default:
-                    break;
+                // TODO: this is temporary until we define set code per product within the json
+                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                returnProduct = product;
             }
 
-            if (string.IsNullOrWhiteSpace(selectedSet.CardSetName))
+            return returnProduct;
+        } 
+
+        private CardSet GetCardSetByCardSetCode(Enums.CardSetCode cardSetCode)
+        {
+            return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
+        }
+
+        // NNOTE: MOVE TO INVENTORY MANAGER
+        // OPEN should accept a reference to an InventoryId, and should only be allowed if
+        // the inventory is found in the requester's own inventory.
+        // should update inventory and response should include the opened contents.
+        //
+        // PURCHASE should accept a reference to an InventoryId (or Ids), and should only be allowed
+        // if the inventory item is found in the shop's inventory AND the requester has enough money.
+        // Shop AND requester's inventory should be updated, and response should include purchased items
+        public List<object> OpenPremiereProduct(Product product)
+        {
+            var premiereSet = _cardSets.FirstOrDefault(x => x.SetCode == "pr");
+
+            return premiereSet.OpenProduct(product).Select(x => (object)x).AsList();
+        }
+
+        public bool TestCardSetRarityPool(CardSetCode cardSetCode, Enums.RarityCode rarityCode, int testCount, bool peekDontDraw)
+        {
+            //var cardSetCodeName = cardSetCode.GetCardSetCodeString();
+            var cardSet = GetCardSetByCardSetCode(cardSetCode);
+            try
             {
-                // TODO: log error
-                return null;
+                // check null
+                var cardPool = new CardPool(Enums.RarityCode.F);
+
+                for (int i = 0; i < testCount; i++)
+                {
+                    cardPool.AddCardNoDuplicates(cardSet.DrawRandomCardFromSet(rarityCode, peekDontDraw), 1);
+                }
+
+                var poolStats = cardPool.GetPoolStatistics();
+                _logger.LogInformation($"Total entries into pool: {cardPool.TotalCardCount}");
+
+                poolStats.PrintStatistics();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Exception while drawing card into new pool for statistics check.", new[] { new { CardSet = cardSet, RarityCode = rarityCode } });
+                return false;
             }
 
-            // TODO: remove this
-            // This is a hacky way of excluding the chosen card from being picked again on the next go-round
-            var exclusionString = "@#$%";
+            return true;
+        }
 
-            if (!selectedSet.CardSetContents.Any(x => x.Rarity.Contains(overallRarity) && !x.Name.Contains(exclusionString)))
-            {
-                // we don't have the cards we need, so replenish the set
-                selectedSet.FillSet(_cards.Where(x => x.Set == selectedSet.CardSetName));
-            }
-
-            // TODO: Make this support all sets
-            var cardsOfRarityFromSet = selectedSet.CardSetContents.Where(x => x.Rarity.Contains(overallRarity) && !x.Name.Contains(exclusionString));
-         
-            if (cardsOfRarityFromSet.Count() < 1)
-            {
-                // TODO: log error
-                return null;
-            }
-
-            var randomInt = _randomizer.Next(cardsOfRarityFromSet.Count());
-
-            var fromSet = cardsOfRarityFromSet.ElementAtOrDefault(randomInt);
-
-            var chosenCard = new Card
-            {
-                Name = fromSet.Name,
-                Set = fromSet.Set,
-                Rarity = fromSet.Rarity,
-                Text = fromSet.Text,
-                CardId = fromSet.CardId,
-                Side = fromSet.Side,
-                Type = fromSet.Type,
-                SubType = fromSet.SubType
-            };
-
-            fromSet.Name += exclusionString;
-
-            //selectedSet.CardSetContents = selectedSet.CardSetContents.Where(x => x.CardId != chosenCard?.CardId).AsList();
+        public async Task InitializeCardSets()
+        {
+            var initTaskList = new List<Task>();
             
-            return chosenCard;
-            
+            try
+            {
+                _cardSets = IngestJsonData<CardSet>("Repositories/Data/CardSets");
+
+                foreach(var set in _cardSets.Where(x => x.CycleCode == "full"))
+                {
+                    initTaskList.Add(set.Initialize());
+                }
+
+                await Task.WhenAll(initTaskList);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Exception while initializing the card sets.");
+            }
+        }
+
+        private List<T> IngestJsonData<T>(string jsonDirectoryPath)
+        {
+
+            var allObjects = new List<T>();
+
+            var files = Directory.GetFiles(jsonDirectoryPath);
+
+            foreach (var file in files)
+            {
+                if (file.Contains(".json"))
+                {
+                    using StreamReader reader = new StreamReader(file);
+                    var json = reader.ReadToEnd();
+                    var obj = JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
+
+                    if (obj != null)
+                    {
+                        allObjects.Add(obj);
+                    }
+                }
+            }
+
+            return allObjects;
+        }
+
+        private class ProductConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(Product);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                JObject jsonObject = JObject.Load(reader);
+                string productType = jsonObject["productType"].ToObject<string>();
+
+                switch (productType)
+                {
+                    case "BoosterPack":
+                        return jsonObject.ToObject<BoosterPack>(serializer);
+                    case "BoosterBox":
+                        return jsonObject.ToObject<BoosterBox>(serializer);
+                    default:
+                        throw new JsonSerializationException($"Unknown product type: {productType}");
+                }
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

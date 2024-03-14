@@ -1,7 +1,10 @@
-﻿using CardShop.Interfaces;
+﻿using Azure;
+using CardShop.Interfaces;
 using CardShop.Logic;
 using CardShop.Models;
+using CardShop.Models.Response;
 using CardShop.Repositories.Models;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CardShop.Controllers
@@ -10,39 +13,34 @@ namespace CardShop.Controllers
     [ApiController]
     public class CardShop : ControllerBase
     {
-        private readonly ICardTestRepository _cardTestRepository;
         private readonly ICardProductBuilder _cardProductBuilder;
+        private readonly IShopManager _shopManager;
+        private readonly ILogger _logger;
 
-        public CardShop(ICardTestRepository cardTestRepository, ICardProductBuilder cardProductBuilder)
+        public CardShop(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger)
         {
-            _cardTestRepository = cardTestRepository;
             _cardProductBuilder = cardProductBuilder;
+            _shopManager = shopManager;
+            _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<Card> GetCardByCardId(int Id)
+        [HttpPost]
+        public async Task<GetShopInventoryResponse> GetShopInventory()
         {
-            var card = await _cardTestRepository.GetCardByCardIdAsync(Id);
-            return card;
-        }
+            var response = new GetShopInventoryResponse();
+            try
+            {
+                var inventory = await _shopManager.GetShopInventory();
 
-        [HttpGet]
-        public async Task<IEnumerable<Card>> GetShopInventory()
-        {
-            var cards = await _cardTestRepository.GetAllCardsAsync();
-            return cards;
-        }
+                response.Inventory = inventory;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception while trying to return shop inventory.");
+                response.ErrorMessage = ex.Message;
+            }
 
-        /// <summary>
-        /// Currently supports only Premiere, New Hope, Hoth, Dagobah, Cloud City, and Special Edition
-        /// </summary>
-        /// <param name="count"></param>
-        /// <param name="cardSetName"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public IEnumerable<CardPack> GetCardPacks(int count, string cardSetName)
-        {
-            return _cardProductBuilder.GetCardPacks(count, cardSetName);
+            return response;
         }
     }
 }
