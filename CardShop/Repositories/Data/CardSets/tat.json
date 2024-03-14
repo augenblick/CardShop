@@ -6,6 +6,37 @@
   "position": 10,
   "size": 90,
   
+  "products":[
+    {
+      "code": "10p",
+      "name": "Tatooine Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "CU", "count": 10},
+        {"code": "R", "count": 1}
+      ]
+    },
+    {
+      "code": "10b",
+      "name": "Tatooine Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"10p",
+          "count": 30
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 3, "OverallRarity": "CU"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "CU"},
+    {"Rarity": "R", "Count": 1, "OverallRarity": "R"}
+  ],
+
   "cards": [{
   "characteristics": "",
   "code": "10001",
