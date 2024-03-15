@@ -58,8 +58,19 @@ namespace CardShop.Logic
 
             if (product != null)
             {
-                // TODO: this is temporary until we define set code per product within the json
+                // TODO: cost and setcode will eventually be defined per product within each set.json
                 product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                if (product.ProductType == ProductType.BoosterBox)
+                {
+                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    product.CostPer = cost ?? 0.00M;
+                }
+                else if (product.ProductType == ProductType.BoosterPack)
+                {
+                    product.CostPer = 2.50M;
+                }
+
                 returnProduct = product;
             }
 
@@ -78,8 +89,18 @@ namespace CardShop.Logic
 
             if (product != null)
             {
-                // TODO: this is temporary until we define set code per product within the json
+                // TODO: cost and setcode will eventually be defined per product within each set.json
                 product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                if (product.ProductType == ProductType.BoosterBox)
+                {
+                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    product.CostPer = cost ?? 0.00M;
+                }
+                else if (product.ProductType == ProductType.BoosterPack)
+                {
+                    product.CostPer = 2.50M;
+                }
 
                 returnProduct = product;
             }
@@ -87,7 +108,7 @@ namespace CardShop.Logic
             return returnProduct;
         } 
 
-        private CardSet GetCardSetByCardSetCode(Enums.CardSetCode cardSetCode)
+        private CardSet GetCardSetByCardSetCode(CardSetCode cardSetCode)
         {
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
         }

@@ -2,10 +2,12 @@
 using CardShop.Interfaces;
 using CardShop.Logic;
 using CardShop.Models;
+using CardShop.Models.Request;
 using CardShop.Models.Response;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace CardShop.Controllers
 {
@@ -13,13 +15,12 @@ namespace CardShop.Controllers
     [ApiController]
     public class CardShop : ControllerBase
     {
-        private readonly ICardProductBuilder _cardProductBuilder;
         private readonly IShopManager _shopManager;
         private readonly ILogger _logger;
 
-        public CardShop(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger)
+
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger)
         {
-            _cardProductBuilder = cardProductBuilder;
             _shopManager = shopManager;
             _logger = logger;
         }
@@ -42,5 +43,30 @@ namespace CardShop.Controllers
 
             return response;
         }
+
+        [HttpPost]
+        public async Task<PurchaseProductResponse> PurchaseProduct(PurchaseProductRequest request)
+        {
+            if (request.InventoryItems == null || request.InventoryItems.Count < 1)
+            {
+                return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            
+            }
+
+            if (request.PurchaserId == 0)
+            {
+                return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
+            }
+
+            var items = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
+
+            if (items == null || items.Count < 1)
+            {
+                return new PurchaseProductResponse { ErrorMessage = "An error occurred while trying to make a pruchase from the shop!" };
+            }
+
+            return new PurchaseProductResponse { InventoryItems = items };
+        }
+
+        
     }
 }
