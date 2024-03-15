@@ -6,6 +6,38 @@
   "position": 11,
   "size": 180,
   
+  "products":[
+    {
+      "code": "11p",
+      "name": "Coruscant Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "CU", "count": 10},
+        {"code": "R", "count": 1}
+      ]
+    },
+    {
+      "code": "11b",
+      "name": "Coruscant Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"11p",
+          "count": 30
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 3, "OverallRarity": "CU"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "CU"},
+    {"Rarity": "R", "Count": 4, "OverallRarity": "R"},
+    {"Rarity": "R5", "Count": 5, "OverallRarity": "R"}
+  ],
+
   "cards": [{
   "characteristics": "",
   "code": "11001",
@@ -409,7 +441,7 @@
   "name": "Coruscant: Jedi Council Chamber",
   "planet": true,
   "position": 17,
-  "rarity_code": "R",
+  "rarity_code": "R5",
   "scomp_link": false,
   "set_code": "cor",
   "side_code": "light",
@@ -2960,7 +2992,7 @@
   "lore": "Green gas that is lethal to most carbon-based life forms.",
   "name": "Dioxis",
   "position": 109,
-  "rarity_code": "R",
+  "rarity_code": "R5",
   "set_code": "cor",
   "side_code": "dark",
   "subtype_code": "lost",
