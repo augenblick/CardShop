@@ -47,7 +47,7 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<PurchaseProductResponse> PurchaseProduct(PurchaseProductRequest request)
         {
-            if (request.InventoryItems == null || request.InventoryItems.Count < 1)
+            if (request.InventoryItems == null || request.InventoryItems.Count < 1 || request.InventoryItems.Sum(x => x.Count) < 1)
             {
                 return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            
             }
@@ -57,11 +57,11 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
             }
 
-            var items = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
+            var (items, errorMessage) = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
 
             if (items == null || items.Count < 1)
             {
-                return new PurchaseProductResponse { ErrorMessage = "An error occurred while trying to make a pruchase from the shop!" };
+                return new PurchaseProductResponse { ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ?  "An error occurred while trying to make a pruchase from the shop!" : errorMessage };
             }
 
             return new PurchaseProductResponse { InventoryItems = items };

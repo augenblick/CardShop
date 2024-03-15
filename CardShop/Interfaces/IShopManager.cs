@@ -9,6 +9,6 @@ namespace CardShop.Interfaces
         void Initialize();
         Task<List<InventoryItem>> GetShopInventory();
         bool ClearShopInventory();
-        Task<List<InventoryItem>> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
+        Task<(List<InventoryItem>, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
     }
 }

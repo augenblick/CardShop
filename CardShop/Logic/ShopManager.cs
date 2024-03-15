@@ -81,15 +81,19 @@ namespace CardShop.Logic
             _logger.LogInformation($">>> Shop Initialization took '{stopWatch.ElapsedMilliseconds}'ms.");
         }
 
-        public async Task<List<InventoryItem>> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems)
+        public async Task<(List<InventoryItem>, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems)
         {
+            var errorMessage = string.Empty;
+            var returnList = new List<InventoryItem>();
+            
             var user = await _userManager.GetUser(userId);
 
             if (user == null)
             {
                 // TODO: send back error message
-                _logger.LogError($"user with Id '{userId}' not found!");
-                return null;
+                errorMessage = $"user with Id '{userId}' not found!";
+                _logger.LogError(errorMessage);
+                return (returnList, errorMessage);
             }
 
             var totalCost = 0.0M;
@@ -102,13 +106,16 @@ namespace CardShop.Logic
             // check that requested inventory exists
             foreach(var item in requestedItems)
             {
+                if (item.Count < 1) { continue; }
+
                 var matchingInventory = shopInventory.FirstOrDefault(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
 
                 if (matchingInventory == null)
                 {
                     // TODO: send back error message
-                    _logger.LogError($"Request inventory '{item.InventoryId}' of count '{item.Count}' not found!");
-                    return null;
+                    errorMessage = $"Request inventory '{item.InventoryId}' of count '{item.Count}' not found!";
+                    _logger.LogError(errorMessage);
+                    return (returnList, errorMessage);
                 }
 
                 totalCost += matchingInventory.Product.CostPer * item.Count;
@@ -118,8 +125,9 @@ namespace CardShop.Logic
             if (user.Balance < totalCost)
             {
                 // TODO: send back error message
-                _logger.LogError($"User {userId} doesn't have enough money for this purchace.  User has ${user.Balance} of the required amount ${totalCost}");
-                return null;
+                errorMessage = $"User {userId} doesn't have enough money for this purchace.  User has ${user.Balance} of the required amount ${totalCost}";
+                _logger.LogError(errorMessage);
+                return (returnList, errorMessage);
             }
 
             // create list for DB update
@@ -127,6 +135,8 @@ namespace CardShop.Logic
             var userInventoryToUpdate = new List<Inventory>();
             foreach (var item in requestedItems)
             {
+                if (item.Count < 1) { continue; }
+
                 var matchingInventory = shopInventory.First(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
 
                 shopInventoryToUpdate.Add(new Inventory
@@ -159,11 +169,12 @@ namespace CardShop.Logic
             if (!isSuccessfulInsert)
             {
                 // TODO: send back error message
-                _logger.LogError($"An error occurred during the insert.");
-                return new List<InventoryItem>();
+                errorMessage = $"An error occurred during the insert.";
+                _logger.LogError(errorMessage);
+                return (returnList, errorMessage);
             }
 
-            return _inventoryManager.InventoryItemsFromInventory(userInventoryToUpdate);
+            return (_inventoryManager.InventoryItemsFromInventory(userInventoryToUpdate), errorMessage);
         }
 
         public async Task<List<InventoryItem>> GetShopInventory()
