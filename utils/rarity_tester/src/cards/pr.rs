@@ -21,10 +21,10 @@ pub struct PremiereCards {
 pub struct CardRarityMap {
     pub rarity: Option<Rarity>,
     pub count: Option<i64>,
-    pub overall_rarity: Option<String>,
+    pub overall_rarity: Option<OverallRarity>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Eq, Hash)]
 pub enum Rarity {
     C1,
     C2,
@@ -33,6 +33,13 @@ pub enum Rarity {
     R2,
     U1,
     U2,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Eq, Hash)]
+pub enum OverallRarity {
+    C,
+    U,
+    R,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
