@@ -60,5 +60,22 @@ namespace CardShop.Controllers
         {
             return await _userManager.SetUserBalance(userId, newBalance);
         }
+
+        [HttpPost]
+        public async Task<User> AddUser(string userName, decimal balance = 0.0M)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return new User();
+            }
+
+            return await _userManager.AddUser(userName, balance);
+        }
+
+        [HttpPost]
+        public async Task<bool> DeleteUser(int userId)
+        {
+            return await _userManager.DeleteUser(userId);
+        }
     }
 }
