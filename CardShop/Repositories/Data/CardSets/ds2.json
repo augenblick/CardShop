@@ -6,6 +6,41 @@
   "position": 9,
   "size": 182,
   
+  "products":[
+    {
+      "code": "09p",
+      "name": "Death Star II Booster Pack",
+      "productType": "BoosterPack",
+      "contents": [
+        {"code": "C", "count": 7},
+        {"code": "R", "count": 1},
+        {"code": "U", "count": 3}
+      ]
+    },
+    {
+      "code": "09b",
+      "name": "Death Star II Booster Box",
+      "productType": "BoosterBox",
+
+      "contents": [
+        { 
+          "code":"09p",
+          "count": 36
+        }
+      ]
+
+    }
+  ],
+
+  "cardRarityMap":[
+    {"Rarity": "C", "Count": 1, "OverallRarity": "C"},
+    {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
+    {"Rarity": "UR", "Count": 2, "OverallRarity": "R"},
+    {"Rarity": "R", "Count": 3, "OverallRarity": "R"},
+    {"Rarity": "R4", "Count": 4, "OverallRarity": "R"}
+
+  ],
+
   "cards": [{
   "ability": 1,
   "armor": 0,
@@ -2220,7 +2255,7 @@
   "lore": "\"General Solo, is your strike team assembled?\"",
   "name": "Strike Planning",
   "position": 76,
-  "rarity_code": "R",
+  "rarity_code": "R4",
   "set_code": "ds2",
   "side_code": "light",
   "type_code": "effect",
@@ -2568,7 +2603,7 @@
   "lore": "",
   "name": "You Must Confront Vader",
   "position": 90,
-  "rarity_code": "R",
+  "rarity_code": "R4",
   "set_code": "ds2",
   "side_code": "light",
   "type_code": "jedi-test",
@@ -3651,7 +3686,7 @@
   "lore": "\"There's too many of them!\"",
   "name": "Flagship Operations",
   "position": 127,
-  "rarity_code": "R",
+  "rarity_code": "R4",
   "set_code": "ds2",
   "side_code": "dark",
   "type_code": "effect",
@@ -5003,7 +5038,7 @@
   "lore": "",
   "name": "That Thing's Operational",
   "position": 174,
-  "rarity_code": "R",
+  "rarity_code": "R4",
   "set_code": "ds2",
   "side_code": "dark",
   "type_code": "epic-event",
