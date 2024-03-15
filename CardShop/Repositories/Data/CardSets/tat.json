@@ -34,7 +34,9 @@
   "cardRarityMap":[
     {"Rarity": "C", "Count": 3, "OverallRarity": "CU"},
     {"Rarity": "U", "Count": 1, "OverallRarity": "CU"},
-    {"Rarity": "R", "Count": 1, "OverallRarity": "R"}
+    {"Rarity": "R", "Count": 8, "OverallRarity": "R"},
+    {"Rarity": "R9", "Count": 9, "OverallRarity": "R"}
+
   ],
 
   "cards": [{
@@ -153,7 +155,7 @@
   "lore": "",
   "name": "Boonta Eve Podrace",
   "position": 7,
-  "rarity_code": "R",
+  "rarity_code": "R9",
   "set_code": "tat",
   "side_code": "light",
   "type_code": "epic-event",
