@@ -1,4 +1,5 @@
 ﻿using CardShop.Models;
+using CardShop.Models.Request;
 using CardShop.Repositories.Models;
 
 namespace CardShop.Interfaces
@@ -8,5 +9,6 @@ namespace CardShop.Interfaces
         void Initialize();
         Task<List<InventoryItem>> GetShopInventory();
         bool ClearShopInventory();
+        Task<List<InventoryItem>> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
     }
 }

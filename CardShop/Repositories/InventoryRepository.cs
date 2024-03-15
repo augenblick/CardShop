@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using CardShop.Repositories.Models;
 using System.Data;
+using CardShop.Models;
 
 
 namespace CardShop.Repositories
@@ -38,13 +39,49 @@ namespace CardShop.Repositories
 
         public async Task<bool> UpsertInventory(List<Inventory> inventoryItems)
         {
-            var returnInventory = new List<Inventory>();
-
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
             dbConnection.Open();
-
             var transaction = dbConnection.BeginTransaction();
+
+            var success = await UpsertInventory(inventoryItems, dbConnection, transaction);
+
+            if (!success)
+            {
+                transaction.Rollback();
+                return success;
+            }
+
+            transaction.Commit();
+            return success;
+        }
+
+        public async Task<bool> UpsertMultipleInventory(List<List<Inventory>> inventoryRequests)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            dbConnection.Open();
+            var transaction = dbConnection.BeginTransaction();
+
+            foreach (var inventoryRequest in inventoryRequests)
+            {
+                var success = await UpsertInventory(inventoryRequest, dbConnection, transaction);
+
+                if (!success)
+                {
+                    transaction.Rollback();
+                    return success;
+                }
+            }
+
+            transaction.Commit();
+            return true;
+
+        }
+
+        private async Task<bool> UpsertInventory(List<Inventory> inventoryItems, SqliteConnection dbConnection, SqliteTransaction transaction)
+        {
+            var returnInventory = new List<Inventory>();
 
             try
             {
@@ -53,40 +90,36 @@ namespace CardShop.Repositories
                 foreach (var item in inventoryItems)
                 {
                     dbConnection.Execute(@"
-                INSERT OR REPLACE INTO Inventory (ProductCode, SetCode, UserId) 
-                VALUES (@ProductCode, @SetCode, @UserId)", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId });
+            INSERT OR REPLACE INTO Inventory (ProductCode, SetCode, UserId) 
+            VALUES (@ProductCode, @SetCode, @UserId)", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId });
                 }
 
                 // Update the Count column for the upserted items if needed
                 foreach (var item in inventoryItems)
                 {
                     dbConnection.Execute(@"
-                UPDATE Inventory 
-                SET Count = @Count 
-                WHERE ProductCode = @ProductCode 
-                AND SetCode = @SetCode 
-                AND UserId = @UserId", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId, Count = item.Count });
+            UPDATE Inventory 
+            SET Count = @Count
+            WHERE ProductCode = @ProductCode 
+            AND SetCode = @SetCode 
+            AND UserId = @UserId", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId, Count = item.Count });
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An Error occurred while trying to insert or update inventory.", inventoryItems.ToArray());
-                transaction.Rollback();
                 return false;
             }
 
-            transaction.Commit();
-
             return true;
-
         } 
 
         public async Task<bool> InsertInventory(string productCode, string setCode, int count, string userId)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
-            var updatedRowCount = await dbConnection.ExecuteScalarAsync<int>($@"
+            var updatedRowCount = await dbConnection.ExecuteAsync($@"
                         INSERT INTO Inventory(ProductCode, SetCode, Count, UserId) 
                         Values(@ProductCode, @SetCode, @Count, @UserId);",
 
