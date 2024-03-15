@@ -17,6 +17,8 @@ namespace CardShop.Logic
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
 
+        private static readonly Mutex _shopManagerMutex = new Mutex();
+
         public ShopManager(ICardProductBuilder cardProductBuilder, IInventoryManager inventoryManager, ILogger<ShopManager> logger, IUserManager userManager)
         {
             _cardProductBuilder = cardProductBuilder;
@@ -90,7 +92,6 @@ namespace CardShop.Logic
 
             if (user == null)
             {
-                // TODO: send back error message
                 errorMessage = $"user with Id '{userId}' not found!";
                 _logger.LogError(errorMessage);
                 return (returnList, errorMessage);
@@ -98,77 +99,85 @@ namespace CardShop.Logic
 
             var totalCost = 0.0M;
 
-            // TODO: ACQUIRE LOCK
+            // create lists used for upcoming DB update
+            var shopInventoryToUpdate = new List<Inventory>();
+            var userInventoryToUpdate = new List<Inventory>();
 
-            var shopInventory = await GetShopInventory();
+            var isSuccessfulInsert = false;
 
-
-            // check that requested inventory exists
-            foreach(var item in requestedItems)
+            try
             {
-                if (item.Count < 1) { continue; }
+                // acquire lock
+                _shopManagerMutex.WaitOne();
 
-                var matchingInventory = shopInventory.FirstOrDefault(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
+                var shopInventory = await GetShopInventory();
 
-                if (matchingInventory == null)
+
+                // check that requested inventory exists
+                foreach (var item in requestedItems)
                 {
-                    // TODO: send back error message
-                    errorMessage = $"Request inventory '{item.InventoryId}' of count '{item.Count}' not found!";
+                    if (item.Count < 1) { continue; }
+
+                    var matchingInventory = shopInventory.FirstOrDefault(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
+
+                    if (matchingInventory == null)
+                    {
+                        errorMessage = $"Request inventory '{item.InventoryId}' of count '{item.Count}' not found!";
+                        _logger.LogError(errorMessage);
+                        return (returnList, errorMessage);
+                    }
+
+                    totalCost += matchingInventory.Product.CostPer * item.Count;
+                }
+
+                // does user have the funds?
+                if (user.Balance < totalCost)
+                {
+                    errorMessage = $"User {userId} doesn't have enough money for this purchace.  User has ${user.Balance} of the required amount ${totalCost}";
                     _logger.LogError(errorMessage);
                     return (returnList, errorMessage);
                 }
 
-                totalCost += matchingInventory.Product.CostPer * item.Count;
-            }
-
-            // does user have the funds?
-            if (user.Balance < totalCost)
-            {
-                // TODO: send back error message
-                errorMessage = $"User {userId} doesn't have enough money for this purchace.  User has ${user.Balance} of the required amount ${totalCost}";
-                _logger.LogError(errorMessage);
-                return (returnList, errorMessage);
-            }
-
-            // create list for DB update
-            var shopInventoryToUpdate = new List<Inventory>();
-            var userInventoryToUpdate = new List<Inventory>();
-            foreach (var item in requestedItems)
-            {
-                if (item.Count < 1) { continue; }
-
-                var matchingInventory = shopInventory.First(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
-
-                shopInventoryToUpdate.Add(new Inventory
+                
+                foreach (var item in requestedItems)
                 {
-                    ProductCode = matchingInventory.Product.Code,
-                    SetCode = matchingInventory.Product.SetCode,
-                    UserId = _shopKeeperUserId,
-                    Count = matchingInventory.Count - item.Count
-                });
+                    if (item.Count < 1) { continue; }
 
-                userInventoryToUpdate.Add(new Inventory
+                    var matchingInventory = shopInventory.First(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
+
+                    shopInventoryToUpdate.Add(new Inventory
+                    {
+                        ProductCode = matchingInventory.Product.Code,
+                        SetCode = matchingInventory.Product.SetCode,
+                        UserId = _shopKeeperUserId,
+                        Count = matchingInventory.Count - item.Count
+                    });
+
+                    userInventoryToUpdate.Add(new Inventory
+                    {
+                        ProductCode = matchingInventory.Product.Code,
+                        SetCode = matchingInventory.Product.SetCode,
+                        UserId = userId,
+                        Count = item.Count
+                    });
+                }
+
+                isSuccessfulInsert = await _inventoryManager.UpdateMultipleInventory(new List<List<Inventory>> { shopInventoryToUpdate, userInventoryToUpdate });
+
+                var balanceUpdated = await _userManager.SetUserBalance(userId, user.Balance - totalCost);
+                if (balanceUpdated)
                 {
-                    ProductCode = matchingInventory.Product.Code,
-                    SetCode = matchingInventory.Product.SetCode,
-                    UserId = userId,
-                    Count = item.Count
-                });
+                    _logger.LogError($"User balance wasn't updated!");
+                }
             }
-
-            var isSuccessfulInsert = await _inventoryManager.UpdateMultipleInventory(new List<List<Inventory>> { shopInventoryToUpdate, userInventoryToUpdate });
-
-            var balanceUpdated = await _userManager.SetUserBalance(userId, user.Balance - totalCost);
-            if (!balanceUpdated)
+            finally
             {
-                _logger.LogError($"User balance wasn't updated!");
+                // release lock
+                _shopManagerMutex.ReleaseMutex();
             }
-
-            // TODO: RELEASE LOCK
 
             if (!isSuccessfulInsert)
             {
-                // TODO: send back error message
                 errorMessage = $"An error occurred during the insert.";
                 _logger.LogError(errorMessage);
                 return (returnList, errorMessage);
