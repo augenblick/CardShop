@@ -49,7 +49,7 @@ namespace CardShop.Controllers
         {
             if (request.InventoryItems.Any(x => x.Count < 0))
             {
-                return new PurchaseProductResponse { ErrorMessage = "Negative counts not allowed!!" };
+                return new PurchaseProductResponse { ErrorMessage = "Negative counts are not allowed!!" };
             }
 
             if (request.InventoryItems == null || request.InventoryItems.Count < 1 || request.InventoryItems.Sum(x => x.Count) < 1)
@@ -62,14 +62,18 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
             }
 
-            var (items, errorMessage) = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
+            var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
 
             if (items == null || items.Count < 1)
             {
-                return new PurchaseProductResponse { ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ?  "An error occurred while trying to make a pruchase from the shop!" : errorMessage };
+                return new PurchaseProductResponse { ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ?  "An error occurred while trying to make a purchase from the shop!" : errorMessage };
             }
 
-            return new PurchaseProductResponse { InventoryItems = items };
+            return new PurchaseProductResponse { 
+                RemainingUserBalance = remainingBalance,
+                TotalCost = totalCost,
+                InventoryItems = items 
+            };
         }
 
         

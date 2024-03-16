@@ -5,7 +5,7 @@ using CardShop.Models.Request;
 using CardShop.Repositories.Models;
 using Dapper;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
+using System.Globalization;
 
 namespace CardShop.Logic
 {
@@ -82,25 +82,35 @@ namespace CardShop.Logic
             _logger.LogInformation($">>> Shop Initialization took '{stopWatch.ElapsedMilliseconds}'ms.");
         }
 
-        public async Task<(List<InventoryItem>, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="requestedItems"></param>
+        /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
+        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems)
         {
             var errorMessage = string.Empty;
             var returnList = new List<InventoryItem>();
-            
+            var totalCostFinal = 0.0M;  // should remain 0.0 until money actually removed from account
+            var userBalance = 0.0M;
+
             var user = await _userManager.GetUser(userId);
 
             if (user == null)
             {
                 errorMessage = $"user with Id '{userId}' not found!";
                 _logger.LogError(errorMessage);
-                return (returnList, errorMessage);
+                return (returnList, totalCostFinal, userBalance, errorMessage);
             }
 
+            userBalance = user.Balance;
             var totalCost = 0.0M;
 
             // create lists used for upcoming DB update
             var shopInventoryToUpdate = new List<Inventory>();
             var userInventoryToUpdate = new List<Inventory>();
+            var purchasedInventoryToReturn = new List<Inventory>();
 
             var isSuccessfulInsert = false;
 
@@ -113,56 +123,58 @@ namespace CardShop.Logic
                 var existingUserInventory = await _inventoryManager.GetUserInventory(userId);
 
                 // check that requested inventory exists
-                foreach (var cheese in requestedItems)
+                foreach (var item in requestedItems)
                 {
 
-                    if (cheese.Count < 1) { continue; }
+                    if (item.Count < 1) { continue; }
 
-                    var matchingInventory = shopInventory.FirstOrDefault(x => x.Product.Code == cheese.ProductCode && x.Count > 0);
+                    var matchingInventory = shopInventory.FirstOrDefault(x => x.Product.Code == item.ProductCode && x.Count > 0);
                     if (matchingInventory == null)
                     {
-                        errorMessage = $"Requested Product '{cheese.ProductCode}' not in stock!";
+                        errorMessage = $"Requested Product '{item.ProductCode}' not in stock!";
                         _logger.LogError(errorMessage);
-                        return (returnList, errorMessage);
+                        return (returnList, totalCostFinal, userBalance, errorMessage);
                     }
 
-                    if (matchingInventory.Count < cheese.Count)
+                    if (matchingInventory.Count < item.Count)
                     {
-                        errorMessage = $"Requested '{cheese.Count}'x of Product '{cheese.ProductCode}', but only {matchingInventory.Count}x in stock!";
+                        errorMessage = $"Requested {item.Count}x of Product '{item.ProductCode}', but only {matchingInventory.Count}x are in stock!";
                         _logger.LogError(errorMessage);
-                        return (returnList, errorMessage);
+                        return (returnList, totalCostFinal, userBalance, errorMessage);
                     }
 
-                    totalCost += matchingInventory.Product.CostPer * cheese.Count;
+                    totalCost += matchingInventory.Product.CostPer * item.Count;
                 }
+
+                var cultureInfo = new CultureInfo("en-US"); // Specify the culture (e.g., US English)
 
                 // does user have the funds?
                 if (user.Balance < totalCost)
                 {
-                    errorMessage = $"User {userId} doesn't have enough money for this purchace.  User has ${user.Balance} of the required amount ${totalCost}";
+                    errorMessage = $"User '{userId}' doesn't have enough money for this purchase.  User has {user.Balance.ToString("C", cultureInfo)} of the required cost of {totalCost.ToString("C", cultureInfo)}";
                     _logger.LogError(errorMessage);
-                    return (returnList, errorMessage);
+                    return (returnList, totalCostFinal, userBalance, errorMessage);
                 }
 
-                foreach (var nother in requestedItems)
+                foreach (var item in requestedItems)
                 {
+                    var requestedCount = item.Count;
 
-                    if (nother == null)
-                    {
-                        _logger.LogError("Item was null!");
-                    }
+                    if (item.Count < 1) { continue; }
 
-                    if (nother.Count < 1) { continue; }
+                    var matchingInventory = shopInventory.First(x => x.Product.Code == item.ProductCode && x.Count >= item.Count);
+                    var matchingUserInventory = existingUserInventory.FirstOrDefault(x => x.ProductCode == item.ProductCode);
 
-                    var matchingInventory = shopInventory.First(x => x.Product.Code == nother.ProductCode && x.Count >= nother.Count);
-                    var matchingUserInventory = existingUserInventory.FirstOrDefault(x => x.ProductCode == nother.ProductCode);
+                    // using item.Count in any compound statement was causing issues, so let's break it down
+                    var matchingCount = matchingUserInventory?.Count ?? 0;
+                    var newCount = matchingCount + requestedCount;
 
                     shopInventoryToUpdate.Add(new Inventory
                     {
                         ProductCode = matchingInventory.Product.Code,
                         SetCode = matchingInventory.Product.SetCode,
                         UserId = _shopKeeperUserId,
-                        Count = matchingInventory.Count - nother.Count
+                        Count = matchingInventory.Count - requestedCount
                     });
 
                     userInventoryToUpdate.Add(new Inventory
@@ -170,14 +182,34 @@ namespace CardShop.Logic
                         ProductCode = matchingInventory.Product.Code,
                         SetCode = matchingInventory.Product.SetCode,
                         UserId = userId,
-                        Count = nother.Count + matchingUserInventory?.Count ?? 0
+                        Count = newCount
+                    });
+
+                    purchasedInventoryToReturn.Add(new Inventory
+                    {
+                        ProductCode = matchingInventory.Product.Code,
+                        SetCode = matchingInventory.Product.SetCode,
+                        UserId = userId,
+                        Count = requestedCount
                     });
                 }
 
                 isSuccessfulInsert = await _inventoryManager.UpdateMultipleInventory(new List<List<Inventory>> { shopInventoryToUpdate, userInventoryToUpdate });
 
+                if (!isSuccessfulInsert)
+                {
+                    errorMessage = $"An error occurred during the insert.";
+                    _logger.LogError(errorMessage);
+                    return (returnList, totalCostFinal, userBalance, errorMessage);
+                }
+
                 var balanceUpdated = await _userManager.SetUserBalance(userId, user.Balance - totalCost);
                 if (balanceUpdated)
+                {
+                    userBalance = user.Balance - totalCost;
+                    totalCostFinal = totalCost;
+                }
+                else 
                 {
                     _logger.LogError($"User balance wasn't updated!");
                 }
@@ -188,14 +220,7 @@ namespace CardShop.Logic
                 _shopManagerMutex.ReleaseMutex();
             }
 
-            if (!isSuccessfulInsert)
-            {
-                errorMessage = $"An error occurred during the insert.";
-                _logger.LogError(errorMessage);
-                return (returnList, errorMessage);
-            }
-
-            return (_inventoryManager.InventoryItemsFromInventory(userInventoryToUpdate), errorMessage);
+            return (_inventoryManager.InventoryItemsFromInventory(purchasedInventoryToReturn), totalCostFinal, userBalance, errorMessage);
         }
 
         public async Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock)

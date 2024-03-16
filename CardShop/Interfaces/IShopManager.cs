@@ -9,6 +9,13 @@ namespace CardShop.Interfaces
         void Initialize();
         Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock);
         bool ClearShopInventory();
-        Task<(List<InventoryItem>, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="requestedItems"></param>
+        /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
+        Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
     }
 }
