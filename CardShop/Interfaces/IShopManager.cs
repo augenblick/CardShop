@@ -7,7 +7,7 @@ namespace CardShop.Interfaces
     public interface IShopManager
     {
         void Initialize();
-        Task<List<InventoryItem>> GetShopInventory();
+        Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock);
         bool ClearShopInventory();
         Task<(List<InventoryItem>, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems);
     }

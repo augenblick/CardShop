@@ -18,6 +18,7 @@ namespace CardShop.Logic
 
         private readonly Random _randomizer = new Random();
         private readonly ILogger _logger;
+        private List<Product> _allPossibleProducts = new List<Product>();
 
         public CardProductBuilder(ILogger<CardProductBuilder> logger)
         {
@@ -170,11 +171,30 @@ namespace CardShop.Logic
                 }
 
                 await Task.WhenAll(initTaskList);
+
+                BuildAllExistingProducts();
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, $"Exception while initializing the card sets.");
             }
+        }
+
+        public List<Product> GetAllExistingProducts()
+        {
+            return _allPossibleProducts;
+        }
+
+        private void BuildAllExistingProducts()
+        {
+            var existingProducts = new List<Product>();
+
+            foreach (var set in _cardSets.OrderBy(x => x.Position))
+            {
+                existingProducts.AddRange(set.Products.OrderBy(x => x.ProductType));
+            }
+
+            _allPossibleProducts = existingProducts.AsList();
         }
 
         private List<T> IngestJsonData<T>(string jsonDirectoryPath)

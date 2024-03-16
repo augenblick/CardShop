@@ -26,12 +26,12 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        public async Task<GetShopInventoryResponse> GetShopInventory()
+        public async Task<GetShopInventoryResponse> GetShopInventory(bool includeOutOfStock = false)
         {
             var response = new GetShopInventoryResponse();
             try
             {
-                var inventory = await _shopManager.GetShopInventory();
+                var inventory = await _shopManager.GetVerboseShopInventory(includeOutOfStock);
 
                 response.Inventory = inventory;
             }
@@ -47,6 +47,11 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<PurchaseProductResponse> PurchaseProduct(PurchaseProductRequest request)
         {
+            if (request.InventoryItems.Any(x => x.Count < 0))
+            {
+                return new PurchaseProductResponse { ErrorMessage = "Negative counts not allowed!!" };
+            }
+
             if (request.InventoryItems == null || request.InventoryItems.Count < 1 || request.InventoryItems.Sum(x => x.Count) < 1)
             {
                 return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            

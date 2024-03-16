@@ -3,6 +3,7 @@ using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Repositories.Models;
+using Dapper;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 
@@ -64,8 +65,6 @@ namespace CardShop.Logic
                 {
                     requestList.Add((ProductType.BoosterPack, set, maxPackCount - currentPackCount));
                 }
-
-
             }
 
             var productList = new List<KeyValuePair<Product, int>>();
@@ -111,23 +110,30 @@ namespace CardShop.Logic
                 _shopManagerMutex.WaitOne();
 
                 var shopInventory = await GetShopInventory();
-
+                var existingUserInventory = await _inventoryManager.GetUserInventory(userId);
 
                 // check that requested inventory exists
-                foreach (var item in requestedItems)
+                foreach (var cheese in requestedItems)
                 {
-                    if (item.Count < 1) { continue; }
 
-                    var matchingInventory = shopInventory.FirstOrDefault(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
+                    if (cheese.Count < 1) { continue; }
 
+                    var matchingInventory = shopInventory.FirstOrDefault(x => x.Product.Code == cheese.ProductCode && x.Count > 0);
                     if (matchingInventory == null)
                     {
-                        errorMessage = $"Request inventory '{item.InventoryId}' of count '{item.Count}' not found!";
+                        errorMessage = $"Requested Product '{cheese.ProductCode}' not in stock!";
                         _logger.LogError(errorMessage);
                         return (returnList, errorMessage);
                     }
 
-                    totalCost += matchingInventory.Product.CostPer * item.Count;
+                    if (matchingInventory.Count < cheese.Count)
+                    {
+                        errorMessage = $"Requested '{cheese.Count}'x of Product '{cheese.ProductCode}', but only {matchingInventory.Count}x in stock!";
+                        _logger.LogError(errorMessage);
+                        return (returnList, errorMessage);
+                    }
+
+                    totalCost += matchingInventory.Product.CostPer * cheese.Count;
                 }
 
                 // does user have the funds?
@@ -138,19 +144,25 @@ namespace CardShop.Logic
                     return (returnList, errorMessage);
                 }
 
-                
-                foreach (var item in requestedItems)
+                foreach (var nother in requestedItems)
                 {
-                    if (item.Count < 1) { continue; }
 
-                    var matchingInventory = shopInventory.First(x => x.InventoryId == item.InventoryId && x.Count >= item.Count);
+                    if (nother == null)
+                    {
+                        _logger.LogError("Item was null!");
+                    }
+
+                    if (nother.Count < 1) { continue; }
+
+                    var matchingInventory = shopInventory.First(x => x.Product.Code == nother.ProductCode && x.Count >= nother.Count);
+                    var matchingUserInventory = existingUserInventory.FirstOrDefault(x => x.ProductCode == nother.ProductCode);
 
                     shopInventoryToUpdate.Add(new Inventory
                     {
                         ProductCode = matchingInventory.Product.Code,
                         SetCode = matchingInventory.Product.SetCode,
                         UserId = _shopKeeperUserId,
-                        Count = matchingInventory.Count - item.Count
+                        Count = matchingInventory.Count - nother.Count
                     });
 
                     userInventoryToUpdate.Add(new Inventory
@@ -158,7 +170,7 @@ namespace CardShop.Logic
                         ProductCode = matchingInventory.Product.Code,
                         SetCode = matchingInventory.Product.SetCode,
                         UserId = userId,
-                        Count = item.Count
+                        Count = nother.Count + matchingUserInventory?.Count ?? 0
                     });
                 }
 
@@ -186,17 +198,54 @@ namespace CardShop.Logic
             return (_inventoryManager.InventoryItemsFromInventory(userInventoryToUpdate), errorMessage);
         }
 
-        public async Task<List<InventoryItem>> GetShopInventory()
+        public async Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock)
+        {
+            var returnItems = new List<InventoryItem>();
+
+            var allPossibleInventory = _cardProductBuilder.GetAllExistingProducts().Select( x => new InventoryItem
+            {
+                Count = 0,
+                Product = x
+            });
+
+            var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
+
+            var completeInventory = new List<InventoryItem>();
+
+            foreach(var inventory in shopInventory)
+            {
+                var matchingPossibleInventory = allPossibleInventory.FirstOrDefault(x => x.Product.Code == inventory.ProductCode);
+
+                if (matchingPossibleInventory != null)
+                {
+                    matchingPossibleInventory.Count = inventory.Count;
+
+                    returnItems.Add(matchingPossibleInventory);
+                }
+
+                
+            }
+
+            if (!includeOutOfStock)
+            {
+                return returnItems.Where(x => x.Count > 0).AsList();
+            }
+
+            return returnItems.AsList();
+        }
+
+        public bool ClearShopInventory()
+        {
+            return _inventoryManager.ClearUserInventory(_shopKeeperUserId);
+        }
+
+        private async Task<List<InventoryItem>> GetShopInventory()
         {
             var returnInventory = new List<InventoryItem>();
 
             var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
 
             return _inventoryManager.InventoryItemsFromInventory(shopInventory);
-        }
-        public bool ClearShopInventory()
-        {
-            return _inventoryManager.ClearUserInventory(_shopKeeperUserId);
         }
     }
 }

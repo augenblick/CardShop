@@ -28,7 +28,8 @@ namespace CardShop.Repositories
             var inventory = await dbConnection.QueryAsync<Inventory>($@"
                         SELECT *
                         FROM Inventory
-                        WHERE UserId = @UserId",
+                        WHERE UserId = @UserId
+                        AND Count > 0",
                         new
                         {
                             UserId = userId

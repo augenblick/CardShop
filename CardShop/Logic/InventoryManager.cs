@@ -91,7 +91,6 @@ namespace CardShop.Logic
 
                 returnInventory.Add(new InventoryItem
                 {
-                    InventoryId = inventoryItem.InventoryId,
                     Product = product,
                     Count = inventoryItem.Count
                 });
