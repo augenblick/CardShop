@@ -120,22 +120,16 @@ namespace CardShop.Models
             {
                 List<Card> chosenCards = new List<Card>();
 
-                switch (content.Code)
+                // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
+                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == content.Code);
+
+                if (cardPool == null)
                 {
-                    case "C":
-                        chosenCards = commonPool.PeekCards(content.Count);
-                        break;
-                    case "U":
-                        chosenCards = uncommonPool.PeekCards(content.Count);
-                        break;
-                    case "R":
-                        chosenCards = rarePool.PeekCards(content.Count);
-                        break;
-                    case "F":
-                        // TODO: will probably handle fixed cards a different way
-                        chosenCards = fixedPool.PeekCards(content.Count);
-                        break;
+                    StaticHelpers.Logger.LogError($"A cardpool with rarity '{content.Code}' was not found within cardset '{SetCode}'");
+                    return returnCardList;
                 }
+
+                chosenCards = cardPool.PeekCards(content.Count);
 
                 if (chosenCards.Count < content.Count)
                 {

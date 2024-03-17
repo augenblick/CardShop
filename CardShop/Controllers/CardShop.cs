@@ -17,12 +17,14 @@ namespace CardShop.Controllers
     {
         private readonly IShopManager _shopManager;
         private readonly ILogger _logger;
+        private readonly IInventoryManager _inventoryManager;
 
 
-        public CardShop(IShopManager shopManager, ILogger<CardShop> logger)
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager)
         {
             _shopManager = shopManager;
             _logger = logger;
+            _inventoryManager = inventoryManager;
         }
 
         [HttpPost]
@@ -73,6 +75,18 @@ namespace CardShop.Controllers
                 RemainingUserBalance = remainingBalance,
                 TotalCost = totalCost,
                 InventoryItems = items 
+            };
+        }
+
+        [HttpPost]
+        public async Task<OpenInventoryProductsResponse> OpenInventoryProducts(OpenInventoryProductsRequest request)
+        {
+            var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(request.UserId, request.InventoryProductsToOpen);
+
+            return new OpenInventoryProductsResponse
+            {
+                ErrorMessage = errorMessage,
+                PurchasedItems = items
             };
         }
 

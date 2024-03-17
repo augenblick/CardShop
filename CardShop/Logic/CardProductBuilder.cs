@@ -42,6 +42,14 @@ namespace CardShop.Logic
             return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
+        public List<Product> OpenProduct(Product product)
+        {
+            var cardSet = GetCardSetByCardSetCode(product.SetCode);
+            var contents = cardSet.OpenProduct(product);
+
+            return contents;
+        }
+
         public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
             var returnProduct = new Product();
@@ -53,7 +61,11 @@ namespace CardShop.Logic
                 cardSet = _cardSets.FirstOrDefault(x => x.Products.Any(y => y.Code == productCode));
             }
 
-            if (cardSet == null) { return returnProduct; }
+            if (cardSet == null) 
+            {
+                _logger.LogError($"Product '{productCode}' not found in any available card set!");
+                return returnProduct; 
+            }
 
             var product = cardSet.Products.FirstOrDefault(x => x.Code == productCode);
 
