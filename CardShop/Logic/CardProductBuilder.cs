@@ -18,6 +18,7 @@ namespace CardShop.Logic
 
         private readonly Random _randomizer = new Random();
         private readonly ILogger _logger;
+        private List<Product> _allPossibleProducts = new List<Product>();
 
         public CardProductBuilder(ILogger<CardProductBuilder> logger)
         {
@@ -58,8 +59,19 @@ namespace CardShop.Logic
 
             if (product != null)
             {
-                // TODO: this is temporary until we define set code per product within the json
+                // TODO: cost and setcode will eventually be defined per product within each set.json
                 product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                if (product.ProductType == ProductType.BoosterBox)
+                {
+                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    product.CostPer = cost ?? 0.00M;
+                }
+                else if (product.ProductType == ProductType.BoosterPack)
+                {
+                    product.CostPer = 2.50M;
+                }
+
                 returnProduct = product;
             }
 
@@ -78,8 +90,18 @@ namespace CardShop.Logic
 
             if (product != null)
             {
-                // TODO: this is temporary until we define set code per product within the json
+                // TODO: cost and setcode will eventually be defined per product within each set.json
                 product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+
+                if (product.ProductType == ProductType.BoosterBox)
+                {
+                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    product.CostPer = cost ?? 0.00M;
+                }
+                else if (product.ProductType == ProductType.BoosterPack)
+                {
+                    product.CostPer = 2.50M;
+                }
 
                 returnProduct = product;
             }
@@ -87,7 +109,7 @@ namespace CardShop.Logic
             return returnProduct;
         } 
 
-        private CardSet GetCardSetByCardSetCode(Enums.CardSetCode cardSetCode)
+        private CardSet GetCardSetByCardSetCode(CardSetCode cardSetCode)
         {
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
         }
@@ -149,11 +171,30 @@ namespace CardShop.Logic
                 }
 
                 await Task.WhenAll(initTaskList);
+
+                BuildAllExistingProducts();
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, $"Exception while initializing the card sets.");
             }
+        }
+
+        public List<Product> GetAllExistingProducts()
+        {
+            return _allPossibleProducts;
+        }
+
+        private void BuildAllExistingProducts()
+        {
+            var existingProducts = new List<Product>();
+
+            foreach (var set in _cardSets.OrderBy(x => x.Position))
+            {
+                existingProducts.AddRange(set.Products.OrderBy(x => x.ProductType));
+            }
+
+            _allPossibleProducts = existingProducts.AsList();
         }
 
         private List<T> IngestJsonData<T>(string jsonDirectoryPath)

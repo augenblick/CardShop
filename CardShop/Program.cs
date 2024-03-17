@@ -15,6 +15,8 @@ builder.Services.AddSingleton<ICardProductBuilder, CardProductBuilder>();
 builder.Services.AddSingleton<IShopManager, ShopManager>();
 builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserManager, UserManager>();
 
 
 var logger = new LoggerConfiguration()

@@ -25,6 +25,11 @@ namespace CardShop.Logic
             return await _inventoryRepository.GetUserInventory(userId);
         }
 
+        public async Task<bool> UpdateMultipleInventory(List<List<Inventory>> inventoryRequests)
+        {
+            return await _inventoryRepository.UpsertMultipleInventory(inventoryRequests);
+        }
+
         public async Task<bool> AddInventory(List<KeyValuePair<Product, int>> productsToAdd, int userId)
         {
             if (productsToAdd == null || productsToAdd.Count < 1)
@@ -50,14 +55,12 @@ namespace CardShop.Logic
 
                 if (userInventory.Count > 0)
                 {
-
                     var existing = userInventory.FirstOrDefault(x => x.SetCode == product.Key.SetCode && x.ProductCode == product.Key.Code);
 
                     if (existing != null)
                     {
                         count += existing.Count;
                     }
-
                 }
 
                 inventoryToAdd.Add(
@@ -88,7 +91,6 @@ namespace CardShop.Logic
 
                 returnInventory.Add(new InventoryItem
                 {
-                    InventoryId = inventoryItem.InventoryId,
                     Product = product,
                     Count = inventoryItem.Count
                 });

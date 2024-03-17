@@ -7,7 +7,7 @@
         public string Name { get; set; }
         public ProductType ProductType { get; set; }
         public List<Content> Contents { get; set; }
-
+        public Decimal CostPer { get; set; }
     }
 
     public enum ProductType
