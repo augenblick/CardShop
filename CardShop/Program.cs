@@ -7,7 +7,23 @@ using Serilog;
 using Serilog.Hosting;
 using System.Diagnostics;
 
+// CORS
+var MyAllowAnyOrigins = "_myAllowAnyOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowAnyOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader(); 
+
+                      });
+});
 
 // Add services to the container.
 // This specifies which implementation to inject into classes whose constructor requires any of the following Implementations.
@@ -46,6 +62,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// CORS
+app.UseCors(MyAllowAnyOrigins);
 
 app.UseAuthorization();
 
