@@ -8,6 +8,8 @@ using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 
 namespace CardShop.Controllers
 {
@@ -81,13 +83,35 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<OpenInventoryProductsResponse> OpenInventoryProducts(OpenInventoryProductsRequest request)
         {
+            if (request.UserId == 0)
+            {
+                return new OpenInventoryProductsResponse
+                {
+                    ErrorMessage = "Cannot open inventory for userId 0 (shop keeper)!"
+                };
+            }
+
+            var watch = new Stopwatch();
+            watch.Start();
             var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(request.UserId, request.InventoryProductsToOpen);
+
+            //var castCard = (Product)(items.FirstOrDefault().Product ?? new Card());
+
+            watch.Stop();
+
+            _logger.LogInformation($"total time to open products = {watch.ElapsedMilliseconds}ms");
 
             return new OpenInventoryProductsResponse
             {
                 ErrorMessage = errorMessage,
-                PurchasedItems = items
+                OpenedItems = items
             };
+        }
+
+        [HttpPost]
+        public Card GetCard()
+        {
+            return new Card();
         }
 
         

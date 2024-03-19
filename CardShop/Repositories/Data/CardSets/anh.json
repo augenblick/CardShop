@@ -7,25 +7,25 @@
     "size": 162,
 
     "products": [
-        {
-            "code": "02p",
-            "name": "A New Hope Booster Pack",
-            "productType": "BoosterPack",
-            "contents": [
-                {
-                    "code": "C",
-                    "count": 10
-                },
-                {
-                    "code": "R",
-                    "count": 1
-                },
-                {
-                    "code": "U",
-                    "count": 4
-                }
-            ]
-        },
+      {
+        "code": "02p",
+        "name": "A New Hope Booster Pack",
+        "productType": "BoosterPack",
+        "packContentSpecs": [
+          {
+            "overallRarity": "C",
+            "count": 10
+          },
+          {
+            "overallRarity": "R",
+            "count": 1
+          },
+          {
+            "overallRarity": "U",
+            "count": 4
+          }
+        ]
+      },
         {
             "code": "02b",
             "name": "A New Hope Booster Box",

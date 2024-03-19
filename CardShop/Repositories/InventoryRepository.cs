@@ -4,6 +4,7 @@ using Dapper;
 using CardShop.Repositories.Models;
 using System.Data;
 using CardShop.Models;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 
 namespace CardShop.Repositories
@@ -36,6 +37,17 @@ namespace CardShop.Repositories
                         });
 
             return inventory.AsList();
+        }
+
+        public async Task RemoveEmptyUserInventory(int userId)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var inventory = await dbConnection.ExecuteAsync($@"
+                        DELETE
+                        FROM Inventory
+                        WHERE Count < 1
+                        AND UserId = @UserId", new { UserId = userId});
         }
 
         public async Task<bool> UpsertInventory(List<Inventory> inventoryItems)

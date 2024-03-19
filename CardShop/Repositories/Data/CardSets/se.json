@@ -11,10 +11,19 @@
       "code": "07p",
       "name": "Special Edition Booster Pack",
       "productType": "BoosterPack",
-      "contents": [
-        {"code": "C", "count": 5},
-        {"code": "R", "count": 1},
-        {"code": "U", "count": 3}
+      "packContentSpecs": [
+        {
+          "overallRarity": "C",
+          "count": 5
+        },
+        {
+          "overallRarity": "R",
+          "count": 1
+        },
+        {
+          "overallRarity": "U",
+          "count": 3
+        }
       ]
     },
     {

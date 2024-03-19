@@ -2,6 +2,6 @@
 {
     public class OpenInventoryProductsResponse : BaseResponse
     {
-        public List<InventoryItem> PurchasedItems { get; set; }
+        public List<InventoryItem> OpenedItems { get; set; }
     }
 }
