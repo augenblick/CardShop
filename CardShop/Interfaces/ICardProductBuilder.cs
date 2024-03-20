@@ -13,7 +13,7 @@ namespace CardShop.Interfaces
         Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined);
         List<InventoryItem> OpenProduct(Product product);
         Product GetProductByProductType(ProductType productType, CardSetCode cardSetCode);
-        bool TestCardSetRarityPool(CardSetCode cardSetCode, Enums.RarityCode rarityCode, int testCount, bool peekDontDraw);
+        bool TestCardSetRarityPool(CardSetCode cardSetCode, string rarityCode, int testCount, bool peekDontDraw);
         List<Product> GetAllExistingProducts();
     }
 }
