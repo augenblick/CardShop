@@ -10,14 +10,14 @@
             set { }
         }
 
-        public Enums.RarityCode PoolRarityCode { get; set; }
+        public string PoolRarityCode { get; set; }
 
-        public CardPool(Enums.RarityCode poolRarityCode)
+        public CardPool(string poolRarityCode)
         {
             PoolRarityCode = poolRarityCode;
         }
 
-        public CardPool(Enums.RarityCode rarityCode, List<KeyValuePair<Card, int>> cards)
+        public CardPool(string rarityCode, List<KeyValuePair<Card, int>> cards)
         {
             PoolRarityCode = rarityCode;
             foreach(var card in cards)

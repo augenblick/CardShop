@@ -46,7 +46,8 @@
     {"Rarity": "U", "Count": 1, "OverallRarity": "U"},
     {"Rarity": "UR", "Count": 2, "OverallRarity": "R"},
     {"Rarity": "R", "Count": 3, "OverallRarity": "R"},
-    {"Rarity": "R4", "Count": 4, "OverallRarity": "R"}
+    {"Rarity": "R4", "Count": 4, "OverallRarity": "R" },
+    { "Rarity": "XR", "Count": 1, "OverallRarity": "F" }
 
   ],
 

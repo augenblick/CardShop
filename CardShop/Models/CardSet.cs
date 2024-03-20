@@ -36,32 +36,32 @@ namespace CardShop.Models
 
         public async Task Initialize()
         {
-            foreach(var cardRarity in CardRarityMap)
-            {
-                if (!_cardRarityPools.Any(x => x.PoolRarityCode.ToString() == cardRarity.OverallRarity)) 
+                foreach(var cardRarity in CardRarityMap)
                 {
-                    _cardRarityPools.Add(new CardPool((Enums.RarityCode)Enum.Parse(typeof(Enums.RarityCode), cardRarity.OverallRarity)));
-                }
-            }
-
-            foreach (var card in Cards)
-            {
-                var cardRarity = CardRarityMap.FirstOrDefault(x => x.Rarity == card.RarityCode);
-                var cardCount = cardRarity?.Count;
-                var cardOverallRarity = cardRarity?.OverallRarity;
-
-                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == cardOverallRarity);
-
-                if (cardPool == null || cardCount < 1)
-                {
-                    StaticHelpers.Logger.LogError($"When trying to insert cards into a card pool for set '{SetCode}', the card pool with overallRarity '{cardOverallRarity}' could not be found!");
+                    if (!_cardRarityPools.Any(x => x.PoolRarityCode.ToString() == cardRarity.OverallRarity))
+                    {
+                        _cardRarityPools.Add(new CardPool(cardRarity.OverallRarity));
+                    }
                 }
 
-                cardPool?.AddCard(card, cardCount.GetValueOrDefault());
-            }
+                foreach (var card in Cards)
+                {
+                    var cardRarity = CardRarityMap.FirstOrDefault(x => x.Rarity == card.RarityCode);
+                    var cardCount = cardRarity?.Count;
+                    var cardOverallRarity = cardRarity?.OverallRarity;
+
+                    var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == cardOverallRarity);
+
+                    if (cardPool == null || cardCount < 1)
+                    {
+                        StaticHelpers.Logger.LogError($"When trying to insert cards into a card pool for set '{SetCode}', the card pool with overallRarity '{cardOverallRarity}' could not be found!");
+                    }
+
+                    cardPool?.AddCard(card, cardCount.GetValueOrDefault());
+                }
         }
 
-        public Card DrawRandomCardFromSet(Enums.RarityCode rarityCode, bool peekDontDraw = true)
+        public Card DrawRandomCardFromSet(string rarityCode, bool peekDontDraw = true)
         {
             var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == rarityCode);
 
@@ -127,11 +127,6 @@ namespace CardShop.Models
         {
             var drawnCards = new List<Product>();
 
-            var commonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.C);
-            var uncommonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.U);
-            var rarePool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.R);
-            var fixedPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.F);
-
             foreach (var raritySpec in pack.PackContentSpecs)
             {
                 List<Card> chosenCards = new List<Card>();
@@ -140,7 +135,7 @@ namespace CardShop.Models
                 var overallRarityForDraw = raritySpec.OverallRarity;
 
                 // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
-                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == overallRarityForDraw);
+                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityForDraw);
 
                 if (cardPool == null)
                 {

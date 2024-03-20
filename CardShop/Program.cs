@@ -56,7 +56,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.MapType<Card>(() => new OpenApiSchema { Type = "object" });
-    options.SchemaFilter<EnumSchemaFilter>();
 });
 
 var app = builder.Build();
@@ -83,14 +82,14 @@ var shopManager = app.Services.GetRequiredService<IShopManager>();
 var timer = new Stopwatch();
 timer.Start();
 
+var logThing = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<ShopManager>>();
+
+StaticHelpers.Logger = logThing;
+
 await cardProductBuilder.InitializeCardSets();
 shopManager.Initialize();
 
 timer.Stop();
-
-var logThing = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<ShopManager>>();
-
-StaticHelpers.Logger = logThing;
 
 logThing.LogInformation($">>>>>>>>>>>>>> Initialization lasted {timer.ElapsedMilliseconds} ms.");
 

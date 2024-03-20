@@ -184,14 +184,14 @@ namespace CardShop.Logic
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
         }
 
-        public bool TestCardSetRarityPool(CardSetCode cardSetCode, Enums.RarityCode rarityCode, int testCount, bool peekDontDraw)
+        public bool TestCardSetRarityPool(CardSetCode cardSetCode, string rarityCode, int testCount, bool peekDontDraw)
         {
             //var cardSetCodeName = cardSetCode.GetCardSetCodeString();
             var cardSet = GetCardSetByCardSetCode(cardSetCode);
             try
             {
                 // check null
-                var cardPool = new CardPool(Enums.RarityCode.F);
+                var cardPool = new CardPool("F");
 
                 for (int i = 0; i < testCount; i++)
                 {

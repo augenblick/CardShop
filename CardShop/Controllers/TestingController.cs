@@ -32,9 +32,9 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        public bool TestRarityPoolLogic(Enums.RarityCode rarityCode, int testCount, bool peekDontDraw = true, Enums.CardSetCode cardSetCode = Enums.CardSetCode.Premiere)
+        public bool TestRarityPoolLogic(string rarityCode, int testCount, bool peekDontDraw = true, Enums.CardSetCode cardSetCode = Enums.CardSetCode.Premiere)
         {
-            return _cardProductBuilder.TestCardSetRarityPool(Enums.CardSetCode.Premiere, rarityCode, testCount, peekDontDraw);
+            return _cardProductBuilder.TestCardSetRarityPool(cardSetCode, rarityCode.ToUpper(), testCount, peekDontDraw);
         }
 
         [HttpPost]
