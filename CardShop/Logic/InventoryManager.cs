@@ -144,8 +144,8 @@ namespace CardShop.Logic
 
             var userInventory = await _inventoryRepository.GetUserInventory(userId);
 
-            var matchingInventoryItems = new List<Inventory>();
-            var existingUserInventoryToModify = new List<Inventory>();
+            var inventoryMatchingItemsToOpen = new List<Inventory>();
+            var existingUserInventoryToUpdate = new List<Inventory>();
             var productsToAddToUserInventory = new List<Inventory>();
 
             foreach(var item in groupedRequest)
@@ -166,10 +166,10 @@ namespace CardShop.Logic
                     return (returnList, errorMessage);
                 }
 
-                matchingInventoryItems.Add(matchingInventory);
+                inventoryMatchingItemsToOpen.Add(matchingInventory);
             }
 
-            foreach(var item in matchingInventoryItems)
+            foreach(var item in inventoryMatchingItemsToOpen)
             {
                 var existingInventoryCount = item.Count;
 
@@ -178,7 +178,7 @@ namespace CardShop.Logic
                 if (requestedCount < 1) { continue; }
 
                 // save record to modify existing inventory count at the end
-                existingUserInventoryToModify.Add(new Inventory
+                existingUserInventoryToUpdate.Add(new Inventory
                 {
                     ProductCode = item.ProductCode,
                     SetCode = item.SetCode,
@@ -237,9 +237,7 @@ namespace CardShop.Logic
                     // random draw for each pack
                     for (int i = 0; i < requestedCount; i++)
                     {
-
                          var productContentsAgain = _cardProductBuilder.OpenProduct(product);
-
 
                         if (productContentsAgain == null || productContentsAgain.FirstOrDefault() == null)
                         {
@@ -278,7 +276,7 @@ namespace CardShop.Logic
             // add new items to user inventory
             // remove requested items from inventory
             _logger.LogInformation($"Total Return Count = {productsToAddToUserInventory.Count}");
-            var successfulInsert = await _inventoryRepository.UpsertMultipleInventory(new List<List<Inventory>> { productsToAddToUserInventory, existingUserInventoryToModify });
+            var successfulInsert = await _inventoryRepository.UpsertMultipleInventory(new List<List<Inventory>> { productsToAddToUserInventory, existingUserInventoryToUpdate });
 
             if (!successfulInsert)
             {
