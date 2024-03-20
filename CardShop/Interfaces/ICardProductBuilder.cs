@@ -15,5 +15,6 @@ namespace CardShop.Interfaces
         Product GetProductByProductType(ProductType productType, CardSetCode cardSetCode);
         bool TestCardSetRarityPool(CardSetCode cardSetCode, string rarityCode, int testCount, bool peekDontDraw);
         List<Product> GetAllExistingProducts();
+        List<Card> GetAllExistingCards();
     }
 }

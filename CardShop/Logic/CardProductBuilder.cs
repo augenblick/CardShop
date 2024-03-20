@@ -18,7 +18,8 @@ namespace CardShop.Logic
 
         private readonly Random _randomizer = new Random();
         private readonly ILogger _logger;
-        private List<Product> _allPossibleProducts = new List<Product>();
+        private List<Product> _allExistingProducts = new List<Product>();
+        private List<Card> _allExistingCards = new List<Card>();
 
         public CardProductBuilder(ILogger<CardProductBuilder> logger)
         {
@@ -237,19 +238,27 @@ namespace CardShop.Logic
 
         public List<Product> GetAllExistingProducts()
         {
-            return _allPossibleProducts;
+            return _allExistingProducts;
+        }
+
+        public List<Card> GetAllExistingCards()
+        {
+            return _allExistingCards;
         }
 
         private void BuildAllExistingProducts()
         {
             var existingProducts = new List<Product>();
+            var existingCards = new List<Card>();
 
             foreach (var set in _cardSets.OrderBy(x => x.Position))
             {
                 existingProducts.AddRange(set.Products.OrderBy(x => x.ProductType));
+                existingCards.AddRange(set.Cards.OrderBy(x => x.Code));
             }
 
-            _allPossibleProducts = existingProducts.AsList();
+            _allExistingProducts = existingProducts.AsList();
+            _allExistingCards = existingCards.AsList();
         }
 
         private List<T> IngestJsonData<T>(string jsonDirectoryPath)
