@@ -104,9 +104,16 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        public List<Product> GetAllAvailableProductInfo()
+        public GetAllAvailableProductInfoResponse GetAllAvailableProductInfo(bool includeCards = false)
         {
-            return _cardProductBuilder.GetAllExistingProducts();
+            var products = _cardProductBuilder.GetAllExistingProducts();
+            var cards = includeCards ? _cardProductBuilder.GetAllExistingCards() : new List<Card>();
+
+            return new GetAllAvailableProductInfoResponse
+            {
+                Products = products,
+                Cards = cards
+            };
         }
 
         [HttpPost]
