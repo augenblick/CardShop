@@ -35,7 +35,7 @@ namespace CardShop.Logic
 
             var existingInventory = await GetShopInventory();
 
-            var availableSets = _cardProductBuilder.GetAvailableCardSets(new List<string> { "full" });
+            var availableSets = _cardProductBuilder.GetAvailableCardSets(new List<string> { "full", "premium" });
             var requestList = new List<(ProductType, CardSetCode, int)>();
             const int maxBoxCount = 5;
             const int maxPackCount = 30;
@@ -48,20 +48,12 @@ namespace CardShop.Logic
                 var currentBoxCount = matchingBoxInventory.Sum(x => x.Count);
                 var currentPackCount = matchingPackInventory.Sum(x => x.Count);
 
-                if (matchingBoxInventory == null)
-                {
-                    requestList.Add((ProductType.BoosterBox, set, maxBoxCount));
-                }
-                else if (currentBoxCount < (maxBoxCount * 0.3))
+                if (currentBoxCount < (maxBoxCount * 0.3))
                 {
                     requestList.Add((ProductType.BoosterBox, set, maxBoxCount - currentBoxCount));
                 }
 
-                if (matchingPackInventory == null)
-                {
-                    requestList.Add((ProductType.BoosterPack, set, maxPackCount));
-                }
-                else if (currentPackCount < (maxPackCount * 0.3))
+                if (currentPackCount < (maxPackCount * 0.3))
                 {
                     requestList.Add((ProductType.BoosterPack, set, maxPackCount - currentPackCount));
                 }
@@ -72,7 +64,11 @@ namespace CardShop.Logic
             foreach (var request in requestList)
             {
                 var product = _cardProductBuilder.GetProductByProductType(request.Item1, request.Item2);
-                productList.Add(new KeyValuePair<Product, int>(product, request.Item3));
+
+                if (product.SetCode != CardSetCode.undefined)
+                {
+                    productList.Add(new KeyValuePair<Product, int>(product, request.Item3));
+                }
             }
 
             var inventoryAdd = await _inventoryManager.AddInventory(productList, _shopKeeperUserId);

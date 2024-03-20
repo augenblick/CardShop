@@ -1,0 +1,672 @@
+{
+  "code": "2pp",
+  "cycle_code": "premium",
+  "date_release": "1995-12-01",
+  "name": "Premiere Two-Player Game",
+  "position": 1,
+  "size": 6,
+
+  "products": [
+
+    {
+      "code": "013s",
+      "name": "Premiere Introductory Two-Player Game",
+      "productType": "BoosterBox",
+      "costPer": "19.95",
+
+      "contents": [
+        {
+          "setCode": "pr",
+          "code": "01p",
+          "count": 1
+        },
+        {
+          "code": "013d01",
+          "count": 1
+        },
+        {
+          "code": "013d02",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "code": "013d01",
+      "name": "Premiere Introductory Deck (Dark Side)",
+      "productType": "StarterDeck",
+
+      "contents": [
+        // Death Star Trooper
+        {
+          "setCode": "pr",
+          "code": "01199",
+          "count": 2
+        },
+        // Imperial Trooper Guard
+        {
+          "setCode": "pr",
+          "code": "01234",
+          "count": 2
+        },
+        // Jawa
+        {
+          "setCode": "pr",
+          "code": "01238",
+          "count": 2
+        },
+        // LIN-V8M
+        {
+          "setCode": "pr",
+          "code": "01245",
+          "count": 2
+        },
+        // Stormtrooper
+        {
+          "setCode": "pr",
+          "code": "01284",
+          "count": 7
+        },
+        // Tusken Raider
+        {
+          "setCode": "pr",
+          "code": "01308",
+          "count": 5
+        },
+        // Vader
+        {
+          "code": "13005",
+          "count": 3
+        },
+        // Comlink
+        {
+          "setCode": "pr",
+          "code": "01184",
+          "count": 1
+        },
+        // Stormtrooper Utility Belt
+        {
+          "setCode": "pr",
+          "code": "01286",
+          "count": 2
+        },
+        // Ket Maliss
+        {
+          "setCode": "pr",
+          "code": "01242",
+          "count": 1
+        },
+        // Macroscan
+        {
+          "setCode": "pr",
+          "code": "01261",
+          "count": 1
+        },
+        // Collateral Damage
+        {
+          "setCode": "pr",
+          "code": "01182",
+          "count": 1
+        },
+        // Counter Assault
+        {
+          "setCode": "pr",
+          "code": "01186",
+          "count": 2
+        },
+        //Imperial Reinforcements
+        {
+          "setCode": "pr",
+          "code": "01233",
+          "count": 1
+        },
+        // It's Worse
+        {
+          "setCode": "pr",
+          "code": "01237",
+          "count": 1
+        },
+        // Kintan Strider
+        {
+          "setCode": "pr",
+          "code": "01243",
+          "count": 1
+        },
+        // Set For Stun
+        {
+          "setCode": "pr",
+          "code": "01283",
+          "count": 1
+        },
+        // Takeel
+        {
+          "setCode": "pr",
+          "code": "01292",
+          "count": 1
+        },
+        // Tusken Scavengers
+        {
+          "setCode": "pr",
+          "code": "01309",
+          "count": 1
+        },
+        // Vaders Obsession
+        {
+          "code": "13006",
+          "count": 3
+        },
+        // You Overestimate Their Chances
+        {
+          "setCode": "pr",
+          "code": "01322",
+          "count": 1
+        },
+        // Death Star: Detention Block Corridor
+        {
+          "setCode": "pr",
+          "code": "01201",
+          "count": 1
+        },
+        // Death Star: Docking Bay 327
+        {
+          "setCode": "pr",
+          "code": "01202",
+          "count": 2
+        },
+        // Death Star: Docking Control Room 327
+        {
+          "code": "13004",
+          "count": 2
+        },
+        // Tatooine: Docking Bay 94
+        {
+          "setCode": "pr",
+          "code": "01296",
+          "count": 1
+        },
+        //Tatooine: Jawa Camp
+        {
+          "setCode": "pr",
+          "code": "01297",
+          "count": 1
+        },
+        // Tatooine: Judland Wastes
+        {
+          "setCode": "pr",
+          "code": "01298",
+          "count": 1
+        },
+        // Tatooine: Mos Eisley
+        {
+          "setCode": "pr",
+          "code": "01300",
+          "count": 1
+        },
+        // Imperial Barrier
+        {
+          "setCode": "pr",
+          "code": "01229",
+          "count": 1
+        },
+        // Omni Box
+        {
+          "setCode": "pr",
+          "code": "01267",
+          "count": 1
+        },
+        // Scanning Crew
+        {
+          "setCode": "pr",
+          "code": "01280",
+          "count": 1
+        },
+        // Blaster Rifle
+        {
+          "setCode": "pr",
+          "code": "01012",
+          "count": 1
+        },
+        // Gaderffii Stick
+        {
+          "setCode": "pr",
+          "code": "01219",
+          "count": 1
+        },
+        // Imperial Blaster
+        {
+          "setCode": "pr",
+          "code": "01230",
+          "count": 2
+        },
+        // Timer Mine
+        {
+          "setCode": "pr",
+          "code": "01303",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "code": "013d02",
+      "name": "Premiere Introductory Deck (Light Side)",
+      "productType": "StarterDeck",
+
+      "contents": [
+        // CZ-3
+        {
+          "setCode": "pr",
+          "code": "01015",
+          "count": 1
+        },
+        // Jawa
+        {
+          "setCode": "pr",
+          "code": "01058",
+          "count": 2
+        },
+        // LIN-V8K
+        {
+          "setCode": "pr",
+          "code": "01069",
+          "count": 2
+        },
+        // Luke
+        {
+          "code": "13002",
+          "count": 3
+        },
+        // Rebel Guard
+        {
+          "setCode": "pr",
+          "code": "01104",
+          "count": 2
+        },
+        //Rebel Tooper
+        {
+          "setCode": "pr",
+          "code": "01108",
+          "count": 7
+        },
+        // Shistavanen Wolfman
+        {
+          "setCode": "pr",
+          "code": "01121",
+          "count": 3
+        },
+        // Talz
+        {
+          "setCode": "pr",
+          "code": "01129",
+          "count": 3
+        },
+        // Electrobinoculars
+        {
+          "setCode": "pr",
+          "code": "01034",
+          "count": 1
+        },
+        // Tatooine Utility Belt
+        {
+          "setCode": "pr",
+          "code": "01133",
+          "count": 2
+        },
+        // Sai-torr Kal Fas
+        {
+          "setCode": "pr",
+          "code": "01117",
+          "count": 1
+        },
+        // Don't Underestimate Our Chances
+        {
+          "setCode": "pr",
+          "code": "01031",
+          "count": 1
+        },
+        // Friendly Fire
+        {
+          "setCode": "pr",
+          "code": "01039",
+          "count": 2
+        },
+        // Old Ben
+        {
+          "setCode": "pr",
+          "code": "01090",
+          "count": 1
+        },
+        // Rebel Reinforcements
+        {
+          "setCode": "pr",
+          "code": "01107",
+          "count": 1
+        },
+        // Run Luke, Run!
+        {
+          "code": "13003",
+          "count": 3
+        },
+        // Surprise Assault
+        {
+          "setCode": "pr",
+          "code": "01127",
+          "count": 2
+        },
+        // Death Star: Docking Bay 327
+        {
+          "setCode": "pr",
+          "code": "01025",
+          "count": 1
+        },
+        // Death Star: Level 6 Core Shaft Corridor
+        {
+          "code": "13001",
+          "count": 2
+        },
+        // Tatooine: Docking Bay 94
+        {
+          "setCode": "pr",
+          "code": "01135",
+          "count": 2
+        },
+        // Tatooine: Dune Sea
+        {
+          "setCode": "pr",
+          "code": "01136",
+          "count": 1
+        },
+        // Tatooine: Jawa Camp
+        {
+          "setCode": "pr",
+          "code": "01137",
+          "count": 2
+        },
+        // Tatoine: Lars' Moisture Farm
+        {
+          "setCode": "pr",
+          "code": "01138",
+          "count": 1
+        },
+        // Han's Dice
+        {
+          "setCode": "pr",
+          "code": "01048",
+          "count": 1
+        },
+        // It Could Be Worse
+        {
+          "setCode": "pr",
+          "code": "01057",
+          "count": 2
+        },
+        // I've Got a Bad Feeling About This
+        {
+          "setCode": "pr",
+          "code": "01055",
+          "count": 1
+        },
+        // Narrow Escape
+        {
+          "setCode": "pr",
+          "code": "01084",
+          "count": 1
+        },
+        // Rebel Barrier
+        {
+          "setCode": "pr",
+          "code": "01103",
+          "count": 1
+        },
+        // The Bith Shuffle
+        {
+          "setCode": "pr",
+          "code": "01142",
+          "count": 1
+        },
+        // We're Doomed
+        {
+          "setCode": "pr",
+          "code": "01152",
+          "count": 1
+        },
+        // Blaster
+        {
+          "setCode": "pr",
+          "code": "01011",
+          "count": 2
+        },
+        // Blaster Rifle
+        {
+          "setCode": "pr",
+          "code": "01012",
+          "count": 1
+        },
+        // Timer Mine
+        {
+          "setCode": "pr",
+          "code": "01145",
+          "count": 3
+        }
+
+      ]
+    }
+  ],
+
+  "cardRarityMap": [
+    {
+      "Rarity": "C1",
+      "Count": 1,
+      "OverallRarity": "C"
+    },
+    {
+      "Rarity": "C2",
+      "Count": 2,
+      "OverallRarity": "C"
+    },
+    {
+      "Rarity": "C3",
+      "Count": 3,
+      "OverallRarity": "C"
+    },
+    {
+      "Rarity": "U1",
+      "Count": 1,
+      "OverallRarity": "U"
+    },
+    {
+      "Rarity": "U2",
+      "Count": 2,
+      "OverallRarity": "U"
+    },
+    {
+      "Rarity": "R1",
+      "Count": 1,
+      "OverallRarity": "R"
+    },
+    {
+      "Rarity": "R2",
+      "Count": 2,
+      "OverallRarity": "R"
+    }
+  ],
+
+  "cards": [
+    {
+      "characteristics": "",
+      "code": "13001",
+      "dark_side_icons": 1,
+      "dark_side_text": "If you control, opponent needs 2 ability to control each Death Star site.",
+      "episode_1": false,
+      "episode_7": false,
+      "gametext": "If you control, Luke and Obi-Wan are power +2 on Death Star.   If you control, opponent needs 2 ability to control each Death Star site.",
+      "has_errata": true,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Light\/large\/deathstarlevel6coreshaftcorridor.gif",
+      "light_side_icons": 1,
+      "light_side_text": "If the Light Side controls this site, Luke and Obi-Wan are each power +2.",
+      "lore": "",
+      "mobile": true,
+      "name": "Death Star: Level 6 Core Shaft Corridor",
+      "planet": false,
+      "position": 1,
+      "rarity_code": "PM2",
+      "scomp_link": false,
+      "set_code": "2pp",
+      "side_code": "light",
+      "site_creature": false,
+      "site_exterior": false,
+      "site_interior": true,
+      "site_starship": false,
+      "site_underground": false,
+      "site_underwater": false,
+      "site_vehicle": false,
+      "space": false,
+      "subtype_code": "site",
+      "system_parsec": 0,
+      "type_code": "location",
+      "uniqueness": "*"
+    },
+    {
+      "ability": 3,
+      "armor": 0,
+      "characteristics": "",
+      "clone_army": false,
+      "code": "13002",
+      "deploy": 4,
+      "destiny": 1,
+      "episode_1": false,
+      "episode_7": false,
+      "force_aptitude": "Force-Attuned",
+      "forfeit": 4,
+      "gametext": "Must deploy on Tatooine, but may move elsewhere. May not be deployed if two or more of opponent's unique (*) characters on table. Your warriors at same site as Luke, or adjacent sites, are forfeit +1.",
+      "has_errata": false,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Light\/large\/luke.gif",
+      "lore": "Raised by guardians Owen and Beru Lars on a moisture farm on Tatooine, where Owen wanted him to stay. Nicknamed 'Wormie' by childhood friends Camie and Fixer.",
+      "maneuver": 0,
+      "model_type": "",
+      "name": "Luke",
+      "nav_computer": false,
+      "permanent_weapon": false,
+      "pilot": false,
+      "politics": 0,
+      "position": 2,
+      "power": 2,
+      "presence": false,
+      "rarity_code": "PM3",
+      "republic": false,
+      "separatist": false,
+      "set_code": "2pp",
+      "side_code": "light",
+      "subtype_code": "rebel",
+      "type_code": "character",
+      "uniqueness": "*",
+      "warrior": true
+    },
+    {
+      "characteristics": "",
+      "code": "13003",
+      "destiny": 6,
+      "episode_1": false,
+      "episode_7": false,
+      "gametext": "At any time, move Luke as a regular move (using landspeed for free) to a battle just initiated at an adjacent site. Luke is power +2 during that battle, unless Vader is present or adjacent to the battle site. OR You may cancel Vader's Obsession.",
+      "has_errata": false,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Light\/large\/runlukerun.gif",
+      "lore": "After seeing Vader strike down Obi-Wan, Luke attacked recklessly until he heard the old Jedi Master's voice warn, \"Run Luke, Run!\"",
+      "name": "Run Luke, Run!",
+      "position": 3,
+      "rarity_code": "PM3",
+      "set_code": "2pp",
+      "side_code": "light",
+      "subtype_code": "lost",
+      "type_code": "interrupt",
+      "uniqueness": "*"
+    },
+    {
+      "characteristics": "",
+      "code": "13004",
+      "dark_side_icons": 1,
+      "dark_side_text": "If you control, may deploy a docking bay directly from your Reserve Deck. Reshuffle deck.",
+      "episode_1": false,
+      "episode_7": false,
+      "gametext": "If you control, with a Rebel with ability > 2 present, Force drain +2 here   If you control, may deploy a docking bay directly from your Reserve Deck. Reshuffle deck.",
+      "has_errata": true,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Dark\/large\/deathstardockingcontrolroom327.gif",
+      "light_side_icons": 0,
+      "light_side_text": "If you control, with a Rebel with ability > 2 present, Force drain +2 here",
+      "lore": "",
+      "mobile": true,
+      "name": "Death Star: Docking Control Room 327",
+      "planet": false,
+      "position": 4,
+      "rarity_code": "PM2",
+      "scomp_link": true,
+      "set_code": "2pp",
+      "side_code": "dark",
+      "site_creature": false,
+      "site_exterior": false,
+      "site_interior": true,
+      "site_starship": false,
+      "site_underground": false,
+      "site_underwater": false,
+      "site_vehicle": false,
+      "space": false,
+      "subtype_code": "site",
+      "system_parsec": 0,
+      "type_code": "location",
+      "uniqueness": "*"
+    },
+    {
+      "ability": 6,
+      "armor": 0,
+      "characteristics": "",
+      "clone_army": false,
+      "code": "13005",
+      "deploy": 7,
+      "destiny": 1,
+      "episode_1": false,
+      "episode_7": false,
+      "force_aptitude": "Dark Jedi",
+      "forfeit": 5,
+      "gametext": "Must deploy on Death Star, but may move elsewhere. May not be deployed if two or more of opponent's unique (*) characters on table. If in a losing battle, draw destiny. If destiny > 4, 'choke' (lose) one Imperial present (your choice).",
+      "has_errata": false,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Dark\/large\/vader.gif",
+      "lore": "Sought to extinguish all Jedi. Former student of Obi-Wan Kenobi. Seduced by the dark side of the Force.",
+      "maneuver": 0,
+      "model_type": "",
+      "name": "Vader",
+      "nav_computer": false,
+      "permanent_weapon": false,
+      "pilot": false,
+      "politics": 0,
+      "position": 5,
+      "power": 4,
+      "presence": false,
+      "rarity_code": "PM3",
+      "republic": false,
+      "separatist": false,
+      "set_code": "2pp",
+      "side_code": "dark",
+      "subtype_code": "imperial",
+      "type_code": "character",
+      "uniqueness": "*",
+      "warrior": true
+    },
+    {
+      "characteristics": "",
+      "code": "13006",
+      "destiny": 6,
+      "episode_1": false,
+      "episode_7": false,
+      "gametext": "During your move phase, if Vader moves to Luke's site from an adjacent site, begin a duel between them. Each adds two destiny to power. Winner retrieves lost Force equal to the difference. Loser loses same amount of Force, plus the character.",
+      "has_errata": false,
+      "image_url": "PremiereIntroductoryTwoPlayerGame-Dark\/large\/vadersobsession.gif",
+      "lore": "Vader sought to hunt down and destroy all Jedi. After completing the circle with Obi-Wan, he turned his attention to the young Skywalker.",
+      "name": "Vader's Obsession",
+      "position": 6,
+      "rarity_code": "PM3",
+      "set_code": "2pp",
+      "side_code": "dark",
+      "subtype_code": "lost",
+      "type_code": "interrupt",
+      "uniqueness": "*"
+    }
+  ]
+}
