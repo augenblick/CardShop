@@ -1,4 +1,5 @@
 ﻿using CardShop.Constants;
+using Dapper;
 using Newtonsoft.Json;
 
 namespace CardShop.Models
@@ -78,75 +79,99 @@ namespace CardShop.Models
             return cardPool.DrawCard();
         }
 
-        public List<Product> OpenProduct(Product product)
+        public List<InventoryItem> OpenProduct(Product product)
         {
-            var returnProductList = new List<Product>();
+            var returnProductList = new List<InventoryItem>();
 
-            if (product.ProductType == ProductType.BoosterPack)
+            if (product is BoosterPack)
             {
-                return OpenBoosterPack(product);
+                return OpenBoosterPack((BoosterPack)product);
             }
-
-            foreach (var content in product.Contents)
+            foreach (var content in ((BoosterBox)product).Contents)
             {
-                for (int i = 0; i < content.Count; i++) 
-                {
-                    var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code);
+                var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code);
 
-                    if (selectedContent != null) 
-                    { 
-                        returnProductList.Add(selectedContent); 
-                    }
-                    else
+                if (selectedContent != null) 
+                { 
+                    returnProductList.Add(new InventoryItem
                     {
-                        StaticHelpers.Logger.LogError("No matching product found while opening a product!");
-                    }
+                        Product = selectedContent,
+                        Count = content.Count
+                    }); 
+                }
+                else
+                {
+                    StaticHelpers.Logger.LogError($"No matching product '{product.Code}' found in set '{SetCode}' while opening products!");
                 }
             }
 
-            return returnProductList;
+            var consolidatedList = returnProductList
+                .GroupBy(x => x.Product.Code)
+                .Select(y => new InventoryItem
+                {
+                    Product = y.First().Product,
+                    Count = y.Sum(c => c.Count)
+                }).AsList();
+
+            return consolidatedList;
         }
 
-        private List<Product> OpenBoosterPack(Product product)
+        public Product GetCardSetProduct(string productCode)
         {
-            var returnCardList = new List<Product>();
+            var product = Products.FirstOrDefault(x => x.Code == productCode) ?? Cards.FirstOrDefault(x => x.Code == productCode);
+
+            return product;
+        }
+
+        public List<InventoryItem> OpenBoosterPack(BoosterPack pack)
+        {
+            var drawnCards = new List<Product>();
 
             var commonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.C);
             var uncommonPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.U);
             var rarePool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.R);
             var fixedPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == Enums.RarityCode.F);
 
-            foreach (var content in product.Contents)
+            foreach (var raritySpec in pack.PackContentSpecs)
             {
                 List<Card> chosenCards = new List<Card>();
 
-                switch (content.Code)
+                var count = raritySpec.Count;
+                var overallRarityForDraw = raritySpec.OverallRarity;
+
+                // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
+                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode.ToString() == overallRarityForDraw);
+
+                if (cardPool == null)
                 {
-                    case "C":
-                        chosenCards = commonPool.PeekCards(content.Count);
-                        break;
-                    case "U":
-                        chosenCards = uncommonPool.PeekCards(content.Count);
-                        break;
-                    case "R":
-                        chosenCards = rarePool.PeekCards(content.Count);
-                        break;
-                    case "F":
-                        // TODO: will probably handle fixed cards a different way
-                        chosenCards = fixedPool.PeekCards(content.Count);
-                        break;
+                    StaticHelpers.Logger.LogError($"A cardpool with rarity '{overallRarityForDraw}' was not found within cardset '{SetCode}'");
+                    break;
                 }
 
-                if (chosenCards.Count < content.Count)
+                chosenCards = cardPool.PeekCards(count);
+
+                if (chosenCards.Count < count)
                 {
-                    StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{content.Code}', Count: '{content.Count}'");
+                    StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{overallRarityForDraw}', Count: '{count}'");
                 }
 
-                returnCardList.AddRange(chosenCards);
+                drawnCards.AddRange(chosenCards);
             }
 
+            if (drawnCards.Count < 1 || drawnCards.Any(x => string.IsNullOrWhiteSpace(x.Code)))
+            {
+                StaticHelpers.Logger.LogError("Test");
+            }
 
-            return returnCardList;
+            var returnList = drawnCards.GroupBy(p => p.Code)
+                    .Select(group => new InventoryItem
+                    {
+                        Product = group.First(),
+                        Count = group.Count()
+                    })
+                    .ToList();
+            
+            return returnList;
         }
 
         private int GetSetCardCountByRarity(string rarity)

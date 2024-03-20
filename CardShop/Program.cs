@@ -4,8 +4,10 @@ using CardShop.Logic;
 using CardShop.Repositories;
 using Serilog.Events;
 using Serilog;
-using Serilog.Hosting;
 using System.Diagnostics;
+using CardShop.Models;
+using Microsoft.OpenApi.Models;
+using CardShop.ConfigurationClasses;
 
 // CORS
 var MyAllowAnyOrigins = "_myAllowAnyOrigins";
@@ -48,9 +50,14 @@ builder.Services.AddLogging(builder => {
     });
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.MapType<Card>(() => new OpenApiSchema { Type = "object" });
+    options.SchemaFilter<EnumSchemaFilter>();
+});
 
 var app = builder.Build();
 

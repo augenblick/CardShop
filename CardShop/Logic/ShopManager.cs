@@ -88,7 +88,7 @@ namespace CardShop.Logic
         /// <param name="userId"></param>
         /// <param name="requestedItems"></param>
         /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
-        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(int userId, List<PurchaseRequest> requestedItems)
+        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(int userId, List<ProductReference> requestedItems)
         {
             var errorMessage = string.Empty;
             var returnList = new List<InventoryItem>();

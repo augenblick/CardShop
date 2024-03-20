@@ -5,16 +5,25 @@
   "name": "Premiere",
   "position": 1,
   "size": 324,
-  
-  "products":[
+
+  "products": [
     {
       "code": "01p",
       "name": "Premiere Booster Pack",
       "productType": "BoosterPack",
-      "contents": [
-        {"code": "C", "count": 10},
-        {"code": "R", "count": 1},
-        {"code": "U", "count": 4}
+      "packContentSpecs": [
+        {
+          "overallRarity": "C",
+          "count": 10
+        },
+        {
+          "overallRarity": "R",
+          "count": 1
+        },
+        {
+          "overallRarity": "U",
+          "count": 4
+        }
       ]
     },
     {
@@ -23,12 +32,11 @@
       "productType": "BoosterBox",
 
       "contents": [
-        { 
-          "code":"01p",
+        {
+          "code": "01p",
           "count": 36
         }
       ]
-
     }
   ],
 

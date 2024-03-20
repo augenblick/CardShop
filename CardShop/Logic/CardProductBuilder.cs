@@ -42,37 +42,105 @@ namespace CardShop.Logic
             return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
+        public List<InventoryItem> OpenProductOld(Product product)
+        {
+            var cardSet = GetCardSetByCardSetCode(product.SetCode);
+            var contents = cardSet.OpenProduct(product);
+
+            return contents;
+        }
+
+        public List<InventoryItem> OpenProduct(Product product)
+        {
+            if (product == null)
+            {
+                return new List<InventoryItem>();
+            }
+
+            var cardSet = GetCardSetByCardSetCode(product.SetCode);
+
+            if (product is BoosterPack)
+            {
+                var contents = cardSet.OpenBoosterPack(product as BoosterPack);
+
+                return contents;
+            }
+
+            // non-BoosterPack product
+            var returnProductList = new List<InventoryItem>();
+            foreach (var content in ((BoosterBox)product).Contents)
+            {
+                var setForThisContent = cardSet;
+                if (!string.IsNullOrWhiteSpace(content.SetCode))
+                {
+                    // a specific set is defined for this content, so use it.
+                    setForThisContent = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
+                }
+
+                var selectedContent = setForThisContent.GetCardSetProduct(content.Code);
+
+                if (selectedContent != null)
+                {
+                    returnProductList.Add(new InventoryItem
+                    {
+                        Product = selectedContent,
+                        Count = content.Count
+                    });
+                }
+                else
+                {
+                    StaticHelpers.Logger.LogError($"No matching product '{product.Code}' found in set '{setForThisContent.SetCode}' while opening products!");
+                }
+            }
+
+            // consolidate any like Contents
+            var consolidatedList = returnProductList
+                .GroupBy(x => x.Product.Code)
+                .Select(y => new InventoryItem
+                {
+                    Product = y.First().Product,
+                    Count = y.Sum(c => c.Count)
+                }).AsList();
+
+            return consolidatedList;
+        }
+
         public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
             var returnProduct = new Product();
 
-            var cardSet = GetCardSetByCardSetCode(cardSetCode);
+            var cardSet = GetCardSetByCardSetCode(cardSetCode) ?? _cardSets.FirstOrDefault(x => x.Products.Any(y => y.Code == productCode)) ?? _cardSets.FirstOrDefault(x => x.Cards.Any(y => y.Code == productCode));
 
-            if (cardSet == null)
+            if (cardSet == null) 
             {
-                cardSet = _cardSets.FirstOrDefault(x => x.Products.Any(y => y.Code == productCode));
+                _logger.LogError($"Product '{productCode}' not found in any available card set!");
+                return returnProduct; 
             }
 
-            if (cardSet == null) { return returnProduct; }
-
-            var product = cardSet.Products.FirstOrDefault(x => x.Code == productCode);
+            var product = cardSet.Products.FirstOrDefault(x => x.Code == productCode) ?? cardSet.Cards.FirstOrDefault(x => x.Code == productCode);
 
             if (product != null)
             {
                 // TODO: cost and setcode will eventually be defined per product within each set.json
-                product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
+                var perPackCost = 2.50M;
 
-                if (product.ProductType == ProductType.BoosterBox)
+                product.SetCode = product.SetCode == CardSetCode.undefined ? Enums.CardSetHelpers.GetCardSetCode(cardSet.SetCode) : product.SetCode;
+
+                if (product is BoosterBox)
                 {
-                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
                     product.CostPer = cost ?? 0.00M;
                 }
-                else if (product.ProductType == ProductType.BoosterPack)
+                else if (product is BoosterPack)
                 {
-                    product.CostPer = 2.50M;
+                    product.CostPer = perPackCost;
                 }
 
                 returnProduct = product;
+            }
+            else
+            {
+                _logger.LogError($"Product '{productCode}' could not be found in set '{cardSet.SetCode}'");
             }
 
             return returnProduct;
@@ -91,16 +159,18 @@ namespace CardShop.Logic
             if (product != null)
             {
                 // TODO: cost and setcode will eventually be defined per product within each set.json
+                var perPackCost = 2.50M;
+
                 product.SetCode = product.SetCode == CardSetCode.undefined ? cardSetCode : product.SetCode;
 
-                if (product.ProductType == ProductType.BoosterBox)
+                if (product is BoosterBox)
                 {
-                    var cost = product.Contents.FirstOrDefault()?.Count * 2.5M * 0.75M;
+                    var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
                     product.CostPer = cost ?? 0.00M;
                 }
-                else if (product.ProductType == ProductType.BoosterPack)
+                else if (product is BoosterPack)
                 {
-                    product.CostPer = 2.50M;
+                    product.CostPer = perPackCost;
                 }
 
                 returnProduct = product;
@@ -112,21 +182,6 @@ namespace CardShop.Logic
         private CardSet GetCardSetByCardSetCode(CardSetCode cardSetCode)
         {
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
-        }
-
-        // NNOTE: MOVE TO INVENTORY MANAGER
-        // OPEN should accept a reference to an InventoryId, and should only be allowed if
-        // the inventory is found in the requester's own inventory.
-        // should update inventory and response should include the opened contents.
-        //
-        // PURCHASE should accept a reference to an InventoryId (or Ids), and should only be allowed
-        // if the inventory item is found in the shop's inventory AND the requester has enough money.
-        // Shop AND requester's inventory should be updated, and response should include purchased items
-        public List<object> OpenPremiereProduct(Product product)
-        {
-            var premiereSet = _cardSets.FirstOrDefault(x => x.SetCode == "pr");
-
-            return premiereSet.OpenProduct(product).Select(x => (object)x).AsList();
         }
 
         public bool TestCardSetRarityPool(CardSetCode cardSetCode, Enums.RarityCode rarityCode, int testCount, bool peekDontDraw)

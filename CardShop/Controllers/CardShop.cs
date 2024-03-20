@@ -1,13 +1,9 @@
-﻿using Azure;
-using CardShop.Interfaces;
-using CardShop.Logic;
+﻿using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
-using CardShop.Repositories.Models;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
+using System.Diagnostics;
 
 namespace CardShop.Controllers
 {
@@ -17,12 +13,16 @@ namespace CardShop.Controllers
     {
         private readonly IShopManager _shopManager;
         private readonly ILogger _logger;
+        private readonly IInventoryManager _inventoryManager;
+        private readonly ICardProductBuilder _cardProductBuilder;
 
 
-        public CardShop(IShopManager shopManager, ILogger<CardShop> logger)
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder)
         {
             _shopManager = shopManager;
             _logger = logger;
+            _inventoryManager = inventoryManager;
+            _cardProductBuilder = cardProductBuilder;
         }
 
         [HttpPost]
@@ -76,6 +76,44 @@ namespace CardShop.Controllers
             };
         }
 
-        
+        [HttpPost]
+        public async Task<OpenInventoryProductsResponse> OpenInventoryProducts(OpenInventoryProductsRequest request)
+        {
+            if (request.UserId == 0)
+            {
+                return new OpenInventoryProductsResponse
+                {
+                    ErrorMessage = "Cannot open inventory for userId 0 (shop keeper)!"
+                };
+            }
+
+            var watch = new Stopwatch();
+            watch.Start();
+            var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(request.UserId, request.InventoryProductsToOpen);
+
+            watch.Stop();
+
+            _logger.LogInformation($"total time to open products = {watch.ElapsedMilliseconds}ms");
+
+            return new OpenInventoryProductsResponse
+            {
+                ErrorMessage = errorMessage,
+                OpenedItems = items,
+                TotalItems = items.Sum(x => x.Count)
+            };
+        }
+
+        [HttpPost]
+        public List<Product> GetAllAvailableProductInfo()
+        {
+            return _cardProductBuilder.GetAllExistingProducts();
+        }
+
+        [HttpPost]
+        public async Task<Product> GetProductInfo(string productCode)
+        {
+            return _cardProductBuilder.GetProduct(productCode);
+        }
+
     }
 }

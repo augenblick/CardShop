@@ -11,9 +11,15 @@
       "code": "10p",
       "name": "Tatooine Booster Pack",
       "productType": "BoosterPack",
-      "contents": [
-        {"code": "CU", "count": 10},
-        {"code": "R", "count": 1}
+      "packContentSpecs": [
+        {
+          "overallRarity": "CU",
+          "count": 10
+        },
+        {
+          "overallRarity": "R",
+          "count": 1
+        }
       ]
     },
     {
