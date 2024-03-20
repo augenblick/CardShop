@@ -62,14 +62,20 @@ namespace CardShop.Logic
 
             if (product is BoosterPack)
             {
-                var contents = cardSet.OpenBoosterPack(product as BoosterPack);
+                var packContents = cardSet.OpenBoosterPack(product as BoosterPack);
 
-                return contents;
+                return packContents;
             }
 
             // non-BoosterPack product
             var returnProductList = new List<InventoryItem>();
-            foreach (var content in ((BoosterBox)product).Contents)
+
+            var contents = new List<Content>();
+            if (product is BoosterBox) { contents = ((BoosterBox)product).Contents; }
+            else if (product is StarterDeck) { contents = ((StarterDeck)product).Contents; }
+            else { _logger.LogError($"ProductType for not '{product.Code}' not supported!"); }
+
+            foreach (var content in contents)
             {
                 var setForThisContent = cardSet;
                 if (!string.IsNullOrWhiteSpace(content.SetCode))
@@ -129,12 +135,18 @@ namespace CardShop.Logic
 
                 if (product is BoosterBox)
                 {
-                    var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
-                    product.CostPer = cost ?? 0.00M;
+                    if (product.CostPer == 0M)
+                    {
+                        var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
+                        product.CostPer = cost ?? 0.00M;
+                    }
                 }
                 else if (product is BoosterPack)
                 {
-                    product.CostPer = perPackCost;
+                    if (product.CostPer == 0M)
+                    {
+                        product.CostPer = perPackCost;
+                    }
                 }
 
                 returnProduct = product;
@@ -166,12 +178,18 @@ namespace CardShop.Logic
 
                 if (product is BoosterBox)
                 {
-                    var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
-                    product.CostPer = cost ?? 0.00M;
+                    if (product.CostPer == 0M)
+                    {
+                        var cost = ((BoosterBox)product).Contents.FirstOrDefault()?.Count * perPackCost * 0.75M;
+                        product.CostPer = cost ?? 0.00M;
+                    }
                 }
                 else if (product is BoosterPack)
                 {
-                    product.CostPer = perPackCost;
+                    if (product.CostPer == 0M)
+                    {
+                        product.CostPer = perPackCost;
+                    }
                 }
 
                 returnProduct = product;
@@ -304,6 +322,8 @@ namespace CardShop.Logic
                         return jsonObject.ToObject<BoosterPack>(serializer);
                     case "BoosterBox":
                         return jsonObject.ToObject<BoosterBox>(serializer);
+                    case "StarterDeck":
+                        return jsonObject.ToObject<StarterDeck>(serializer);
                     default:
                         throw new JsonSerializationException($"Unknown product type: {productType}");
                 }

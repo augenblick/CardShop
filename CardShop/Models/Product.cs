@@ -5,6 +5,7 @@ namespace CardShop.Models
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
     [JsonDerivedType(typeof(BoosterPack), typeDiscriminator: "BoosterPack")]
     [JsonDerivedType(typeof(BoosterBox), typeDiscriminator: "BoosterBox")]
+    [JsonDerivedType(typeof(StarterDeck), typeDiscriminator: "StarterDeck")]
     [JsonDerivedType(typeof(Card), typeDiscriminator: "Card")]
     public class Product
     {
@@ -19,10 +20,16 @@ namespace CardShop.Models
     {
         BoosterBox,
         BoosterPack,
+        StarterDeck,
         Card
     }
 
     public class BoosterBox : Product
+    {
+        public List<Content> Contents { get; set; }
+    }
+
+    public class StarterDeck : Product
     {
         public List<Content> Contents { get; set; }
     }
