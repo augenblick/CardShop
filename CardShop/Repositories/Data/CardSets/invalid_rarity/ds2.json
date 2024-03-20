@@ -11,10 +11,19 @@
       "code": "09p",
       "name": "Death Star II Booster Pack",
       "productType": "BoosterPack",
-      "contents": [
-        {"code": "C", "count": 7},
-        {"code": "R", "count": 1},
-        {"code": "U", "count": 3}
+      "packContentSpecs": [
+        {
+          "overallRarity": "C",
+          "count": 7
+        },
+        {
+          "overallRarity": "R",
+          "count": 1
+        },
+        {
+          "overallRarity": "U",
+          "count": 3
+        }
       ]
     },
     {

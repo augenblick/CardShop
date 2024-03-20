@@ -1,6 +1,8 @@
-﻿using CardShop.Interfaces;
+﻿using Azure.Core;
+using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
+using CardShop.Models.Response;
 using CardShop.Repositories.Models;
 using Dapper;
 using System.Collections.Generic;
@@ -122,8 +124,15 @@ namespace CardShop.Logic
                 return (returnList, errorMessage);
             }
 
+            if ( itemsToOpen == null || itemsToOpen.Count < 1 || itemsToOpen.Sum(x => x.Count) < 1)
+            {
+                errorMessage = $"The request list is empty!";
+                _logger.LogError(errorMessage);
+                return (returnList, errorMessage);
+            }
+
             // group like items
-            var groupedRequest = itemsToOpen
+            var groupedRequestItems = itemsToOpen
                 .GroupBy(
                     item => new { item.ProductCode },
                     (key, group) => new ProductReference
@@ -148,7 +157,7 @@ namespace CardShop.Logic
             var existingUserInventoryToUpdate = new List<Inventory>();
             var productsToAddToUserInventory = new List<Inventory>();
 
-            foreach(var item in groupedRequest)
+            foreach(var item in groupedRequestItems)
             {
                 var matchingInventory = userInventory.FirstOrDefault(x => x.ProductCode == item.ProductCode);
 
@@ -173,7 +182,7 @@ namespace CardShop.Logic
             {
                 var existingInventoryCount = item.Count;
 
-                var requestedCount = groupedRequest.First(x => x.ProductCode == item.ProductCode).Count;
+                var requestedCount = groupedRequestItems.First(x => x.ProductCode == item.ProductCode).Count;
 
                 if (requestedCount < 1) { continue; }
 
@@ -195,12 +204,8 @@ namespace CardShop.Logic
                     return (returnList, errorMessage);
                 }
 
-                // TODO: move this check and some logic into CardProductBuilder?
                 if (product is not BoosterPack)
                 {
-                    // open once and apply count to inventory listing
-                    // TODO: This method assumes homogeneous  contents-- need to refactor to support Heterogeneous contents
-                    // This may be unnecessary as we consolidate the list at the end before submitting to the database
                     var productContents = _cardProductBuilder.OpenProduct(product);
 
                     if (productContents == null || productContents.FirstOrDefault() == null)
@@ -210,27 +215,32 @@ namespace CardShop.Logic
                         return (returnList, errorMessage);
                     }
 
-                    // get inventory that matches opened items
-                    var existingInventoryMatchingOpenedItems = userInventory.FirstOrDefault(x => x.ProductCode == productContents.First().Product.Code);
-
-                    productsToAddToUserInventory.AddRange(productContents.Select(x => new Inventory
+                    foreach (var constituent in productContents)
                     {
-                        // add existing count to newly added product count
-                        Count = (x.Count * requestedCount) + (existingInventoryMatchingOpenedItems?.Count ?? 0),
-                        ProductCode = x.Product.Code,
-                        UserId = userId,
-                        SetCode = x.Product.SetCode
-                    }));
+                        // get inventory that matches opened items
+                        var existingInventoryMatchingOpenedItems = userInventory.FirstOrDefault(x => x.ProductCode == constituent.Product.Code);
 
+                        // TODO: make card setcode an enum too
+                        var constituentSetCode = constituent.Product is Card ? Enums.CardSetHelpers.GetCardSetCode(((Card)constituent.Product).SetCode) : constituent.Product.SetCode;
 
-                    // maintain separate list for return to consumer (which doesn't include counts of matching inventory) 
-                    uncommittedReturnList.AddRange(productContents.Select(x => new Inventory
-                    {
-                        Count = (x.Count * requestedCount),
-                        ProductCode = x.Product.Code,
-                        UserId = userId,
-                        SetCode = x.Product.SetCode
-                    }));
+                        productsToAddToUserInventory.Add(new Inventory
+                        {
+                            // add existing count to newly added product count
+                            Count = (constituent.Count * requestedCount) + (existingInventoryMatchingOpenedItems?.Count ?? 0),
+                            ProductCode = constituent.Product.Code,
+                            UserId = userId,
+                            SetCode = constituentSetCode
+                        });
+
+                        // maintain separate list for return to consumer (which doesn't include counts of matching inventory) 
+                        uncommittedReturnList.Add(new Inventory
+                        {
+                            Count = (constituent.Count * requestedCount),
+                            ProductCode = constituent.Product.Code,
+                            UserId = userId,
+                            SetCode = constituentSetCode
+                        });
+                    }
                 }
                 else
                 {
@@ -274,7 +284,7 @@ namespace CardShop.Logic
             }
 
             // add new items to user inventory
-            // remove requested items from inventory
+            // remove opened items from inventory
             _logger.LogInformation($"Total Return Count = {productsToAddToUserInventory.Count}");
             var successfulInsert = await _inventoryRepository.UpsertMultipleInventory(new List<List<Inventory>> { productsToAddToUserInventory, existingUserInventoryToUpdate });
 

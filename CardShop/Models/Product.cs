@@ -3,7 +3,6 @@
 namespace CardShop.Models
 {
     [JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
-    //[JsonPolymorphic(TypeDiscriminatorPropertyName = "$productType")]
     [JsonDerivedType(typeof(BoosterPack), typeDiscriminator: "BoosterPack")]
     [JsonDerivedType(typeof(BoosterBox), typeDiscriminator: "BoosterBox")]
     [JsonDerivedType(typeof(Card), typeDiscriminator: "Card")]
@@ -30,6 +29,7 @@ namespace CardShop.Models
 
     public class Content
     {
+        public string? SetCode { get; set; }
         public string Code { get; set; }
         public int Count { get; set; }
     }

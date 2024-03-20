@@ -1,15 +1,9 @@
-﻿using Azure;
-using CardShop.Interfaces;
-using CardShop.Logic;
+﻿using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
-using CardShop.Repositories.Models;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 
 namespace CardShop.Controllers
 {
@@ -20,13 +14,15 @@ namespace CardShop.Controllers
         private readonly IShopManager _shopManager;
         private readonly ILogger _logger;
         private readonly IInventoryManager _inventoryManager;
+        private readonly ICardProductBuilder _cardProductBuilder;
 
 
-        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager)
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder)
         {
             _shopManager = shopManager;
             _logger = logger;
             _inventoryManager = inventoryManager;
+            _cardProductBuilder = cardProductBuilder;
         }
 
         [HttpPost]
@@ -95,8 +91,6 @@ namespace CardShop.Controllers
             watch.Start();
             var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(request.UserId, request.InventoryProductsToOpen);
 
-            //var castCard = (Product)(items.FirstOrDefault().Product ?? new Card());
-
             watch.Stop();
 
             _logger.LogInformation($"total time to open products = {watch.ElapsedMilliseconds}ms");
@@ -104,16 +98,22 @@ namespace CardShop.Controllers
             return new OpenInventoryProductsResponse
             {
                 ErrorMessage = errorMessage,
-                OpenedItems = items
+                OpenedItems = items,
+                TotalItems = items.Sum(x => x.Count)
             };
         }
 
         [HttpPost]
-        public Card GetCard()
+        public List<Product> GetAllAvailableProductInfo()
         {
-            return new Card();
+            return _cardProductBuilder.GetAllExistingProducts();
         }
 
-        
+        [HttpPost]
+        public async Task<Product> GetProductInfo(string productCode)
+        {
+            return _cardProductBuilder.GetProduct(productCode);
+        }
+
     }
 }

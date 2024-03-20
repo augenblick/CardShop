@@ -116,7 +116,14 @@ namespace CardShop.Models
             return consolidatedList;
         }
 
-        private List<InventoryItem> OpenBoosterPack(BoosterPack pack)
+        public Product GetCardSetProduct(string productCode)
+        {
+            var product = Products.FirstOrDefault(x => x.Code == productCode) ?? Cards.FirstOrDefault(x => x.Code == productCode);
+
+            return product;
+        }
+
+        public List<InventoryItem> OpenBoosterPack(BoosterPack pack)
         {
             var drawnCards = new List<Product>();
 
