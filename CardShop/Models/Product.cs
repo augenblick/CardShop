@@ -14,6 +14,7 @@ namespace CardShop.Models
         public string Name { get; set; }
         public decimal CostPer { get; set; }
         public ProductType ProductType { get; set; }
+        public bool IsPurchasable { get; set; } = true;
     }
 
     public enum ProductType
