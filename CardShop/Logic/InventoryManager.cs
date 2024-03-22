@@ -1,12 +1,9 @@
-﻿using Azure.Core;
+﻿using CardShop.Extensions;
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
-using CardShop.Models.Response;
 using CardShop.Repositories.Models;
 using Dapper;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CardShop.Logic
 {
@@ -295,7 +292,7 @@ namespace CardShop.Logic
             }
             else
             {
-                returnList = InventoryItemsFromInventory(uncommittedReturnList).AsList();
+                returnList = InventoryItemsFromInventory(uncommittedReturnList).AsList().Consolidate();
 
                 await _inventoryRepository.RemoveEmptyUserInventory(userId);
             }

@@ -1,7 +1,10 @@
 ﻿using CardShop.Interfaces;
 using CardShop.Logic;
+using CardShop.Models.Request;
+using CardShop.Models.Response;
 using CardShop.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace CardShop.Controllers
 {
@@ -76,6 +79,54 @@ namespace CardShop.Controllers
         public async Task<bool> DeleteUser(int userId)
         {
             return await _userManager.DeleteUser(userId);
+        }
+
+        /// <summary>
+        /// Opens multiple products at once, but doesn't return products in response 
+        /// to keep from bombarding Swagger upon opening very large quantities.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="repeatOrderTimes">repeat the order this many times</param>
+        /// <param name="openOrder">List of products and counts to open</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<OpenMultipleProductTestResponse> OpenMultipleProductTest(int userId, int repeatOrderTimes, List<ProductReference> openOrder )
+        {
+            var response = new OpenMultipleProductTestResponse();
+
+            try
+            {
+                var timer = new Stopwatch();
+                timer.Start();
+
+                for (int i = 0; i < repeatOrderTimes; i++)
+                {
+                    var (items, message) = await _inventoryManager.OpenInventoryProducts(userId, openOrder);
+
+                    response.ErrorMessage = message;
+                    response.CountReturned = response.CountReturned + items.Sum(x => x.Count);
+
+                    if (!string.IsNullOrWhiteSpace(message))
+                    {
+                        break;
+                    }
+                }
+
+                timer.Stop();
+                _logger.LogInformation($"OpenMultipleProductTest operation took {timer.ElapsedMilliseconds}ms.");
+            }
+            catch(Exception ex)
+            {
+                response.ErrorMessage = ex.Message;
+            }
+
+            return response;
+        }
+
+        [HttpPost]
+        public async Task<bool> DeleteUserInventory(int userId)
+        {
+            return _inventoryManager.ClearUserInventory(userId);
         }
     }
 }
