@@ -175,28 +175,28 @@ namespace CardShop.Logic
                 inventoryMatchingItemsToOpen.Add(matchingInventory);
             }
 
-            foreach(var item in inventoryMatchingItemsToOpen)
+            foreach(var matchingItem in inventoryMatchingItemsToOpen)
             {
-                var existingInventoryCount = item.Count;
+                var existingInventoryCount = matchingItem.Count;
 
-                var requestedCount = groupedRequestItems.First(x => x.ProductCode == item.ProductCode).Count;
+                var requestedCount = groupedRequestItems.First(x => x.ProductCode == matchingItem.ProductCode).Count;
 
                 if (requestedCount < 1) { continue; }
 
                 // save record to modify existing inventory count at the end
                 existingUserInventoryToUpdate.Add(new Inventory
                 {
-                    ProductCode = item.ProductCode,
-                    SetCode = item.SetCode,
+                    ProductCode = matchingItem.ProductCode,
+                    SetCode = matchingItem.SetCode,
                     UserId = userId,
                     Count = existingInventoryCount - requestedCount
                 });
 
-                var product = _cardProductBuilder.GetProduct(item.ProductCode);
+                var product = _cardProductBuilder.GetProduct(matchingItem.ProductCode);
 
                 if (product == null)
                 {
-                    errorMessage = $"Product '{item.ProductCode}' could not be acquired!";
+                    errorMessage = $"Product '{matchingItem.ProductCode}' could not be acquired!";
                     _logger.LogError(errorMessage);
                     return (returnList, errorMessage);
                 }
@@ -256,7 +256,7 @@ namespace CardShop.Logic
                         foreach (var card in productContentsAgain)
                         {
                             // get inventory that matches opened items
-                            var existingInventoryMatchingOpenedItemsAgain = userInventory.FirstOrDefault(x => x.ProductCode == productContentsAgain.First().Product.Code);
+                            var existingInventoryMatchingOpenedItemsAgain = userInventory.FirstOrDefault(x => x.ProductCode == card.Product.Code);
 
                             productsToAddToUserInventory.Add( new Inventory
                             {

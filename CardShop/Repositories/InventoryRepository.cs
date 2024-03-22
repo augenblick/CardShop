@@ -3,8 +3,6 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using CardShop.Repositories.Models;
 using System.Data;
-using CardShop.Models;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using CardShop.Extensions;
 
 
@@ -106,7 +104,7 @@ namespace CardShop.Repositories
                 // Perform the upsert operation (insert or replace)
                 foreach (var item in inventoryItems)
                 {
-
+                    
                     await dbConnection.ExecuteAsync(@"
             INSERT OR REPLACE INTO Inventory (ProductCode, SetCode, UserId, Count) 
             VALUES (@ProductCode, @SetCode, @UserId, @Count)", new { ProductCode = item.ProductCode, SetCode = item.SetCode.ToString(), UserId = item.UserId, Count = item.Count });

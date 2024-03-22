@@ -1,8 +1,9 @@
 ﻿using CardShop.Interfaces;
-using CardShop.Logic;
+using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
 using CardShop.Repositories.Models;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -103,11 +104,11 @@ namespace CardShop.Controllers
                 {
                     var (items, message) = await _inventoryManager.OpenInventoryProducts(userId, openOrder);
 
-                    response.ErrorMessage = message;
                     response.CountReturned = response.CountReturned + items.Sum(x => x.Count);
 
                     if (!string.IsNullOrWhiteSpace(message))
                     {
+                        response.ErrorMessage = message;
                         break;
                     }
                 }
@@ -127,6 +128,52 @@ namespace CardShop.Controllers
         public async Task<bool> DeleteUserInventory(int userId)
         {
             return _inventoryManager.ClearUserInventory(userId);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetUserInventoryStats(int userId, string setCode = null)
+        {
+            try
+            {
+                var cardLists = new List<List<InventoryItem>>();
+
+                var userInventory = await _inventoryManager.GetUserInventory(userId);
+                var userInventoryItems = _inventoryManager.InventoryItemsFromInventory(userInventory.Where(x => Enums.CardSetHelpers.GetCardSetCodeString(x.SetCode) == setCode || setCode == null).AsList());
+
+                foreach (var item in userInventoryItems)
+                {
+                    if (item.Product is Card)
+                    {
+                        var card = item.Product as Card;
+                        var existingList = cardLists.FirstOrDefault(x => x.FirstOrDefault(c => ((Card)c.Product).RarityCode == card?.RarityCode) != null);
+
+                        if (existingList == null)
+                        {
+                            existingList = [item];
+
+                            cardLists.Add(existingList);
+                            continue;
+                        }
+                        existingList.Add(item);
+                    }
+                }
+
+                foreach (var cardList in cardLists)
+                {
+                    var listRarity = ((Card)cardList.First().Product).RarityCode;
+                    var listCount = cardList.Sum(x => x.Count);
+
+                    _logger.LogInformation($"{listCount}x cards of rarity '{listRarity}' (an average of {listCount / cardList.Count}x per card)");
+
+                }
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An unhandled exception occurred.");
+                return Problem("An unexpected error occurred.", statusCode: StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }
