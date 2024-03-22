@@ -116,6 +116,26 @@ namespace CardShop.Controllers
             };
         }
 
+        [HttpGet]
+        public ActionResult<GetAllAvailableCardSetInfoResponse> GetAllAvailableCardSetInfo()
+        {
+            var response = new GetAllAvailableCardSetInfoResponse();
+            try
+            {
+                var cardSetsInfo = _cardProductBuilder.GetAllAvailableCardSetInfo();
+
+                response.CardSetsInfo = cardSetsInfo;
+                response.InfoCount = cardSetsInfo.Count;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving all set data.");
+                return Problem("An unexpected error occurred.", statusCode: StatusCodes.Status500InternalServerError);
+            }
+
+            return response.InfoCount < 1 ? NotFound(response) : Ok(response);
+        }
+
         [HttpPost]
         public async Task<Product> GetProductInfo(string productCode)
         {
