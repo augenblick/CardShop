@@ -112,6 +112,19 @@ namespace CardShop.Logic
             return consolidatedList;
         }
 
+        public List<CardSetInfo> GetAllAvailableCardSetInfo()
+        {
+            return _cardSets.Select(x => new CardSetInfo
+            {
+                Name = x.Name,
+                SetCode = x.SetCode,
+                CycleCode = x.CycleCode,
+                Position = x.Position,
+                ReleaseDate = x.ReleaseDate,
+                Size = x.Size
+            }).AsList();
+        }
+
         public Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined)
         {
             var returnProduct = new Product();
