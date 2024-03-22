@@ -223,7 +223,7 @@ namespace CardShop.Logic
         {
             var returnItems = new List<InventoryItem>();
 
-            var allPossibleInventory = _cardProductBuilder.GetAllExistingProducts().Select( x => new InventoryItem
+            var allPossibleInventory = _cardProductBuilder.GetAllExistingProducts().Where(y => y.IsPurchasable).Select( x => new InventoryItem
             {
                 Count = 0,
                 Product = x
@@ -231,20 +231,18 @@ namespace CardShop.Logic
 
             var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
 
-            var completeInventory = new List<InventoryItem>();
+            // var completeInventory = new List<InventoryItem>();
 
-            foreach(var inventory in shopInventory)
+            foreach(var possibleInventory in allPossibleInventory)
             {
-                var matchingPossibleInventory = allPossibleInventory.FirstOrDefault(x => x.Product.Code == inventory.ProductCode);
+                var matchingExistingInventory = shopInventory.FirstOrDefault(x => x.ProductCode == possibleInventory.Product.Code);
 
-                if (matchingPossibleInventory != null)
+                if (matchingExistingInventory != null)
                 {
-                    matchingPossibleInventory.Count = inventory.Count;
-
-                    returnItems.Add(matchingPossibleInventory);
+                    possibleInventory.Count = matchingExistingInventory.Count;
                 }
 
-                
+                returnItems.Add(possibleInventory);
             }
 
             if (!includeOutOfStock)

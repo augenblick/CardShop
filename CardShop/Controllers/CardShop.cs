@@ -122,5 +122,26 @@ namespace CardShop.Controllers
             return _cardProductBuilder.GetProduct(productCode);
         }
 
+        [HttpPost]
+        public async Task<List<Product>> GetProductInfoMany(List<string> productCodes)
+        {
+            var returnList = new List<Product>();
+
+            foreach(var productCode in productCodes)
+            {
+                var product = _cardProductBuilder.GetProduct(productCode);
+
+                if (product == null || string.IsNullOrWhiteSpace(product.Code))
+                {
+                    _logger.LogError($"Product '{productCode}' not found!");
+                    continue;
+                }
+
+                returnList.Add(product);
+            }
+
+            return returnList;
+        }
+
     }
 }
