@@ -7,7 +7,11 @@ using Serilog;
 using System.Diagnostics;
 using CardShop.Models;
 using Microsoft.OpenApi.Models;
-using CardShop.ConfigurationClasses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using CardShop.Repositories.Models;
 
 // CORS
 var MyAllowAnyOrigins = "_myAllowAnyOrigins";
@@ -35,6 +39,7 @@ builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserManager, UserManager>();
+builder.Services.AddSingleton<TokenManager, TokenManager>();
 
 
 var logger = new LoggerConfiguration()
@@ -50,13 +55,81 @@ builder.Services.AddLogging(builder => {
     });
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.MapType<Card>(() => new OpenApiSchema { Type = "object" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
+
+
+
+var secret = "TODO: store this some place secure!";
+var key = Encoding.ASCII.GetBytes(secret);
+
+//builder.Services
+//    .AddIdentity<SecureUser, IdentityRole>(options =>
+//    {
+//        options.SignIn.RequireConfirmedAccount = false;
+//        options.User.RequireUniqueEmail = true;
+//        options.Password.RequireDigit = false;
+//        options.Password.RequiredLength = 6;
+//        options.Password.RequireNonAlphanumeric = false;
+//        options.Password.RequireUppercase = false;
+//    })
+//    .AddRoles<IdentityRole>();
+
+var validIssuer = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidIssuer");
+var validAudience = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidAudience");
+var symmetricSecurityKey = builder.Configuration.GetValue<string>("JwtTokenSettings:SymmetricSecurityKey");
+
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = validIssuer,
+            ValidAudience = validAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(symmetricSecurityKey)
+            ),
+        };
+    });
 
 var app = builder.Build();
 
@@ -72,6 +145,7 @@ app.UseHttpsRedirection();
 // CORS
 app.UseCors(MyAllowAnyOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

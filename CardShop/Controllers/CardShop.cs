@@ -2,6 +2,8 @@
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
+using CardShop.Repositories.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -25,10 +27,14 @@ namespace CardShop.Controllers
             _cardProductBuilder = cardProductBuilder;
         }
 
+        //[Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<GetShopInventoryResponse> GetShopInventory(bool includeOutOfStock = false)
         {
             var response = new GetShopInventoryResponse();
+
+            
+
             try
             {
                 var inventory = await _shopManager.GetVerboseShopInventory(includeOutOfStock);
@@ -44,6 +50,7 @@ namespace CardShop.Controllers
             return response;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<PurchaseProductResponse> PurchaseProduct(PurchaseProductRequest request)
         {
@@ -57,12 +64,14 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            
             }
 
-            if (request.PurchaserId == 0)
-            {
-                return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
-            }
+            //if (request.PurchaserId == 0)
+            //{
+            //    return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
+            //}
 
-            var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
+            var userName = HttpContext.User.Identity.Name;
+
+            var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(userName, request.InventoryItems);
 
             if (items == null || items.Count < 1)
             {

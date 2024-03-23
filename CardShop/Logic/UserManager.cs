@@ -19,10 +19,15 @@ namespace CardShop.Logic
             return await _userRepository.GetUser(userId);
         }
 
-        public async Task<User> AddUser(string userName, decimal balance)
+        public async Task<User> GetUser(string username)
         {
-            return await _userRepository.AddUser(userName, balance);
+            return await _userRepository.GetUser(username);
         }
+
+        //public async Task<User> AddUser(string userName, decimal balance)
+        //{
+        //    return await _userRepository.AddUser(userName, balance);
+        //}
 
         public async Task<bool> DeleteUser(int userId)
         {

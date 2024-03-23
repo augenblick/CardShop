@@ -1,4 +1,5 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Enums;
+using CardShop.Interfaces;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -32,24 +33,80 @@ namespace CardShop.Repositories
             return user;
         }
 
-        public async Task<User> AddUser(string username, decimal balance) 
+        public async Task<User> GetUser(string username)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
+            var user = await dbConnection.QuerySingleAsync<User>($@"
+                        SELECT *
+                        FROM User
+                        WHERE Username = @Username",
+                        new
+                        {
+                            Username = username
+                        });
+
+            return user;
+        }
+
+        public async Task<SecureUser> GetSecureUser(int userId)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var user = await dbConnection.QuerySingleAsync<SecureUser>($@"
+                        SELECT *
+                        FROM User
+                        WHERE UserId = @UserId",
+                        new
+                        {
+                            UserId = userId
+                        });
+
+            return user;
+        }
+
+        public async Task<SecureUser> GetSecureUser(string username)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var user = await dbConnection.QuerySingleAsync<SecureUser>($@"
+                        SELECT *
+                        FROM User
+                        WHERE Username = @Username",
+                        new
+                        {
+                            Username = username
+                        });
+
+            return user;
+        }
+
+        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User) 
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                return null;
+            }
+
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
             var newUserId = await dbConnection.ExecuteScalarAsync<int>($@"
-                        INSERT INTO User(Username, Balance) 
-                        VALUES(@Username, @Balance)
+                        INSERT INTO User(Username, Balance, Email, Password, Role) 
+                        VALUES(@Username, @Balance, @Email, @Password, @Role)
                         RETURNING *;",
                         new
                         {
                             Username = username,
-                            Balance = balance
+                            Balance = balance,
+                            Email = email,
+                            Password = password,
+                            Role = role
                         });
 
             if (newUserId < 1)
             {
                 _logger.LogError($"New User insert failed for username '{username}'");
-                return new User();
+                return null;
             }
 
             var newUser = await dbConnection.QuerySingleAsync<User>($@"

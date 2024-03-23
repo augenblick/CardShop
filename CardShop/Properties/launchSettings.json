@@ -37,7 +37,8 @@
         "DbConnectionString-CardDump": "Data Source=./Repositories/Data/StarWarsCardDumpDb",
         "CardShopConnectionString": "Data Source=./Repositories/Data/CardShop",
         "ASPNETCORE_HTTPS_PORTS": "8081",
-        "ASPNETCORE_HTTP_PORTS": "8080"
+        "ASPNETCORE_HTTP_PORTS": "8080",
+        //"jwt-secret": "TODO: move to secure location!"
       },
       "publishAllPorts": true,
       "useSSL": true
