@@ -1,4 +1,5 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Enums;
+using CardShop.Interfaces;
 using CardShop.Repositories.Models;
 
 namespace CardShop.Logic
@@ -42,6 +43,37 @@ namespace CardShop.Logic
         public async Task<bool> SetUserBalance(int userId, decimal newBalance)
         {
             return await _userRepository.SetUserBalance(userId, newBalance);
+        }
+
+        public async Task<User> SetUserRole(int userId, Role role)
+        {
+            var userWasUpdated = await _userRepository.SetUserRole(userId, role);
+
+            if (!userWasUpdated)
+            {
+                return new User();
+            }
+
+            return await _userRepository.GetUser(userId);
+        }
+
+        public async Task<User> SetUserRole(string userName, Role role)
+        {
+            var user = await GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return new User();
+            }
+
+            var userWasUpdated = await _userRepository.SetUserRole(user.UserId, role);
+
+            if (!userWasUpdated)
+            {
+                return new User();
+            }
+
+            return await _userRepository.GetUser(user.UserId);
         }
     }
 }

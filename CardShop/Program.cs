@@ -145,8 +145,11 @@ app.UseHttpsRedirection();
 // CORS
 app.UseCors(MyAllowAnyOrigins);
 
-app.UseAuthentication();
-app.UseAuthorization();
+if (!Debugger.IsAttached || app.Services.GetRequiredService<IConfiguration>().GetValue<bool>("UseAuthDuringDev"))
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 
 app.MapControllers();
 

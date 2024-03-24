@@ -1,4 +1,5 @@
-﻿using CardShop.Repositories.Models;
+﻿using CardShop.Enums;
+using CardShop.Repositories.Models;
 
 namespace CardShop.Interfaces
 {
@@ -6,7 +7,8 @@ namespace CardShop.Interfaces
     {
         Task<User> GetUser(int userId);
         Task<User> GetUser(string username);
-        //Task<User> AddUser(string userName, decimal balance = 0.0M);
+        Task<User> SetUserRole(int userId, Role role);
+        Task<User> SetUserRole(string username, Role role);
         Task<bool> DeleteUser(int userId);
         Task<bool> SetUserBalance(int userId, decimal newBalance);
     }

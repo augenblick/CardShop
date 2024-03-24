@@ -38,7 +38,7 @@ namespace CardShop.Controllers
             //    request.Password!
             //);
 
-            var userInDb = _userRepository.GetSecureUser(request.Username);
+            var userInDb = await _userRepository.GetSecureUser(request.Username);
             
             if (userInDb != null)
             {
@@ -54,7 +54,7 @@ namespace CardShop.Controllers
                 return Problem(errorMessage);
             }
 
-            request.Password = "";
+            request.Password = "[redacted]";
             return CreatedAtAction(nameof(Register), new { username = request.Username }, request);
         }
 

@@ -53,7 +53,7 @@ namespace CardShop.Repositories
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
-            var user = await dbConnection.QuerySingleAsync<SecureUser>($@"
+            var user = await dbConnection.QueryAsync<SecureUser>($@"
                         SELECT *
                         FROM User
                         WHERE UserId = @UserId",
@@ -62,14 +62,14 @@ namespace CardShop.Repositories
                             UserId = userId
                         });
 
-            return user;
+            return user.FirstOrDefault();
         }
 
         public async Task<SecureUser> GetSecureUser(string username)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
-            var user = await dbConnection.QuerySingleAsync<SecureUser>($@"
+            var user = await dbConnection.QueryAsync<SecureUser>($@"
                         SELECT *
                         FROM User
                         WHERE Username = @Username",
@@ -78,7 +78,7 @@ namespace CardShop.Repositories
                             Username = username
                         });
 
-            return user;
+            return user.FirstOrDefault();
         }
 
         public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User) 
@@ -148,6 +148,23 @@ namespace CardShop.Repositories
                         new
                         {
                             Balance = newBalance,
+                            UserId = userId
+                        });
+
+            return updatedRowCount > 0;
+        }
+
+        public async Task<bool> SetUserRole(int userId, Role role)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var updatedRowCount = await dbConnection.ExecuteAsync($@"
+                        UPDATE User
+                        SET Role = @Role
+                        WHERE UserId = @UserId",
+                        new
+                        {
+                            Role = role,
                             UserId = userId
                         });
 
