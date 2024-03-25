@@ -35,6 +35,7 @@ builder.Services.AddSingleton<IInventoryManager, InventoryManager>();
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserManager, UserManager>();
+builder.Services.AddSingleton<DbBuilder>();
 
 
 var logger = new LoggerConfiguration()
@@ -78,6 +79,7 @@ app.MapControllers();
 
 var cardProductBuilder = app.Services.GetRequiredService<ICardProductBuilder>();
 var shopManager = app.Services.GetRequiredService<IShopManager>();
+var dbBuilder = app.Services.GetRequiredService<DbBuilder>();
 
 var timer = new Stopwatch();
 timer.Start();
@@ -86,6 +88,7 @@ var logThing = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILog
 
 StaticHelpers.Logger = logThing;
 
+await dbBuilder.InitializeDb();
 await cardProductBuilder.InitializeCardSets();
 shopManager.Initialize();
 

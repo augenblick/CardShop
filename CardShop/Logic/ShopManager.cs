@@ -13,25 +13,34 @@ namespace CardShop.Logic
     {
         private readonly ICardProductBuilder _cardProductBuilder;
         private readonly IInventoryManager _inventoryManager;
-        private const string _shopKeeperUserName = "ShopKeeper";
-        private const int _shopKeeperUserId = 0;
+        private int _shopKeeperUserId;
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
+        private readonly IConfiguration _configuration;
 
         private static readonly Mutex _shopManagerMutex = new Mutex();
 
-        public ShopManager(ICardProductBuilder cardProductBuilder, IInventoryManager inventoryManager, ILogger<ShopManager> logger, IUserManager userManager)
+        public ShopManager(ICardProductBuilder cardProductBuilder, IInventoryManager inventoryManager, ILogger<ShopManager> logger, IUserManager userManager, IConfiguration configuration)
         {
             _cardProductBuilder = cardProductBuilder;
             _inventoryManager = inventoryManager;
             _logger = logger;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public async void Initialize()
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
+
+            var shopUser = await _userManager.GetUser(_configuration.GetValue<string>("ShopkeeperUsername") ?? "ShopKeeper");
+            if (string.IsNullOrWhiteSpace(shopUser.Username))
+            {
+                _logger.LogError("The Shopkeeper user could not be obtained when initializing the shop.");
+            }
+
+            _shopKeeperUserId = shopUser.UserId;
 
             var existingInventory = await GetShopInventory();
 

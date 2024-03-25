@@ -32,6 +32,22 @@ namespace CardShop.Repositories
             return user;
         }
 
+        public async Task<User> GetUser(string username)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var user = await dbConnection.QueryAsync<User>($@"
+                        SELECT *
+                        FROM User
+                        WHERE Username = @Username",
+                        new
+                        {
+                            Username = username
+                        });
+
+            return user.FirstOrDefault();
+        }
+
         public async Task<User> AddUser(string username, decimal balance) 
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
