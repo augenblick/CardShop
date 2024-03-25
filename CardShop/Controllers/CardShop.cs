@@ -66,7 +66,7 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            
             }
 
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext?.User?.Identity?.Name;
 
             var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(userName, request.InventoryItems);
 
@@ -85,7 +85,7 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<OpenInventoryProductsResponse> OpenInventoryProducts(OpenInventoryProductsRequest request)
         {
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext?.User?.Identity?.Name;
             var user = await _userManager.GetUser(userName);
 
             if (string.IsNullOrWhiteSpace(user.Username))
@@ -176,7 +176,7 @@ namespace CardShop.Controllers
         [HttpGet]
         public async Task<ActionResult<List<InventoryItem>>> GetUserInventory()
         {
-            var userName = HttpContext.User.Identity.Name;
+            var userName = HttpContext?.User?.Identity?.Name;
             var user = await _userManager.GetUser(userName);
 
             if (string.IsNullOrWhiteSpace(user.Username))
