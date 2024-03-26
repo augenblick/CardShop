@@ -23,6 +23,14 @@ namespace CardShop.Logic
         public async Task<User> GetUser(string username)
         {
             if (string.IsNullOrWhiteSpace(username)) { return new User(); }
+            var user = await _userRepository.GetUser(username);
+
+            return user ?? new User();
+        }
+
+        public async Task<User> AddUser(string userName, decimal balance)
+        {
+            if (string.IsNullOrWhiteSpace(username)) { return new User(); }
             return await _userRepository.GetUser(username);
         }
 
