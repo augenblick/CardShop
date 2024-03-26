@@ -36,8 +36,6 @@ namespace CardShop.Controllers
         {
             var response = new GetShopInventoryResponse();
 
-            
-
             try
             {
                 var inventory = await _shopManager.GetVerboseShopInventory(includeOutOfStock);

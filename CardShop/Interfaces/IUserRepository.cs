@@ -13,5 +13,6 @@ namespace CardShop.Interfaces
         Task<bool> DeleteUser(int userId);
         Task<bool> SetUserBalance(int userId, decimal newBalance);
         Task<bool> SetUserRole(int userId, Role role);
+        Task<bool> UpdateUserPassword(int userId, string newPassword);
     }
 }

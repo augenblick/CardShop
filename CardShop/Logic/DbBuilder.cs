@@ -82,7 +82,7 @@ namespace CardShop.Logic
                     Username = shopkeeperUsername,
                     Balance = 0M,
                     Password = "password123",
-                    Role = Enums.Role.User,
+                    Role = Enums.Role.Shop,
                     Email = "email@email.com"
                 },
                 new SecureUser

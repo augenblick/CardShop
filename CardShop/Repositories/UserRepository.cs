@@ -3,6 +3,7 @@ using CardShop.Interfaces;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace CardShop.Repositories
 {
@@ -165,6 +166,23 @@ namespace CardShop.Repositories
                         new
                         {
                             Role = role,
+                            UserId = userId
+                        });
+
+            return updatedRowCount > 0;
+        }
+
+        public async Task<bool> UpdateUserPassword(int userId, string newPassword)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var updatedRowCount = await dbConnection.ExecuteAsync($@"
+                        UPDATE User
+                        SET Password = @Password
+                        WHERE UserId = @UserId",
+                        new
+                        {
+                            Password = newPassword,
                             UserId = userId
                         });
 

@@ -4,10 +4,12 @@ using CardShop.Interfaces;
 using CardShop.Logic;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CardShop.Controllers
 {
+    [Route("[controller]/[action]")]
     public class UserController : ControllerBase
     {
 
@@ -26,7 +28,6 @@ namespace CardShop.Controllers
 
 
         [HttpPost]
-        [Route("register")]
         public async Task<IActionResult> Register(RegistrationRequest request)
         {
             if (!ModelState.IsValid)
@@ -60,7 +61,6 @@ namespace CardShop.Controllers
 
 
         [HttpPost]
-        [Route("login")]
         public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
@@ -84,11 +84,15 @@ namespace CardShop.Controllers
 
             if (userInDb is null)
             {
-                return Unauthorized();
+                return Unauthorized("Username or password are incorrect.");
             }
             if (request.Password != userInDb.Password)
             {
-                return Unauthorized();
+                return Unauthorized("Username or password are incorrect.");
+            }
+            if (userInDb.Role == Role.Shop)
+            {
+                return Unauthorized("May not log in with shop account.");
             }
 
             var accessToken = _tokenService.CreateToken(userInDb);
@@ -100,5 +104,28 @@ namespace CardShop.Controllers
                 Token = accessToken,
             });
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<bool>> UpdatePassword(string existingPassword, string newPassword)
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userRepository.GetSecureUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user?.Username))
+            {
+                return Unauthorized();
+            }
+
+            if (existingPassword != user.Password)
+            {
+                return Unauthorized();
+            }
+
+            var updated = _userRepository.UpdateUserPassword(user.UserId, newPassword);
+
+            return Ok(updated);
+        }
+
     }
 }
