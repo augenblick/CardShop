@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+    <Folder Include="Repositories\Databases\" />
   </ItemGroup>
 
 </Project>
