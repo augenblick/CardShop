@@ -28,10 +28,18 @@ namespace CardShop.Logic
             return user ?? new User();
         }
 
-        public async Task<User> AddUser(string userName, decimal balance)
+        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0, Role role = Role.User)
         {
             if (string.IsNullOrWhiteSpace(username)) { return new User(); }
-            return await _userRepository.GetUser(username);
+            var existing = await _userRepository.GetUser(username);
+
+            if (!string.IsNullOrWhiteSpace(existing?.Username))
+            {
+                _logger.LogError($"Username '{username}' already exists!");
+                return new User();
+            }
+
+            return await _userRepository.AddUser(username, password, email, balance, role);
         }
 
         //public async Task<User> AddUser(string userName, decimal balance)

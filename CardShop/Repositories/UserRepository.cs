@@ -21,7 +21,7 @@ namespace CardShop.Repositories
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
-            var user = await dbConnection.QuerySingleAsync<User>($@"
+            var user = await dbConnection.QueryAsync<User>($@"
                         SELECT *
                         FROM User
                         WHERE UserId = @UserId",
@@ -30,23 +30,23 @@ namespace CardShop.Repositories
                             UserId = userId
                         });
 
-            return user;
+            return user.FirstOrDefault();
         }
 
         public async Task<User> GetUser(string username)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
-            var user = await dbConnection.QuerySingleAsync<User>($@"
+            var user = await dbConnection.QueryAsync<User>($@"
                         SELECT *
                         FROM User
-                        WHERE Username = @Username",
+                        WHERE Username LIKE @Username",
                         new
                         {
                             Username = username
                         });
 
-            return user;
+            return user.FirstOrDefault();
         }
 
         public async Task<SecureUser> GetSecureUser(int userId)
@@ -72,7 +72,7 @@ namespace CardShop.Repositories
             var user = await dbConnection.QueryAsync<SecureUser>($@"
                         SELECT *
                         FROM User
-                        WHERE Username = @Username",
+                        WHERE Username LIKE @Username",
                         new
                         {
                             Username = username

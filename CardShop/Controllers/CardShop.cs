@@ -195,5 +195,20 @@ namespace CardShop.Controllers
 
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult<User>> GetUser()
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return NotFound(new User());
+            }
+
+            return Ok(user);
+        }
+
     }
 }
