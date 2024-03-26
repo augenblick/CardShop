@@ -13,12 +13,14 @@ namespace CardShop.Logic
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
+        private readonly IShopManager _shopManager;
 
-        public DbBuilder(IConfiguration configuration, ILogger<InventoryRepository> logger, IUserManager userManager)
+        public DbBuilder(IConfiguration configuration, ILogger<InventoryRepository> logger, IUserManager userManager, IShopManager shopManager)
         {
             _configuration = configuration;
             _logger = logger;
             _userManager = userManager;
+            _shopManager = shopManager;
         }
 
         public async Task InitializeDb()
@@ -78,7 +80,7 @@ namespace CardShop.Logic
             {
                 new SecureUser
                 {
-                    UserId = 0,
+                    UserId = 1,
                     Username = shopkeeperUsername,
                     Balance = 0M,
                     Password = "password123",
@@ -87,9 +89,9 @@ namespace CardShop.Logic
                 },
                 new SecureUser
                 {
-                    UserId = 1,
+                    UserId = 2,
                     Username = "wormie",
-                    Balance = 2500M,
+                    Balance = 25M,
                     Password = "password123",
                     Role = Enums.Role.Admin,
                     Email = "email@email.com"
@@ -102,7 +104,7 @@ namespace CardShop.Logic
 
                 if (!string.IsNullOrWhiteSpace(existingUser.Username)) { continue; }
 
-                var inserted = await _userManager.AddUser(defaultUser.Username, defaultUser.Password, defaultUser.Email, defaultUser.Balance, defaultUser.Role);
+                var inserted = await _userManager.AddUser(defaultUser.Username, defaultUser.Password, defaultUser.Email, defaultUser.Balance, defaultUser.Role, defaultUser.UserId);
             }
         }
     }

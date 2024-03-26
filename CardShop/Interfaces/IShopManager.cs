@@ -17,5 +17,6 @@ namespace CardShop.Interfaces
         /// <param name="requestedItems"></param>
         /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
         Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems);
+        Task<bool> AllotStartingInventoryToUser(string userName);
     }
 }

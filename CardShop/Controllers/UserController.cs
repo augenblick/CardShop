@@ -13,17 +13,17 @@ namespace CardShop.Controllers
     public class UserController : ControllerBase
     {
 
-        //private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly TokenManager _tokenService;
         private readonly ILogger _logger;
+        private readonly IShopManager _shopManager;
 
-        public UserController(IUserRepository userRepository, TokenManager tokenService, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, TokenManager tokenService, ILogger<UserController> logger, IShopManager shopManager)
         {
             _userRepository = userRepository;
-            //_userManager = userManager;
             _tokenService = tokenService;
             _logger = logger;
+            _shopManager = shopManager;
         }
 
 
@@ -34,10 +34,6 @@ namespace CardShop.Controllers
             {
                 return BadRequest(ModelState);
             }
-            //var result = await _userManager.CreateAsync(
-            //    new ApplicationUser { UserName = request.Username, Email = request.Email },
-            //    request.Password!
-            //);
 
             var userInDb = await _userRepository.GetSecureUser(request.Username);
             
@@ -55,6 +51,8 @@ namespace CardShop.Controllers
                 return Problem(errorMessage);
             }
 
+            await _shopManager.AllotStartingInventoryToUser(newUser.Username);
+
             request.Password = "[redacted]";
             return CreatedAtAction(nameof(Register), new { username = request.Username }, request);
         }
@@ -68,17 +66,6 @@ namespace CardShop.Controllers
                 return BadRequest(ModelState);
             }
 
-            //var managedUser = await _userManager.FindByEmailAsync(request.Email!);
-            //if (managedUser == null)
-            //{
-            //    return BadRequest("Bad credentials");
-            //}
-
-            //var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
-            //if (!isPasswordValid)
-            //{
-            //    return BadRequest("Bad credentials");
-            //}
 
             var userInDb = await _userRepository.GetSecureUser(request.Username);
 
@@ -96,7 +83,6 @@ namespace CardShop.Controllers
             }
 
             var accessToken = _tokenService.CreateToken(userInDb);
-            //await _context.SaveChangesAsync();
 
             return Ok(new LoginResponse
             {

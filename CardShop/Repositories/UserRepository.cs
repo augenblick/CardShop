@@ -3,6 +3,7 @@ using CardShop.Interfaces;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Data;
 
 namespace CardShop.Repositories
@@ -82,7 +83,7 @@ namespace CardShop.Repositories
             return user.FirstOrDefault();
         }
 
-        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User) 
+        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User, int? userId = null) 
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -92,8 +93,8 @@ namespace CardShop.Repositories
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
             var newUserId = await dbConnection.ExecuteScalarAsync<int>($@"
-                        INSERT INTO User(Username, Balance, Email, Password, Role) 
-                        VALUES(@Username, @Balance, @Email, @Password, @Role)
+                        INSERT INTO User(Username, Balance, Email, Password, Role, UserId) 
+                        VALUES(@Username, @Balance, @Email, @Password, @Role, @UserId)
                         RETURNING *;",
                         new
                         {
@@ -101,7 +102,8 @@ namespace CardShop.Repositories
                             Balance = balance,
                             Email = email,
                             Password = password,
-                            Role = role
+                            Role = role,
+                            UserId = userId
                         });
 
             if (newUserId < 1)

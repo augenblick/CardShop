@@ -9,7 +9,7 @@ namespace CardShop.Logic
     public class TokenManager
     {
         // Specify how long until the token expires
-        private const int ExpirationMinutes = 30;
+        private const int ExpirationMinutes = 60;
         private readonly ILogger<TokenManager> _logger;
 
         public TokenManager(ILogger<TokenManager> logger)
@@ -53,7 +53,7 @@ namespace CardShop.Logic
                 new Claim(JwtRegisteredClaimNames.Sub, jwtSub),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),    // TODO: this was user.Id.  a guid, perhaps?
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 //new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())

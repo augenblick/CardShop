@@ -230,6 +230,24 @@ namespace CardShop.Logic
             return (_inventoryManager.InventoryItemsFromInventory(purchasedInventoryToReturn), totalCostFinal, userBalance, errorMessage);
         }
 
+        public async Task<bool> AllotStartingInventoryToUser(string userName)
+        {
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return false;
+            }
+
+            // TODO: rework this, incl. probably defining starting items elsewhere
+            var startingProductList = new List<KeyValuePair<Product, int>>
+            {
+                new KeyValuePair<Product, int>(_cardProductBuilder.GetProduct("013s", CardSetCode.PremiereTwoPlayer), 1)
+            };
+
+            return await _inventoryManager.AddInventory(startingProductList, user.UserId);
+        }
+
         public async Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock)
         {
             var returnItems = new List<InventoryItem>();

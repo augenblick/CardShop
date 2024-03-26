@@ -28,7 +28,7 @@ namespace CardShop.Logic
             return user ?? new User();
         }
 
-        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0, Role role = Role.User)
+        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0, Role role = Role.User, int? userId = null)
         {
             if (string.IsNullOrWhiteSpace(username)) { return new User(); }
             var existing = await _userRepository.GetUser(username);
@@ -39,21 +39,20 @@ namespace CardShop.Logic
                 return new User();
             }
 
-            return await _userRepository.AddUser(username, password, email, balance, role);
+            return await _userRepository.AddUser(username, password, email, balance, role, userId);
         }
 
-        //public async Task<User> AddUser(string userName, decimal balance)
-        //{
-        //    return await _userRepository.AddUser(userName, balance);
-        //}
 
         public async Task<bool> DeleteUser(int userId)
         {
-            if (userId == 0)
+            var user = await _userRepository.GetSecureUser(userId);
+
+            if (user.Role == Role.Shop)
             {
                 _logger.LogError("Deletion the Shop Keeper from the userlist ist verboten!");
                 return false;
             }
+
             return await _userRepository.DeleteUser(userId);
         }
 

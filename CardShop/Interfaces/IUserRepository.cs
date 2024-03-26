@@ -9,7 +9,7 @@ namespace CardShop.Interfaces
         Task<User> GetUser(string username);
         Task<SecureUser> GetSecureUser(int userId);
         Task<SecureUser> GetSecureUser(string username);
-        Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User);
+        Task<User> AddUser(string username, string password, string email = null, decimal balance = 0m, Role role = Role.User, int? userId = null);
         Task<bool> DeleteUser(int userId);
         Task<bool> SetUserBalance(int userId, decimal newBalance);
         Task<bool> SetUserRole(int userId, Role role);
