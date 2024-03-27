@@ -40,7 +40,10 @@ builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserManager, UserManager>();
 builder.Services.AddSingleton<TokenManager, TokenManager>();
+builder.Services.AddSingleton<IDeckRepository, DeckRepository>();
+builder.Services.AddSingleton<IDeckManager, DeckManager>();
 builder.Services.AddSingleton<DbBuilder>();
+
 
 
 var logger = new LoggerConfiguration()

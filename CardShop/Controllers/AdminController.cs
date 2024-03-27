@@ -3,6 +3,7 @@ using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
+using CardShop.Repositories;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -22,14 +23,19 @@ namespace CardShop.Controllers
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
         private readonly IInventoryManager _inventoryManager;
+        private readonly IDeckManager _deckManager;
+        private readonly IDeckRepository _deckRepository;
 
-        public AdminController(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger, IUserManager userManager, IInventoryManager inventoryManager)
+        public AdminController(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger, 
+            IUserManager userManager, IInventoryManager inventoryManager, IDeckManager deckManager, IDeckRepository deckRepository)
         {
             _cardProductBuilder = cardProductBuilder;
             _shopManager = shopManager;
             _logger = logger;
             _userManager = userManager;
             _inventoryManager = inventoryManager;
+            _deckManager = deckManager;
+            _deckRepository = deckRepository;
         }
 
         [HttpPost]
@@ -68,16 +74,18 @@ namespace CardShop.Controllers
             return await _userManager.SetUserBalance(userId, newBalance);
         }
 
-        //[HttpPost]
-        //public async Task<User> AddUser(string userName, decimal balance = 0.0M)
-        //{
-        //    if (string.IsNullOrWhiteSpace(userName))
-        //    {
-        //        return new User();
-        //    }
+        [HttpDelete]
+        public async Task<bool> DeleteDeck(int deckId)
+        {
+            var deck = await _deckManager.GetDeckNoContents(deckId);
 
-        //    return await _userManager.AddUser(userName, balance);
-        //}
+            if (deck.DeckId < 1)
+            {
+                return false;
+            }
+
+            return await _deckRepository.DeleteDeck(deckId);
+        }
 
         [HttpPost]
         public async Task<User> SetUserRoleById(int userId, Role role)
