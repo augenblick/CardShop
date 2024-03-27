@@ -33,6 +33,7 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
+        "UseAuthDuringDev": "false",
         "ShopkeeperUsername": "ShopKeeper",
         "CardShopConnectionString": "Data Source=./Repositories/CardShop.db",
         "ASPNETCORE_HTTPS_PORTS": "8081",

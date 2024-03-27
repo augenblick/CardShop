@@ -3,6 +3,7 @@ using CardShop.Repositories;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 
 namespace CardShop.Logic
@@ -12,12 +13,14 @@ namespace CardShop.Logic
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
+        private readonly IShopManager _shopManager;
 
-        public DbBuilder(IConfiguration configuration, ILogger<InventoryRepository> logger, IUserManager userManager)
+        public DbBuilder(IConfiguration configuration, ILogger<InventoryRepository> logger, IUserManager userManager, IShopManager shopManager)
         {
             _configuration = configuration;
             _logger = logger;
             _userManager = userManager;
+            _shopManager = shopManager;
         }
 
         public async Task InitializeDb()
@@ -58,8 +61,12 @@ namespace CardShop.Logic
                                 Username TEXT    UNIQUE
                                                  NOT NULL,
                                 Balance  TEXT    NOT NULL
+                                                 DEFAULT (0),
+                                Password ANY     NOT NULL
+                                                 DEFAULT password123,
+                                Email    ANY,
+                                Role     ANY     NOT NULL
                                                  DEFAULT (0)
-                               
                         )
                         STRICT;
                         ");
@@ -69,19 +76,25 @@ namespace CardShop.Logic
         {
             var shopkeeperUsername = _configuration.GetValue<string>("ShopkeeperUsername") ?? "ShopKeeper";
 
-            var defaultUserList = new List<User>
+            var defaultUserList = new List<SecureUser>
             {
-                new User
-                {
-                    UserId = 0,
-                    Username = shopkeeperUsername,
-                    Balance = 0M
-                },
-                new User
+                new SecureUser
                 {
                     UserId = 1,
+                    Username = shopkeeperUsername,
+                    Balance = 0M,
+                    Password = "password123",
+                    Role = Enums.Role.Shop,
+                    Email = "email@email.com"
+                },
+                new SecureUser
+                {
+                    UserId = 2,
                     Username = "wormie",
-                    Balance = 2500M
+                    Balance = 25M,
+                    Password = "password123",
+                    Role = Enums.Role.Admin,
+                    Email = "email@email.com"
                 }
             };
             
@@ -91,7 +104,7 @@ namespace CardShop.Logic
 
                 if (!string.IsNullOrWhiteSpace(existingUser.Username)) { continue; }
 
-                var inserted = await _userManager.AddUser(defaultUser.Username, defaultUser.Balance);
+                var inserted = await _userManager.AddUser(defaultUser.Username, defaultUser.Password, defaultUser.Email, defaultUser.Balance, defaultUser.Role, defaultUser.UserId);
             }
         }
     }

@@ -2,7 +2,7 @@
 {
     public class PurchaseProductRequest
     {
-        public int PurchaserId { get; set; }
+        //public int PurchaserId { get; set; }
         public List<ProductReference> InventoryItems { get; set; }
     }
 
