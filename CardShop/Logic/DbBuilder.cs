@@ -91,15 +91,19 @@ namespace CardShop.Logic
             var deckContent = await dbConnection.ExecuteAsync(@"
                         CREATE TABLE IF NOT EXISTS 
                             DeckContent (
-                                DeckContentId   INTEGER PRIMARY KEY AUTOINCREMENT
-                                                        UNIQUE
-                                                        NOT NULL,
-                                DeckId          INTEGER REFERENCES Deck (DeckId) 
-                                                        NOT NULL,
-                                CardProductCode TEXT    NOT NULL,
-                                Count           INT     NOT NULL
+                            DeckContentId   INTEGER PRIMARY KEY AUTOINCREMENT
+                                                    UNIQUE
+                                                    NOT NULL,
+                            DeckId          INTEGER REFERENCES Deck (DeckId) 
+                                                    NOT NULL,
+                            CardProductCode TEXT    NOT NULL,
+                            Count           INT     NOT NULL,
+                            UNIQUE (
+                                DeckId,
+                                CardProductCode
                             )
-                            STRICT;");
+                        )
+                        STRICT;");
         }
 
         private async Task CreateDefaultUsers()

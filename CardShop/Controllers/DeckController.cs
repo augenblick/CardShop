@@ -1,6 +1,7 @@
 ﻿using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Specialized;
@@ -73,7 +74,6 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<ActionResult<List<DeckContent>>> AddCardsToDeck(AddCardsToDeckRequest request)
         {
-            
             var userName = HttpContext?.User?.Identity?.Name;
             var user = await _userManager.GetUser(userName);
 
@@ -87,36 +87,148 @@ namespace CardShop.Controllers
                 return Problem("requested item list is empty or contains negative counts.");
             }
 
-            var addedCards = await _deckManager.AddCardsToDeck(request.DeckId, user.UserId, request.CardsToAdd);
+            if (request.CardsToAdd.Any(x => string.IsNullOrWhiteSpace(x.CardProductCode)))
+            {
+                return Problem("requested item list contains empty CardProductCode(s).");
+            }
+
+            var (addedCards, errorMessage) = await _deckManager.AddCardsToDeck(request.DeckId, user.UserId, request.CardsToAdd);
+
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return Problem(errorMessage);
+            }
 
             return Ok(addedCards);
-
         }
-        
-        // addCardToDeck
-            // call addCards
 
+        [HttpPost]
+        public async Task<ActionResult<List<DeckContent>>> AddSingleCardToDeck(AddSingleCardToDeckRequest request)
+        {
+            return await AddCardsToDeck(new AddCardsToDeckRequest
+            {
+                DeckId = request.DeckId,
+                CardsToAdd = new List<DeckContent> { new DeckContent
+                    {
+                        CardProductCode = request.CardProductCode,
+                        Count = 1
+                    }
+                }
+            });
+        }
 
+        [HttpPost]
+        public async Task<ActionResult<List<DeckContent>>> RemoveCardsFromDeck(AddCardsToDeckRequest request)
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
 
-        // removeCards
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return Problem("User not found.");
+            }
 
-        // removeCard
-            // call removeCards
+            if (request.CardsToAdd.Count < 1 || request.CardsToAdd.Any(x => x.Count < 0) || request.CardsToAdd.Sum(x => x.Count) < 1)
+            {
+                return Problem("requested item list is empty or contains negative counts.");
+            }
+
+            if (request.CardsToAdd.Any(x => string.IsNullOrWhiteSpace(x.CardProductCode)))
+            {
+                return Problem("requested item list contains empty CardProductCode(s).");
+            }
+
+            var (removedCards, errorMessage) = await _deckManager.RemoveCardsFromDeck(request.DeckId, user.UserId, request.CardsToAdd);
+
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return Problem(errorMessage);
+            }
+
+            return Ok(removedCards);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<List<DeckContent>>> RemoveSingleCardFromDeck(AddSingleCardToDeckRequest request)
+        {
+            return await RemoveCardsFromDeck(new AddCardsToDeckRequest
+            {
+                DeckId = request.DeckId,
+                CardsToAdd = new List<DeckContent> { new DeckContent
+                    {
+                        CardProductCode = request.CardProductCode,
+                        Count = 1
+                    }
+                }
+            });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<Deck>> GetDeck(int deckId)
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return Problem("User not found.");
+            }
+
+            var deck = await _deckManager.GetDeck(deckId);
+
+            if (deck == null || deck.DeckId < 1)
+            {
+                return NotFound(deck);
+            }
+
+            if (!deck.IsPublic && deck.UserId != user.UserId)
+            {
+                return Problem($"This deck is private and is not owned by UserId {user.UserId}.");
+            }
+
+            return Ok(deck);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Deck>>> GetUserDecks()
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return Problem("User not found.");
+            }
+
+            var allDecks = await _deckManager.GetDecks(user.UserId);
+
+            return allDecks;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Deck>>> GetPublicDecks()
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return Problem("User not found.");
+            }
+
+            var allDecks = await _deckManager.GetDecks(null);
+
+            return allDecks.Where(x => x.IsPublic || x.UserId == user.UserId).AsList();
+        }
+
 
         // GetInventoryCardsMinusDeck
-            // maaaybe?
-
-        // GetDeck
-            // specific deck w/ contents (deck must be either public or owned by logged-in user)
+        // maaaybe?
 
         // GetDeckVerbose
-            // maaaybe?
-            // specific deck w/ contents and card details
+        // maaaybe?
+        // specific deck w/ contents and card details
 
-        // GetDeckList
-            // list of all this user's decks
 
-        // GetAllPublicDecks
-            // list of all public decks
     }
 }

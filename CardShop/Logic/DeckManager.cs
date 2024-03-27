@@ -1,5 +1,7 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Extensions;
+using CardShop.Interfaces;
 using CardShop.Models;
+using System.ComponentModel;
 
 namespace CardShop.Logic
 {
@@ -28,9 +30,9 @@ namespace CardShop.Logic
             var deck = deckTask.Result;
             var deckContents = deckContentsTask.Result;
 
-            if (deck.DeckId < 1)
+            if (deck == null || deck.DeckId < 1)
             {
-                // TODO: log error
+                // TODO: return error message
                 return new Deck();
             }
 
@@ -58,18 +60,26 @@ namespace CardShop.Logic
             return await _deckRepository.DeleteDeck(deckId);
         }
 
-        public async Task<List<DeckContent>> AddCardsToDeck(int deckId, int userId, List<DeckContent> cardsToAdd)
+        public async Task<(List<DeckContent>, string)> AddCardsToDeck(int deckId, int userId, List<DeckContent> cardsToAdd)
         {
+            var errorMessage = string.Empty;
+            var returnList = new List<DeckContent>();
+
             var deck = await GetDeck(deckId);
             if (deck.DeckId < 1)
             {
-                // TODO: deck not found!
+                errorMessage = $"Deck with DeckId {deckId} not found.";
+                return (returnList, errorMessage);
+            }
+            if (deck.UserId != userId)
+            {
+                errorMessage = $"The Deck with DeckId {deckId} is not owned by this user.";
+                return (returnList, errorMessage);
             }
 
-            // TODO: make sure this is returning only cards
             var playerCards = await _inventoryManager.GetUserInventoryItems(userId, ProductType.Card);
 
-            // TODO: consolidate cardsToAdd
+            cardsToAdd = cardsToAdd.Consolidate();
 
             var cardsToAddToDeck = new List<DeckContent>();
 
@@ -80,26 +90,90 @@ namespace CardShop.Logic
 
                 if (ownedCard == null)
                 {
-                    // TODO: card not found
+                    errorMessage = $"Card '{card.CardProductCode}' not found in user inventory.";
+                    return (new List<DeckContent>(), errorMessage);
                 }
                 if (ownedCard!.Count - (inDeckCard?.Count ?? 0) < card.Count)
                 {
-                    // TODO: not enough of requested card!
+                    errorMessage = $"Not enough of card '{card.CardProductCode}' in inventory.";
+                    return (new List<DeckContent>(), errorMessage);
                 }
 
                 cardsToAddToDeck.Add(card);
             }
 
-            var updated = await _deckRepository.AddCardsToDeck(deckId, cardsToAddToDeck);
+            var updated = await _deckRepository.UpsertDeckContents(deckId, cardsToAddToDeck);
 
             if (!updated) 
-            { 
-                // TODO: return error message?
-                return new List<DeckContent>(); 
+            {
+                errorMessage = $"An error occurred and the requested card(s) could not be added to the deck.";
+                _logger.LogError(errorMessage);
+                return (new List<DeckContent>(), errorMessage); 
             }
 
             // TODO: return updated deck?
-            return cardsToAdd;
+            return (cardsToAdd, errorMessage);
+        }
+
+        public async Task<(List<DeckContent>, string)> RemoveCardsFromDeck(int deckId, int userId, List<DeckContent> cardsToRemove)
+        {
+            var errorMessage = string.Empty;
+            var returnList = new List<DeckContent>();
+            var cardsToRemoveFromDeck = new List<DeckContent>();
+
+            var deck = await GetDeck(deckId);
+            if (deck.DeckId < 1)
+            {
+                errorMessage = $"Deck with DeckId {deckId} not found.";
+                return (returnList, errorMessage);
+            }
+
+            cardsToRemove = cardsToRemove.Consolidate();
+
+            foreach (var thisCard in cardsToRemove)
+            {
+                var countToRemove = thisCard.Count;
+                var cardProductCode = thisCard.CardProductCode;
+
+                var inDeckCard = deck.CardList.FirstOrDefault(x => x.CardProductCode == cardProductCode);
+
+                if (inDeckCard == null)
+                {
+                    errorMessage = $"Card '{cardProductCode}' not found in deck {deckId}.";
+                    return (returnList, errorMessage);
+                }
+                
+                if (inDeckCard.Count < countToRemove)
+                {
+                    errorMessage = $"Cannot remove {countToRemove}x of Card '{cardProductCode}'. Only {inDeckCard.Count}x exist in deck with DeckId {deckId}.";
+                    return (returnList, errorMessage);
+                }
+
+                cardsToRemoveFromDeck.Add(new DeckContent
+                {
+                    CardProductCode = cardProductCode,
+                    Count = inDeckCard.Count - countToRemove
+                });
+            }
+
+            var updated = await _deckRepository.UpsertDeckContents(deckId, cardsToRemoveFromDeck);
+
+            if (!updated)
+            {
+                errorMessage = $"An error occurred and the requested card(s) could not be added to the deck.";
+                _logger.LogError(errorMessage);
+                return (new List<DeckContent>(), errorMessage);
+            }
+
+            // remove any deck contents lowered to zero
+            var zeroCountCardsCleared = await _deckRepository.ClearZeroedDeckContents(deckId);
+
+            return (cardsToRemoveFromDeck, errorMessage);
+        }
+
+        public async Task<List<Deck>> GetDecks(int? userId = null, bool? isPublic = null)
+        {
+            return await _deckRepository.GetDecks(userId, isPublic);
         }
     }
 }

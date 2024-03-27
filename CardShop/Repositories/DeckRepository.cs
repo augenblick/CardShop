@@ -115,7 +115,7 @@ namespace CardShop.Repositories
 
         }
 
-        public async Task<bool> AddCardsToDeck(int deckId, List<DeckContent> cardsToAdd)
+        public async Task<bool> UpsertDeckContents(int deckId, List<DeckContent> cardsToAdd)
         {
             using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
 
@@ -141,6 +141,39 @@ namespace CardShop.Repositories
 
             // TODO: return card list?
             return true;
+        }
+
+        public async Task<bool> ClearZeroedDeckContents(int deckId)
+        {
+            try
+            {
+                using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+                var contentDeletedCount = await dbConnection.ExecuteAsync(@"
+                    DELETE FROM DeckContent 
+                    WHERE DeckId = @DeckId
+                    AND Count = 0", new { DeckId = deckId });
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"An unhandled exception when clearing zeroed deck contents for deckid {deckId}");
+                return false;
+            }
+        }
+
+        public async Task<List<Deck>> GetDecks(int? userId, bool? isPublic)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var allDecks = await dbConnection.QueryAsync<Deck>(@"
+                    SELECT * 
+                    FROM Deck
+                    WHERE @UserId IS NULL OR UserId = @UserId
+                    AND @IsPublic IS NULL OR IsPublic = @IsPublic;", new { UserId = userId, IsPublic = isPublic});
+
+            return allDecks.AsList();
         }
     }
 }
