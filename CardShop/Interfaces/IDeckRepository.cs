@@ -11,5 +11,6 @@ namespace CardShop.Interfaces
         Task<bool> UpsertDeckContents(int deckId, List<DeckContent> cardsToAdd);
         Task<bool> ClearZeroedDeckContents(int deckId);
         Task<List<Deck>> GetDecks(int? userId, bool? isPublic);
+        Task<Deck> UpdateDeck(Deck deck);
     }
 }

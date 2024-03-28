@@ -1,6 +1,7 @@
 ﻿using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
+using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
@@ -17,24 +18,6 @@ namespace CardShop.Repositories
             _logger = logger;
         }
 
-        /*public async Task<List<Inventory>> GetUserInventory(int userId)
-        {
-            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
-
-            SqlMapper.AddTypeHandler(new CardSetCodeTypeHandler());
-
-            var inventory = await dbConnection.QueryAsync<Inventory>($@"
-                        SELECT *
-                        FROM Inventory
-                        WHERE UserId = @UserId
-                        AND Count > 0",
-                        new
-                        {
-                            UserId = userId
-                        });
-
-            return inventory.AsList();
-        }*/
 
         public async Task<Deck> CreateDeck(Deck deck)
         {
@@ -174,6 +157,23 @@ namespace CardShop.Repositories
                     AND @IsPublic IS NULL OR IsPublic = @IsPublic;", new { UserId = userId, IsPublic = isPublic});
 
             return allDecks.AsList();
+        }
+
+        public async Task<Deck> UpdateDeck(Deck deck)
+        {
+            using var dbConnection = new SqliteConnection(_configuration.GetValue<string>("CardShopConnectionString"));
+
+            var updatedDeck = await dbConnection.QueryFirstOrDefaultAsync<Deck>(@"
+                    UPDATE Deck
+                    SET IsPublic = @IsPublic,
+                        DeckName = @DeckName,
+                        UserId = @UserId,
+                        Decktype = @DeckType
+                    WHERE DeckId = @DeckId
+                    RETURNING *
+                    ", new { DeckId = deck.DeckId, IsPublic = deck.IsPublic, DeckName = deck.DeckName, DeckType = deck.DeckType, UserId = deck.UserId });
+
+            return updatedDeck;
         }
     }
 }

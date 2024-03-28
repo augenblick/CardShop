@@ -28,10 +28,9 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<ActionResult<Deck>> CreateDeck(string? deckName)
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -49,10 +48,9 @@ namespace CardShop.Controllers
         [HttpDelete]
         public async Task<ActionResult> DeleteDeck(int deckId)
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -67,17 +65,14 @@ namespace CardShop.Controllers
             return Ok();
         }
 
-        // renameDeck
-
-        // toggleDeckVisibility
+        
 
         [HttpPost]
         public async Task<ActionResult<List<DeckContent>>> AddCardsToDeck(AddCardsToDeckRequest request)
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -120,10 +115,9 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<ActionResult<List<DeckContent>>> RemoveCardsFromDeck(AddCardsToDeckRequest request)
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -166,10 +160,9 @@ namespace CardShop.Controllers
         [HttpGet]
         public async Task<ActionResult<Deck>> GetDeck(int deckId)
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -192,10 +185,9 @@ namespace CardShop.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Deck>>> GetUserDecks()
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -208,10 +200,9 @@ namespace CardShop.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Deck>>> GetPublicDecks()
         {
-            var userName = HttpContext?.User?.Identity?.Name;
-            var user = await _userManager.GetUser(userName);
+            var user = await _userManager.GetUser(HttpContext);
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (user == null)
             {
                 return Problem("User not found.");
             }
@@ -221,14 +212,44 @@ namespace CardShop.Controllers
             return allDecks.Where(x => x.IsPublic || x.UserId == user.UserId).AsList();
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Deck>> ToggleDeckVisibility(int deckId)
+        {
+            var user = await _userManager.GetUser(HttpContext);
 
-        // GetInventoryCardsMinusDeck
-        // maaaybe?
+            if (user == null)
+            {
+                return Problem("User not found.");
+            }
 
-        // GetDeckVerbose
-        // maaaybe?
-        // specific deck w/ contents and card details
+            var (updatedDeck, errorMessage) = await _deckManager.ToggleDeckVisibility(user.UserId, deckId);
 
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return Problem(errorMessage);
+            }
 
+            return Ok(updatedDeck);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Deck>> RenameDeck(int deckId, string newDeckName)
+        {
+            var user = await _userManager.GetUser(HttpContext);
+
+            if (user == null)
+            {
+                return Problem("User not found.");
+            }
+
+            var (updatedDeck, errorMessage) = await _deckManager.RenameDeck(user.UserId, deckId, newDeckName);
+
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return Problem(errorMessage);
+            }
+
+            return Ok(updatedDeck);
+        }
     }
 }

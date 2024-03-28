@@ -32,7 +32,6 @@ namespace CardShop.Logic
 
             if (deck == null || deck.DeckId < 1)
             {
-                // TODO: return error message
                 return new Deck();
             }
 
@@ -66,7 +65,7 @@ namespace CardShop.Logic
             var returnList = new List<DeckContent>();
 
             var deck = await GetDeck(deckId);
-            if (deck.DeckId < 1)
+            if (deck == null || deck.DeckId < 1)
             {
                 errorMessage = $"Deck with DeckId {deckId} not found.";
                 return (returnList, errorMessage);
@@ -122,7 +121,7 @@ namespace CardShop.Logic
             var cardsToRemoveFromDeck = new List<DeckContent>();
 
             var deck = await GetDeck(deckId);
-            if (deck.DeckId < 1)
+            if (deck == null || deck.DeckId < 1)
             {
                 errorMessage = $"Deck with DeckId {deckId} not found.";
                 return (returnList, errorMessage);
@@ -165,7 +164,7 @@ namespace CardShop.Logic
                 return (new List<DeckContent>(), errorMessage);
             }
 
-            // remove any deck contents lowered to zero
+            // remove any deck contents reduced to zero count
             var zeroCountCardsCleared = await _deckRepository.ClearZeroedDeckContents(deckId);
 
             return (cardsToRemoveFromDeck, errorMessage);
@@ -174,6 +173,66 @@ namespace CardShop.Logic
         public async Task<List<Deck>> GetDecks(int? userId = null, bool? isPublic = null)
         {
             return await _deckRepository.GetDecks(userId, isPublic);
+        }
+
+        public async Task<(Deck, string)> ToggleDeckVisibility(int userId, int deckId)
+        {
+            var (deck, errorMessage) = await GetDeckValidateDeckOwner(userId, deckId);
+
+            if (errorMessage != null) { return (deck, errorMessage); }
+
+            deck.IsPublic = !deck.IsPublic;
+
+            var updatedDeck = await _deckRepository.UpdateDeck(deck);
+
+            if (updatedDeck == null)
+            {
+                errorMessage = $"The deck with deckId {deckId} could not be updated";
+                _logger.LogError(errorMessage);
+                return (deck, errorMessage);
+            }
+
+            return (updatedDeck, errorMessage);
+        }
+
+        public async Task<(Deck, string)> RenameDeck(int userId, int deckId, string newDeckName)
+        {
+            var (deck, errorMessage) = await GetDeckValidateDeckOwner(userId, deckId);
+
+            if (errorMessage != null) { return (deck, errorMessage); }
+
+            deck.DeckName = newDeckName;
+
+            var updatedDeck = await _deckRepository.UpdateDeck(deck);
+
+            if (updatedDeck == null)
+            {
+                errorMessage = $"The deck with deckId {deckId} could not be updated";
+                _logger.LogError(errorMessage);
+                return (deck, errorMessage);
+            }
+
+            return (updatedDeck, errorMessage);
+        }
+
+        private async Task<(Deck, string?)> GetDeckValidateDeckOwner(int userId, int deckId)
+        {
+            var errorMessage = string.Empty;
+            var returnDeck = new Deck();
+            var deck = await GetDeckNoContents(deckId);
+
+            if (deck == null || deck.DeckId < 1)
+            {
+                errorMessage = $"Deck with deckId {deckId} not found.";
+                return (returnDeck, errorMessage);
+            }
+            if (deck.UserId != userId)
+            {
+                errorMessage = $"The Deck with DeckId {deckId} is not owned by this user.";
+                return (returnDeck, errorMessage);
+            }
+
+            return (deck, null);
         }
     }
 }
