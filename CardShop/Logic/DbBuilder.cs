@@ -70,6 +70,40 @@ namespace CardShop.Logic
                         )
                         STRICT;
                         ");
+
+            var deck = await dbConnection.ExecuteAsync(@"
+                        CREATE TABLE IF NOT EXISTS
+                            Deck (
+                                DeckId   INTEGER PRIMARY KEY AUTOINCREMENT
+                                                 NOT NULL
+                                                 UNIQUE,
+                                DeckName     TEXT,
+                                DeckType ANY     NOT NULL
+                                                 DEFAULT (0),
+                                IsPublic ANY     NOT NULL
+                                                 DEFAULT (0),
+                                UserId   ANY     REFERENCES User (UserId) 
+                                                 NOT NULL
+                            )
+                            STRICT;");
+
+
+            var deckContent = await dbConnection.ExecuteAsync(@"
+                        CREATE TABLE IF NOT EXISTS 
+                            DeckContent (
+                            DeckContentId   INTEGER PRIMARY KEY AUTOINCREMENT
+                                                    UNIQUE
+                                                    NOT NULL,
+                            DeckId          INTEGER REFERENCES Deck (DeckId) 
+                                                    NOT NULL,
+                            CardProductCode TEXT    NOT NULL,
+                            Count           INT     NOT NULL,
+                            UNIQUE (
+                                DeckId,
+                                CardProductCode
+                            )
+                        )
+                        STRICT;");
         }
 
         private async Task CreateDefaultUsers()

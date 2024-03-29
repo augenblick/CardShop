@@ -1,6 +1,7 @@
 ﻿using CardShop.Enums;
 using CardShop.Interfaces;
 using CardShop.Repositories.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace CardShop.Logic
 {
@@ -26,6 +27,19 @@ namespace CardShop.Logic
             var user = await _userRepository.GetUser(username);
 
             return user ?? new User();
+        }
+
+        public async Task<User?> GetUser(HttpContext context)
+        {
+            var userName = context?.User?.Identity?.Name;
+            var user = await GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return null;
+            }
+
+            return user;
         }
 
         public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0, Role role = Role.User, int? userId = null)
