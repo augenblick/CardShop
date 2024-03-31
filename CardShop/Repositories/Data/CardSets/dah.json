@@ -11,17 +11,29 @@
       "code": "04p",
       "name": "Dagobah Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCode": "dah",
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "dah",
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCode": "dah",
           "count": 3
         }
       ]

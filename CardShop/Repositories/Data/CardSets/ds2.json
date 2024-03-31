@@ -11,17 +11,29 @@
       "code": "09p",
       "name": "Death Star II Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCode": "ds2",
           "count": 7
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "ds2",
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCode": "ds2",
           "count": 3
         }
       ]

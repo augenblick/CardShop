@@ -11,17 +11,29 @@
       "code": "08p",
       "name": "Endor Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCode": "edr",
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "edr",
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCode": "edr",
           "count": 3
         }
       ]

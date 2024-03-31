@@ -12,17 +12,29 @@
       "code": "06p",
       "name": "Jabba's Palace Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCode": "jp",
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "jp",
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCode": "jp",
           "count": 3
         }
       ]

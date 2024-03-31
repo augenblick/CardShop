@@ -61,7 +61,7 @@ namespace CardShop.Models
                 }
         }
 
-        public Card DrawRandomCardFromSet(string rarityCode, bool peekDontDraw = true)
+        public Card DrawRandomCardFromSet(string rarityCode, string? cardSide = null, bool peekDontDraw = true)
         {
             var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == rarityCode);
 
@@ -73,20 +73,20 @@ namespace CardShop.Models
 
             if (peekDontDraw)
             {
-                return cardPool.PeekCard();
+                return cardPool.PeekCard(cardSide);
             }
 
-            return cardPool.DrawCard();
+            return cardPool.DrawCard(cardSide);
         }
 
         public List<InventoryItem> OpenProduct(Product product)
         {
             var returnProductList = new List<InventoryItem>();
 
-            if (product is BoosterPack)
-            {
-                return OpenBoosterPack((BoosterPack)product);
-            }
+            //if (product is BoosterPack)
+            //{
+            //    return OpenBoosterPack((BoosterPack)product);
+            //}
             foreach (var content in ((BoosterBox)product).Contents)
             {
                 var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code);
@@ -116,6 +116,28 @@ namespace CardShop.Models
             return consolidatedList;
         }
 
+        public InventoryItem OpenProduct(Content content)
+        {
+            var returnProduct = new InventoryItem();
+
+            var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code) ?? Cards.FirstOrDefault(x => x.Code == content.Code);
+
+            if (selectedContent != null)
+            {
+                returnProduct = new InventoryItem
+                {
+                    Product = selectedContent,
+                    Count = content.Count
+                };
+            }
+            else
+            {
+                StaticHelpers.Logger.LogError($"No matching product '{content.Code}' found in set '{SetCode}' while opening products!");
+            }
+
+            return returnProduct;
+        }
+
         public Product GetCardSetProduct(string productCode)
         {
             var product = Products.FirstOrDefault(x => x.Code == productCode) ?? Cards.FirstOrDefault(x => x.Code == productCode);
@@ -123,50 +145,124 @@ namespace CardShop.Models
             return product;
         }
 
-        public List<InventoryItem> OpenBoosterPack(BoosterPack pack)
+        //public List<InventoryItem> OpenBoosterPack(BoosterPack pack)
+        //{
+        //    var drawnCards = new List<Product>();
+
+        //    foreach (var raritySpec in pack.PackContentSpecs)
+        //    {
+        //        List<Card> chosenCards = new List<Card>();
+
+        //        var count = raritySpec.Count;
+        //        var overallRarityForDraw = raritySpec.OverallRarity;
+
+        //        // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
+        //        var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityForDraw);
+
+        //        if (cardPool == null)
+        //        {
+        //            StaticHelpers.Logger.LogError($"A cardpool with rarity '{overallRarityForDraw}' was not found within cardset '{SetCode}'");
+        //            break;
+        //        }
+
+        //        chosenCards = cardPool.PeekCards(count);
+
+        //        if (chosenCards.Count < count)
+        //        {
+        //            StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{overallRarityForDraw}', Count: '{count}'");
+        //        }
+
+        //        drawnCards.AddRange(chosenCards);
+        //    }
+
+        //    if (drawnCards.Count < 1 || drawnCards.Any(x => string.IsNullOrWhiteSpace(x.Code)))
+        //    {
+        //        StaticHelpers.Logger.LogError("Test");
+        //    }
+
+        //    var returnList = drawnCards.GroupBy(p => p.Code)
+        //            .Select(group => new InventoryItem
+        //            {
+        //                Product = group.First(),
+        //                Count = group.Count()
+        //            })
+        //            .ToList();
+            
+        //    return returnList;
+        //}
+
+        public List<InventoryItem> MakeRandomPicks(Content content)
         {
-            var drawnCards = new List<Product>();
+            var randomPicks = new List<Product>();
 
-            foreach (var raritySpec in pack.PackContentSpecs)
+            if (content?.RandomPickParameters?.OverallRarities?.FirstOrDefault() == null)
             {
-                List<Card> chosenCards = new List<Card>();
-
-                var count = raritySpec.Count;
-                var overallRarityForDraw = raritySpec.OverallRarity;
-
-                // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
-                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityForDraw);
-
-                if (cardPool == null)
-                {
-                    StaticHelpers.Logger.LogError($"A cardpool with rarity '{overallRarityForDraw}' was not found within cardset '{SetCode}'");
-                    break;
-                }
-
-                chosenCards = cardPool.PeekCards(count);
-
-                if (chosenCards.Count < count)
-                {
-                    StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{overallRarityForDraw}', Count: '{count}'");
-                }
-
-                drawnCards.AddRange(chosenCards);
+                return new List<InventoryItem>();
             }
 
-            if (drawnCards.Count < 1 || drawnCards.Any(x => string.IsNullOrWhiteSpace(x.Code)))
+            for (int i = 0; i < content.Count; i++)
+            {
+                string overallRarity;
+                if (content.RandomPickParameters.OverallRarities.Count > 1)
+                {
+                    // pick one of these at random
+                    var rando = new Random();
+                    var index = rando.Next(content.RandomPickParameters.OverallRarities.Count);
+
+                    overallRarity = content.RandomPickParameters.OverallRarities[index];
+                }
+                else
+                {
+                    overallRarity = content.RandomPickParameters.OverallRarities.First();
+                }
+
+                var pick = DrawRandomCardFromSet(overallRarity, content.RandomPickParameters.Side);
+                if (pick != null)
+                {
+                    randomPicks.Add(pick);
+                }
+            }
+
+            //foreach (var raritySpec in pack.PackContentSpecs)
+            //{
+            //    List<Card> chosenCards = new List<Card>();
+
+            //    var count = raritySpec.Count;
+            //    var overallRarityForDraw = raritySpec.OverallRarity;
+
+            //    // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
+            //    var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityForDraw);
+
+            //    if (cardPool == null)
+            //    {
+            //        StaticHelpers.Logger.LogError($"A cardpool with rarity '{overallRarityForDraw}' was not found within cardset '{SetCode}'");
+            //        break;
+            //    }
+
+            //    chosenCards = cardPool.PeekCards(count);
+
+            //    if (chosenCards.Count < count)
+            //    {
+            //        StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{overallRarityForDraw}', Count: '{count}'");
+            //    }
+
+            //    drawnCards.AddRange(chosenCards);
+            //}
+
+            if (randomPicks.Count < 1 || randomPicks.Any(x => string.IsNullOrWhiteSpace(x.Code)))
             {
                 StaticHelpers.Logger.LogError("Test");
             }
 
-            var returnList = drawnCards.GroupBy(p => p.Code)
-                    .Select(group => new InventoryItem
-                    {
-                        Product = group.First(),
-                        Count = group.Count()
-                    })
-                    .ToList();
-            
-            return returnList;
+            //var returnList = drawnCards.GroupBy(p => p.Code)
+            //        .Select(group => new InventoryItem
+            //        {
+            //            Product = group.First(),
+            //            Count = group.Count()
+            //        })
+            //        .ToList();
+
+            return randomPicks.Select(x => new InventoryItem { Count = 1, Product = x}).AsList();
         }
 
         private int GetSetCardCountByRarity(string rarity)

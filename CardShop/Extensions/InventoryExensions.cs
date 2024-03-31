@@ -29,6 +29,8 @@ namespace CardShop.Extensions
         /// <returns></returns>
         public static List<InventoryItem> Consolidate(this List<InventoryItem> inventoryList)
         {
+            if (inventoryList.Count < 2) { return inventoryList; }
+
             return inventoryList.GroupBy(x => x.Product.Code)
                                 .Select(y => new InventoryItem
                                 {

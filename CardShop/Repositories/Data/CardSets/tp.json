@@ -11,13 +11,21 @@
       "code": "12p",
       "name": "Theed Palace Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "CU",
+          "randomPickParameters": {
+            "overallRarities": [ "CU" ],
+            "side": null
+          },
+          "setCode": "tp",
           "count": 10
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "tp",
           "count": 1
         }
       ]

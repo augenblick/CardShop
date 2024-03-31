@@ -11,17 +11,29 @@
       "code": "03p",
       "name": "Hoth Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCode": "hoth",
           "count": 10
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCode": "hoth",
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCode": "hoth",
           "count": 4
         }
       ]

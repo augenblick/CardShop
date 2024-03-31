@@ -48,16 +48,16 @@
             existingCardEntry.Duplicates += count;
         }
 
-        public Card DrawCard()
+        public Card DrawCard(string? cardSide = null)
         {
-            var card = DrawCard(false);
+            var card = DrawCard(false, cardSide);
 
             return card;
         }
 
-        public Card PeekCard()
+        public Card PeekCard(string? cardSide = null)
         {
-            return DrawCard(true);
+            return DrawCard(true, cardSide);
         }
 
         public List<Card> PeekCards(int count)
@@ -74,16 +74,27 @@
             return list;
         }
 
-        private Card DrawCard(bool peekWithoutDrawing)
+        private Card DrawCard(bool peekWithoutDrawing, string? cardSide)
         {
-            double totalWeight = _cards.Sum(card => card.Duplicates);
+            // Separate cards based on SideCode
+            var relevantCards = _cards.Where(card => cardSide == null || card.Card.SideCode == cardSide);
+
+            if (relevantCards.Count() < 1) 
+            { 
+                RefreshPool();
+                relevantCards = _cards.Where(card => cardSide == null || card.Card.SideCode == cardSide);
+            }
+
+            double totalWeight = relevantCards.Sum(card => card.Duplicates);
             double randomNumber = _random.NextDouble() * totalWeight;
 
-            if (_cards.Count < 1 ) { RefreshPool(); }
+            double cumulativeWeight = 0.0;
 
-            foreach (CardPoolNode card in _cards)
+            foreach (CardPoolNode card in relevantCards)
             {
-                if (randomNumber < card.Duplicates)
+                cumulativeWeight += card.Duplicates;
+
+                if (randomNumber < cumulativeWeight)
                 {
                     if (card.Duplicates > 0)
                     {
@@ -95,7 +106,6 @@
                         return card.Card;
                     }
                 }
-                randomNumber -= card.Duplicates;
             }
 
             StaticHelpers.Logger.LogError("Unable to draw a card as requested.");

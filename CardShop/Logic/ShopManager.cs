@@ -48,14 +48,23 @@ namespace CardShop.Logic
             var requestList = new List<(ProductType, CardSetCode, int)>();
             const int maxBoxCount = 5;
             const int maxPackCount = 30;
+            const int maxDeckCount = 10;
+            const int maxSealedDeckCount = 5;
+            const int maxMiscCount = 10;
 
             foreach (var set in availableSets)
             {
                 var matchingBoxInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterBox);
                 var matchingPackInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterPack);
+                var matchingDeckInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.StarterDeck);
+                var matchingSealedDeckInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.SealedDeck);
+                var matchingMiscInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.Miscellaneous);
 
                 var currentBoxCount = matchingBoxInventory.Sum(x => x.Count);
                 var currentPackCount = matchingPackInventory.Sum(x => x.Count);
+                var currentDeckCount = matchingDeckInventory.Sum(x => x.Count);
+                var currentSealedDeckCount = matchingDeckInventory.Sum(x => x.Count);
+                var currentMiscCount = matchingDeckInventory.Sum(x => x.Count);
 
                 if (currentBoxCount < (maxBoxCount * 0.3))
                 {
@@ -66,6 +75,21 @@ namespace CardShop.Logic
                 {
                     requestList.Add((ProductType.BoosterPack, set, maxPackCount - currentPackCount));
                 }
+
+                if (currentDeckCount < (maxDeckCount * 0.3))
+                {
+                    requestList.Add((ProductType.StarterDeck, set, maxDeckCount - currentPackCount));
+                }
+
+                if (currentSealedDeckCount < (maxSealedDeckCount * 0.3))
+                {
+                    requestList.Add((ProductType.SealedDeck, set, maxSealedDeckCount - currentPackCount));
+                }
+
+                if (currentMiscCount < (maxMiscCount * 0.3))
+                {
+                    requestList.Add((ProductType.Miscellaneous, set, maxMiscCount - currentPackCount));
+                }
             }
 
             var productList = new List<KeyValuePair<Product, int>>();
@@ -74,7 +98,7 @@ namespace CardShop.Logic
             {
                 var product = _cardProductBuilder.GetProductByProductType(request.Item1, request.Item2);
 
-                if (product.SetCode != CardSetCode.undefined)
+                if (product != null && product.SetCode != CardSetCode.undefined)
                 {
                     productList.Add(new KeyValuePair<Product, int>(product, request.Item3));
                 }

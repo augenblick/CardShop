@@ -9,9 +9,9 @@
   "products": [
 
     {
-      "code": "013s",
+      "code": "13s",
       "name": "Premiere Introductory Two-Player Game",
-      "productType": "BoosterBox",
+      "productType": "Miscellaneous",
       "costPer": "19.95",
 
       "contents": [
@@ -21,17 +21,17 @@
           "count": 1
         },
         {
-          "code": "013d01",
+          "code": "13d01",
           "count": 1
         },
         {
-          "code": "013d02",
+          "code": "13d02",
           "count": 1
         }
       ]
     },
     {
-      "code": "013d01",
+      "code": "13d01",
       "name": "Premiere Introductory Deck (Dark Side)",
       "productType": "StarterDeck",
       "isPurchasable": false,
@@ -247,7 +247,7 @@
       ]
     },
     {
-      "code": "013d02",
+      "code": "13d02",
       "name": "Premiere Introductory Deck (Light Side)",
       "productType": "StarterDeck",
       "isPurchasable": false,

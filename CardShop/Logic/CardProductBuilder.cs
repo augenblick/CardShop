@@ -1,10 +1,12 @@
 ﻿using CardShop.Enums;
+using CardShop.Extensions;
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Repositories.Models;
 using Dapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
 
 namespace CardShop.Logic
 {
@@ -51,63 +53,96 @@ namespace CardShop.Logic
             return contents;
         }
 
-        public List<InventoryItem> OpenProduct(Product product)
+        public List<InventoryItem> OpenProduct(Product product, int multiplier)
         {
             if (product == null)
             {
                 return new List<InventoryItem>();
             }
 
-            var cardSet = GetCardSetByCardSetCode(product.SetCode);
-
-            if (product is BoosterPack)
-            {
-                var packContents = cardSet.OpenBoosterPack(product as BoosterPack);
-
-                return packContents;
-            }
-
-            // non-BoosterPack product
             var returnProductList = new List<InventoryItem>();
 
-            var contents = new List<Content>();
-            if (product is BoosterBox) { contents = ((BoosterBox)product).Contents; }
-            else if (product is StarterDeck) { contents = ((StarterDeck)product).Contents; }
-            else { _logger.LogError($"ProductType for not '{product.Code}' not supported!"); }
+            //var cardSet = GetCardSetByCardSetCode(product.SetCode);
 
-            foreach (var content in contents)
+            //if (product is BoosterPack)
+            //{
+            //    var packContents = cardSet.OpenBoosterPack(product as BoosterPack);
+
+            //    return packContents;
+            //}
+
+            foreach(var content in product.Contents)
             {
-                var setForThisContent = cardSet;
+                CardSet sourceCardSet;
+                content.Count *= multiplier;
+
+                // TODO: this cardsetcode stuff is a mess and needs to be cleaned up
                 if (!string.IsNullOrWhiteSpace(content.SetCode))
                 {
-                    // a specific set is defined for this content, so use it.
-                    setForThisContent = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
-                }
-
-                var selectedContent = setForThisContent.GetCardSetProduct(content.Code);
-
-                if (selectedContent != null)
-                {
-                    returnProductList.Add(new InventoryItem
-                    {
-                        Product = selectedContent,
-                        Count = content.Count
-                    });
+                    sourceCardSet = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
                 }
                 else
                 {
-                    StaticHelpers.Logger.LogError($"No matching product '{product.Code}' found in set '{setForThisContent.SetCode}' while opening products!");
+                    sourceCardSet = GetCardSetByCardSetCode(product.SetCode);
+                }
+
+                if (sourceCardSet == null)
+                {
+                    // TODO: we have a problem
+                    _logger.LogError($"No source set found for this content");
+                }
+
+                if (content.RandomPickParameters != null)
+                {
+                    // make random pick
+                    returnProductList.AddRange(sourceCardSet.MakeRandomPicks(content));
+                }
+                else
+                {
+                    returnProductList.Add(sourceCardSet.OpenProduct(content));
                 }
             }
 
+            //var contents = new List<Content>();
+            //if (product is BoosterBox) { contents = ((BoosterBox)product).Contents; }
+            //else if (product is StarterDeck) { contents = ((StarterDeck)product).Contents; }
+            //else { _logger.LogError($"ProductType for not '{product.Code}' not supported!"); }
+
+            //foreach (var content in contents)
+            //{
+            //    var setForThisContent = cardSet;
+            //    if (!string.IsNullOrWhiteSpace(content.SetCode))
+            //    {
+            //        // a specific set is defined for this content, so use it.
+            //        setForThisContent = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
+            //    }
+
+            //    var selectedContent = setForThisContent.GetCardSetProduct(content.Code);
+
+            //    if (selectedContent != null)
+            //    {
+            //        returnProductList.Add(new InventoryItem
+            //        {
+            //            Product = selectedContent,
+            //            Count = content.Count
+            //        });
+            //    }
+            //    else
+            //    {
+            //        StaticHelpers.Logger.LogError($"No matching product '{product.Code}' found in set '{setForThisContent.SetCode}' while opening products!");
+            //    }
+            //}
+
             // consolidate any like Contents
-            var consolidatedList = returnProductList
-                .GroupBy(x => x.Product.Code)
-                .Select(y => new InventoryItem
-                {
-                    Product = y.First().Product,
-                    Count = y.Sum(c => c.Count)
-                }).AsList();
+            //var consolidatedList = returnProductList
+            //    .GroupBy(x => x.Product.Code)
+            //    .Select(y => new InventoryItem
+            //    {
+            //        Product = y.First().Product,
+            //        Count = y.Sum(c => c.Count)
+            //    }).AsList();
+
+            var consolidatedList = returnProductList.Consolidate();
 
             return consolidatedList;
         }
@@ -180,7 +215,11 @@ namespace CardShop.Logic
 
             if (cardSet == null) { return returnProduct; }
 
-            var product = cardSet.Products.FirstOrDefault(x => x.ProductType == productType);
+            var products = cardSet.Products.Where(x => x.ProductType == productType).AsList();
+
+            if (products.Count < 1) { return returnProduct; }
+            var randomIndex = _randomizer.Next(products.Count);
+            var product = products[randomIndex];
 
             if (product != null)
             {
@@ -202,6 +241,13 @@ namespace CardShop.Logic
                     if (product.CostPer == 0M)
                     {
                         product.CostPer = perPackCost;
+                    }
+                }
+                else if (product is StarterDeck)
+                {
+                    if (product.CostPer == 0M)
+                    {
+                        product.CostPer = perPackCost * 3.5M;
                     }
                 }
 
@@ -227,7 +273,7 @@ namespace CardShop.Logic
 
                 for (int i = 0; i < testCount; i++)
                 {
-                    cardPool.AddCardNoDuplicates(cardSet.DrawRandomCardFromSet(rarityCode, peekDontDraw), 1);
+                    cardPool.AddCardNoDuplicates(cardSet.DrawRandomCardFromSet(rarityCode, null, peekDontDraw), 1);
                 }
 
                 var poolStats = cardPool.GetPoolStatistics();
@@ -337,6 +383,10 @@ namespace CardShop.Logic
                         return jsonObject.ToObject<BoosterBox>(serializer);
                     case "StarterDeck":
                         return jsonObject.ToObject<StarterDeck>(serializer);
+                    case "Miscellaneous":
+                        return jsonObject.ToObject<Miscellaneous>(serializer);
+                    case "SealedDeck":
+                        return jsonObject.ToObject<SealedDeck>(serializer);
                     default:
                         throw new JsonSerializationException($"Unknown product type: {productType}");
                 }

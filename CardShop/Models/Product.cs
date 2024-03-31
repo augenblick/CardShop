@@ -15,6 +15,7 @@ namespace CardShop.Models
         public decimal CostPer { get; set; }
         public ProductType ProductType { get; set; }
         public bool IsPurchasable { get; set; } = true;
+        public List<Content> Contents { get; set; }
     }
 
     public enum ProductType
@@ -22,17 +23,19 @@ namespace CardShop.Models
         BoosterBox,
         BoosterPack,
         StarterDeck,
-        Card
+        SealedDeck,
+        Card,
+        Miscellaneous
     }
 
     public class BoosterBox : Product
     {
-        public List<Content> Contents { get; set; }
+        //public List<Content> Contents { get; set; }
     }
 
     public class StarterDeck : Product
     {
-        public List<Content> Contents { get; set; }
+        //public List<Content> Contents { get; set; }
     }
 
     public class Content
@@ -40,16 +43,33 @@ namespace CardShop.Models
         public string? SetCode { get; set; }
         public string Code { get; set; }
         public int Count { get; set; }
+        public RandomPickParameters RandomPickParameters { get; set; }
     }
 
     public class BoosterPack : Product
     {
-        public List<PackContentSpec> PackContentSpecs { get; set;}
+        //public List<Content> PackContentSpecs { get; set;}
     }
 
-    public class PackContentSpec
+    //public class PackContentSpec
+    //{
+    //    public int Count { get; set; }
+    //    public string OverallRarity { get; set; }
+    //}
+
+    public class Miscellaneous : Product
     {
-        public int Count { get; set; }
-        public string OverallRarity { get; set; }
+
+    }
+
+    public class SealedDeck : Product
+    {
+
+    }
+
+    public class RandomPickParameters
+    {
+        public List<string>? OverallRarities { get; set; }
+        public string? Side { get; set; }
     }
 }
