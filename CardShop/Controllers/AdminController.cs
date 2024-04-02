@@ -1,9 +1,12 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Enums;
+using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
+using CardShop.Repositories;
 using CardShop.Repositories.Models;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -11,7 +14,8 @@ namespace CardShop.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
-    public class TestingController : ControllerBase
+    [Authorize(Roles = "Admin")]
+    public class AdminController : ControllerBase
     {
 
         private readonly ICardProductBuilder _cardProductBuilder;
@@ -19,14 +23,19 @@ namespace CardShop.Controllers
         private readonly ILogger _logger;
         private readonly IUserManager _userManager;
         private readonly IInventoryManager _inventoryManager;
+        private readonly IDeckManager _deckManager;
+        private readonly IDeckRepository _deckRepository;
 
-        public TestingController(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger, IUserManager userManager, IInventoryManager inventoryManager)
+        public AdminController(ICardProductBuilder cardProductBuilder, IShopManager shopManager, ILogger<CardShop> logger, 
+            IUserManager userManager, IInventoryManager inventoryManager, IDeckManager deckManager, IDeckRepository deckRepository)
         {
             _cardProductBuilder = cardProductBuilder;
             _shopManager = shopManager;
             _logger = logger;
             _userManager = userManager;
             _inventoryManager = inventoryManager;
+            _deckManager = deckManager;
+            _deckRepository = deckRepository;
         }
 
         [HttpPost]
@@ -54,7 +63,7 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        public async Task<List<Inventory>> GetUserInventory(int userId)
+        public async Task<List<Inventory>> GetUserInventoryByUserId(int userId)
         {
             return await _inventoryManager.GetUserInventory(userId);
         }
@@ -65,15 +74,29 @@ namespace CardShop.Controllers
             return await _userManager.SetUserBalance(userId, newBalance);
         }
 
-        [HttpPost]
-        public async Task<User> AddUser(string userName, decimal balance = 0.0M)
+        [HttpDelete]
+        public async Task<bool> DeleteDeck(int deckId)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            var deck = await _deckManager.GetDeckNoContents(deckId);
+
+            if (deck.DeckId < 1)
             {
-                return new User();
+                return false;
             }
 
-            return await _userManager.AddUser(userName, balance);
+            return await _deckRepository.DeleteDeck(deckId);
+        }
+
+        [HttpPost]
+        public async Task<User> SetUserRoleById(int userId, Role role)
+        {
+            return await _userManager.SetUserRole(userId, role);
+        }
+
+        [HttpPost]
+        public async Task<User> SetUserRoleByUsername(string username, Role role)
+        {
+            return await _userManager.SetUserRole(username, role);
         }
 
         [HttpPost]

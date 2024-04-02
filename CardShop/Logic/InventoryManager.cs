@@ -29,6 +29,18 @@ namespace CardShop.Logic
             return await _inventoryRepository.GetUserInventory(userId);
         }
 
+        public async Task<List<InventoryItem>> GetUserInventoryItems(int userId, ProductType? productTypeFilter = null)
+        {
+            var items = InventoryItemsFromInventory(await GetUserInventory(userId));
+
+            if (productTypeFilter.HasValue)
+            {
+                return items.Where(x => x.Product.ProductType == productTypeFilter.Value).AsList();
+            }
+
+            return items;
+        }
+
         public async Task<bool> UpdateMultipleInventory(List<List<Inventory>> inventoryRequests)
         {
             return await _inventoryRepository.UpsertMultipleInventory(inventoryRequests);

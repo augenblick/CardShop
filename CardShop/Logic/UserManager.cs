@@ -1,5 +1,7 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Enums;
+using CardShop.Interfaces;
 using CardShop.Repositories.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace CardShop.Logic
 {
@@ -27,24 +29,81 @@ namespace CardShop.Logic
             return user ?? new User();
         }
 
-        public async Task<User> AddUser(string userName, decimal balance)
+        public async Task<User?> GetUser(HttpContext context)
         {
-            return await _userRepository.AddUser(userName, balance);
+            var userName = context?.User?.Identity?.Name;
+            var user = await GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return null;
+            }
+
+            return user;
         }
+
+        public async Task<User> AddUser(string username, string password, string email = null, decimal balance = 0, Role role = Role.User, int? userId = null)
+        {
+            if (string.IsNullOrWhiteSpace(username)) { return new User(); }
+            var existing = await _userRepository.GetUser(username);
+
+            if (!string.IsNullOrWhiteSpace(existing?.Username))
+            {
+                _logger.LogError($"Username '{username}' already exists!");
+                return new User();
+            }
+
+            return await _userRepository.AddUser(username, password, email, balance, role, userId);
+        }
+
 
         public async Task<bool> DeleteUser(int userId)
         {
-            if (userId == 0)
+            var user = await _userRepository.GetSecureUser(userId);
+
+            if (user.Role == Role.Shop)
             {
                 _logger.LogError("Deletion the Shop Keeper from the userlist ist verboten!");
                 return false;
             }
+
             return await _userRepository.DeleteUser(userId);
         }
 
         public async Task<bool> SetUserBalance(int userId, decimal newBalance)
         {
             return await _userRepository.SetUserBalance(userId, newBalance);
+        }
+
+        public async Task<User> SetUserRole(int userId, Role role)
+        {
+            var userWasUpdated = await _userRepository.SetUserRole(userId, role);
+
+            if (!userWasUpdated)
+            {
+                return new User();
+            }
+
+            return await _userRepository.GetUser(userId);
+        }
+
+        public async Task<User> SetUserRole(string userName, Role role)
+        {
+            var user = await GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return new User();
+            }
+
+            var userWasUpdated = await _userRepository.SetUserRole(user.UserId, role);
+
+            if (!userWasUpdated)
+            {
+                return new User();
+            }
+
+            return await _userRepository.GetUser(user.UserId);
         }
     }
 }

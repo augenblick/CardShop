@@ -2,12 +2,15 @@
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
+using CardShop.Repositories.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace CardShop.Controllers
 {
     [Route("[controller]/[action]")]
+    [Authorize]
     [ApiController]
     public class CardShop : ControllerBase
     {
@@ -15,20 +18,24 @@ namespace CardShop.Controllers
         private readonly ILogger _logger;
         private readonly IInventoryManager _inventoryManager;
         private readonly ICardProductBuilder _cardProductBuilder;
+        private readonly IUserManager _userManager;
 
 
-        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder)
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder, IUserManager userManager)
         {
             _shopManager = shopManager;
             _logger = logger;
             _inventoryManager = inventoryManager;
             _cardProductBuilder = cardProductBuilder;
+            _userManager = userManager;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<GetShopInventoryResponse> GetShopInventory(bool includeOutOfStock = false)
         {
             var response = new GetShopInventoryResponse();
+
             try
             {
                 var inventory = await _shopManager.GetVerboseShopInventory(includeOutOfStock);
@@ -57,12 +64,9 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse {ErrorMessage = "The request list is empty!" };            
             }
 
-            if (request.PurchaserId == 0)
-            {
-                return new PurchaseProductResponse { ErrorMessage = "A PurchaserId of 0 (the shopKeeper's id) is not allowed!" };
-            }
+            var userName = HttpContext?.User?.Identity?.Name;
 
-            var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(request.PurchaserId, request.InventoryItems);
+            var (items, totalCost, remainingBalance, errorMessage) = await _shopManager.PurchaseInventory(userName, request.InventoryItems);
 
             if (items == null || items.Count < 1)
             {
@@ -79,17 +83,17 @@ namespace CardShop.Controllers
         [HttpPost]
         public async Task<OpenInventoryProductsResponse> OpenInventoryProducts(OpenInventoryProductsRequest request)
         {
-            if (request.UserId == 0)
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
             {
-                return new OpenInventoryProductsResponse
-                {
-                    ErrorMessage = "Cannot open inventory for userId 0 (shop keeper)!"
-                };
+                return new OpenInventoryProductsResponse { ErrorMessage = $"User not found!" };
             }
 
             var watch = new Stopwatch();
             watch.Start();
-            var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(request.UserId, request.InventoryProductsToOpen);
+            var (items, errorMessage) = await _inventoryManager.OpenInventoryProducts(user.UserId, request.InventoryProductsToOpen);
 
             watch.Stop();
 
@@ -103,6 +107,7 @@ namespace CardShop.Controllers
             };
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public GetAllAvailableProductInfoResponse GetAllAvailableProductInfo(bool includeCards = false)
         {
@@ -116,6 +121,7 @@ namespace CardShop.Controllers
             };
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<GetAllAvailableCardSetInfoResponse> GetAllAvailableCardSetInfo()
         {
@@ -136,12 +142,14 @@ namespace CardShop.Controllers
             return response.InfoCount < 1 ? NotFound(response) : Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<Product> GetProductInfo(string productCode)
         {
             return _cardProductBuilder.GetProduct(productCode);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<List<Product>> GetProductInfoMany(List<string> productCodes)
         {
@@ -161,6 +169,43 @@ namespace CardShop.Controllers
             }
 
             return returnList;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<InventoryItem>>> GetUserInventory()
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return NotFound(new List<InventoryItem>());
+            }
+
+            var currentInventory = await _inventoryManager.GetUserInventory(user.UserId);
+
+            if (currentInventory == null || currentInventory.Count < 1) 
+            {
+                return Ok(new List<InventoryItem>());
+            }
+
+            return Ok(_inventoryManager.InventoryItemsFromInventory(currentInventory));
+
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<User>> GetUser()
+        {
+            var userName = HttpContext?.User?.Identity?.Name;
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return NotFound(new User());
+            }
+
+            return Ok(user);
         }
 
     }

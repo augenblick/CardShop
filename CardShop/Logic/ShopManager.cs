@@ -117,21 +117,23 @@ namespace CardShop.Logic
         /// <param name="userId"></param>
         /// <param name="requestedItems"></param>
         /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
-        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(int userId, List<ProductReference> requestedItems)
+        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems)
         {
             var errorMessage = string.Empty;
             var returnList = new List<InventoryItem>();
             var totalCostFinal = 0.0M;  // should remain 0.0 until money actually removed from account
             var userBalance = 0.0M;
 
-            var user = await _userManager.GetUser(userId);
+            var user = await _userManager.GetUser(username);
 
             if (user == null)
             {
-                errorMessage = $"user with Id '{userId}' not found!";
+                errorMessage = $"user '{username}' not found!";
                 _logger.LogError(errorMessage);
                 return (returnList, totalCostFinal, userBalance, errorMessage);
             }
+
+            var userId = user.UserId;
 
             userBalance = user.Balance;
             var totalCost = 0.0M;
@@ -180,7 +182,7 @@ namespace CardShop.Logic
                 // does user have the funds?
                 if (user.Balance < totalCost)
                 {
-                    errorMessage = $"User '{userId}' doesn't have enough money for this purchase.  User has {user.Balance.ToString("C", cultureInfo)} of the required cost of {totalCost.ToString("C", cultureInfo)}";
+                    errorMessage = $"User '{username}' doesn't have enough money for this purchase.  User has {user.Balance.ToString("C", cultureInfo)} of the required cost of {totalCost.ToString("C", cultureInfo)}";
                     _logger.LogError(errorMessage);
                     return (returnList, totalCostFinal, userBalance, errorMessage);
                 }
@@ -250,6 +252,24 @@ namespace CardShop.Logic
             }
 
             return (_inventoryManager.InventoryItemsFromInventory(purchasedInventoryToReturn), totalCostFinal, userBalance, errorMessage);
+        }
+
+        public async Task<bool> AllotStartingInventoryToUser(string userName)
+        {
+            var user = await _userManager.GetUser(userName);
+
+            if (string.IsNullOrWhiteSpace(user.Username))
+            {
+                return false;
+            }
+
+            // TODO: rework this, incl. probably defining starting items elsewhere
+            var startingProductList = new List<KeyValuePair<Product, int>>
+            {
+                new KeyValuePair<Product, int>(_cardProductBuilder.GetProduct("013s", CardSetCode.PremiereTwoPlayer), 1)
+            };
+
+            return await _inventoryManager.AddInventory(startingProductList, user.UserId);
         }
 
         public async Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock)
