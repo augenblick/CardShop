@@ -1,7 +1,7 @@
 {
   "code": "cor",
   "cycle_code": "full",
-  "date_release": "2001-01-01",
+  "date_release": "2001-08-01",
   "name": "Coruscant",
   "position": 11,
   "size": 180,
@@ -11,13 +11,22 @@
       "code": "11p",
       "name": "Coruscant Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "costPer": 3.29,
+      "contents": [
         {
-          "overallRarity": "CU",
+          "randomPickParameters": {
+            "overallRarities": [ "CU" ],
+            "side": null
+          },
+          "setCodes": [ "cor" ],
           "count": 10
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCodes": [ "cor" ],
           "count": 1
         }
       ]

@@ -1,10 +1,32 @@
 {
   "code": "rlp",
   "cycle_code": "premium",
-  "date_release": "1997-01-01",
+  "date_release": "1996-04-01",
   "name": "Rebel Leaders pack",
   "position": 4,
   "size": 2,
+
+  "products": [
+    {
+      "code": "16s",
+      "name": "Rebel Leaders Pack",
+      "productType": "PromotionalSet",
+      "costPer": "3.95", // TODO: unknown
+      "isPurchasable": false,
+      "contents": [
+        {
+          "setCodes": [ "rlp" ],
+          "code": "16001",
+          "count": 1
+        },
+        {
+          "setCodes": [ "rlp" ],
+          "code": "16002",
+          "count": 1
+        }
+      ]
+    }
+  ],
   
   "cards": [{
   "ability": 2,

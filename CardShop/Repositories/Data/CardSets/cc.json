@@ -1,7 +1,7 @@
 {
   "code": "cc",
   "cycle_code": "full",
-  "date_release": "1997-01-01",
+  "date_release": "1997-11-01",
   "name": "Cloud City",
   "position": 5,
   "size": 180,
@@ -12,17 +12,30 @@
       "code": "05p",
       "name": "Cloud City Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "costPer": 2.5,
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCodes": [ "cc" ],
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCodes": [ "cc" ], 
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCodes": [ "cc" ],
           "count": 3
         }
       ]

@@ -25,12 +25,12 @@ namespace CardShop.Models
         public int Size { get; set; }
 
         [JsonProperty("cards", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Card> Cards { get; set; }
+        public List<Card> Cards { get; set; } = new List<Card>();
 
         [JsonProperty("products", NullValueHandling = NullValueHandling.Ignore)]
         public List<Product> Products { get; set; }
 
-        public List<CardRarity> CardRarityMap { get; set; }
+        public List<CardRarity> CardRarityMap { get; set; } = new List<CardRarity>();
 
         private List<CardPool> _cardRarityPools { get; set; } = new List<CardPool>();
 
@@ -54,39 +54,63 @@ namespace CardShop.Models
 
                     if (cardPool == null || cardCount < 1)
                     {
-                        StaticHelpers.Logger.LogError($"When trying to insert cards into a card pool for set '{SetCode}', the card pool with overallRarity '{cardOverallRarity}' could not be found!");
+                        //StaticHelpers.Logger.LogError($"When trying to insert cards into a card pool for set '{SetCode}', the card pool with overallRarity '{cardOverallRarity}' could not be found!");
                     }
 
                     cardPool?.AddCard(card, cardCount.GetValueOrDefault());
                 }
         }
 
-        public Card DrawRandomCardFromSet(string rarityCode, bool peekDontDraw = true)
+        public Card DrawRandomCardFromSet(List<string> overallRarityCodes, string? cardSide = null, bool peekDontDraw = true)
         {
-            var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == rarityCode);
+            CardPool? cardPool = null;
+
+            if (overallRarityCodes.Count == 1)
+            {
+                cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityCodes.First());
+            }
+            else
+            {
+                // create unique identifier for this pool
+                overallRarityCodes.Sort();
+                var uniqueCombinedName = string.Join('-', overallRarityCodes.Select(x => x.ToUpper()));
+
+                // see if such a pool has already been generated
+                cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == uniqueCombinedName);
+                if ( cardPool == null)
+                {
+                    var suitableCardPools = _cardRarityPools.Where(x => overallRarityCodes.Contains(x.PoolRarityCode)).AsList();
+                    if (suitableCardPools.Count < 2)
+                    {
+                        StaticHelpers.Logger.LogError($"Not all of requested rarity codes '{overallRarityCodes.Select(x => $"{x}, ")}' found in cardset '{Name}'");
+                        return null;
+                    }
+
+                    cardPool = new CardPool(suitableCardPools, uniqueCombinedName);
+                }
+            }
 
             if (cardPool == null)
             {
-                StaticHelpers.Logger.LogError($"No card pool in set '{Name}' with rarity code '{rarityCode}'");
+                StaticHelpers.Logger.LogError($"Not all of requested rarity codes '{overallRarityCodes.Select(x => $"{x}, ")}' found in cardset '{Name}'");
                 return null;
             }
 
+            // save for later use
+            _cardRarityPools.Add(cardPool);
+
             if (peekDontDraw)
             {
-                return cardPool.PeekCard();
+                return cardPool.PeekCard(cardSide);
             }
 
-            return cardPool.DrawCard();
+            return cardPool.DrawCard(cardSide);
         }
 
         public List<InventoryItem> OpenProduct(Product product)
         {
             var returnProductList = new List<InventoryItem>();
 
-            if (product is BoosterPack)
-            {
-                return OpenBoosterPack((BoosterPack)product);
-            }
             foreach (var content in ((BoosterBox)product).Contents)
             {
                 var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code);
@@ -116,6 +140,28 @@ namespace CardShop.Models
             return consolidatedList;
         }
 
+        public InventoryItem OpenProduct(Content content)
+        {
+            var returnProduct = new InventoryItem();
+
+            var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code) ?? Cards.FirstOrDefault(x => x.Code == content.Code);
+
+            if (selectedContent != null)
+            {
+                returnProduct = new InventoryItem
+                {
+                    Product = selectedContent,
+                    Count = content.Count
+                };
+            }
+            else
+            {
+                StaticHelpers.Logger.LogError($"No matching product '{content.Code}' found in set '{SetCode}' while opening products!");
+            }
+
+            return returnProduct;
+        }
+
         public Product GetCardSetProduct(string productCode)
         {
             var product = Products.FirstOrDefault(x => x.Code == productCode) ?? Cards.FirstOrDefault(x => x.Code == productCode);
@@ -123,293 +169,44 @@ namespace CardShop.Models
             return product;
         }
 
-        public List<InventoryItem> OpenBoosterPack(BoosterPack pack)
+        public List<InventoryItem> MakeRandomPicks(Content content)
         {
-            var drawnCards = new List<Product>();
+            var randomPicks = new List<Product>();
 
-            foreach (var raritySpec in pack.PackContentSpecs)
+            if (content?.RandomPickParameters?.OverallRarities?.FirstOrDefault() == null)
             {
-                List<Card> chosenCards = new List<Card>();
-
-                var count = raritySpec.Count;
-                var overallRarityForDraw = raritySpec.OverallRarity;
-
-                // TODO: update PoolRarityCode options to be defined dynamically based on cardset definition jsons
-                var cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == overallRarityForDraw);
-
-                if (cardPool == null)
-                {
-                    StaticHelpers.Logger.LogError($"A cardpool with rarity '{overallRarityForDraw}' was not found within cardset '{SetCode}'");
-                    break;
-                }
-
-                chosenCards = cardPool.PeekCards(count);
-
-                if (chosenCards.Count < count)
-                {
-                    StaticHelpers.Logger.LogError($"Unable to draw enough cards while opening a booster pack!  OverallRarity: '{overallRarityForDraw}', Count: '{count}'");
-                }
-
-                drawnCards.AddRange(chosenCards);
+                return new List<InventoryItem>();
             }
 
-            if (drawnCards.Count < 1 || drawnCards.Any(x => string.IsNullOrWhiteSpace(x.Code)))
+            for (int i = 0; i < content.Count; i++)
+            {
+                var pick = DrawRandomCardFromSet(content.RandomPickParameters.OverallRarities, content.RandomPickParameters.Side);
+                if (pick != null)
+                {
+                    randomPicks.Add(pick);
+                }
+            }
+
+
+            if (randomPicks.Count < 1 || randomPicks.Any(x => string.IsNullOrWhiteSpace(x.Code)))
             {
                 StaticHelpers.Logger.LogError("Test");
             }
 
-            var returnList = drawnCards.GroupBy(p => p.Code)
-                    .Select(group => new InventoryItem
-                    {
-                        Product = group.First(),
-                        Count = group.Count()
-                    })
-                    .ToList();
-            
-            return returnList;
+            return randomPicks.Select(x => new InventoryItem { Count = 1, Product = x}).AsList();
         }
 
-        private int GetSetCardCountByRarity(string rarity)
+        public Card? GetCardByName(string cardName)
         {
-            switch (Name)
+            var foundCards = Cards.Where(x => x.Name?.ToLower() == cardName?.ToLower()).AsList();
+
+            if (foundCards.Count > 1)
             {
-                case CardSetConstants.Premiere:
-                    switch (rarity)
-                    {
-
-                        case "C1": return 1;
-                        case "C2": return 2;
-                        case "C3": return 3;
-
-                        case "U1": return 2;
-                        case "U2": return 4;
-
-                        case "R1": return 2;
-                        case "R2": return 4;
-                    }
-                    return -1;
-                case CardSetConstants.NewHope:
-                    switch (rarity)
-                    {
-
-                        case "C1": return 1;
-                        case "C2": return 2;
-                        case "C3": return 3;
-                        case "U1": return 1;
-                        case "U2": return 2;
-                        case "R1": return 1;
-                        case "R2": return 2;
-                    }
-                    return -1;
-                case CardSetConstants.Hoth:
-                    switch (rarity)
-                    {
-
-                        case "C1": return 1;
-                        case "C2": return 2;
-                        case "C3": return 3;
-                        case "U1": return 1;
-                        case "U2": return 2;
-                        case "R1": return 1;
-                        case "R2": return 2;
-                    }
-                    return -1;
-                case CardSetConstants.Dagobah:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.CloudCity:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.JabbasPalace:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.SpecialEdition:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R": return 1;
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Endor:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R": return 1;
-                        case "CF": return 9;
-                        case "UF": return 4;
-                        case "RF": return 2;
-                    }
-                    return -1;
-                case CardSetConstants.DeathStar2:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "UR": return 2;
-                        case "R3": return 3;
-                        case "R4": return 4;
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Tatooine:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R1": return 1;
-                        case "R3": return 3;
-                        case "R4": return 4;
-                    }
-                    return -1;
-                case CardSetConstants.Coruscant:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R1": return 1;
-                        case "R3": return 3;
-                        case "R4": return 4;
-                    }
-                    return -1;
-                case CardSetConstants.Theed:
-                    switch (rarity)
-                    {
-
-                        case "C": return 1;
-                        case "U": return 1;
-                        case "R1": return 1;
-                        case "R3": return 3;
-                        case "R4": return 4;
-                    }
-                    return -1;
-                case CardSetConstants.Reflections1:
-                    switch (rarity)
-                    {
-
-                        case "CF": return 3;
-                        case "UF": return 2;
-                        case "RF": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Reflections2:
-                    switch (rarity)
-                    {
-
-                        case "CF": return 3;
-                        case "UF": return 2;
-                        case "RF": return 1;
-                        case "F1": return 1;
-                        case "F2": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Reflections3:
-                    switch (rarity)
-                    {
-
-                        case "CF": return 3;
-                        case "UF": return 2;
-                        case "RF": return 1;
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.PremiereEnhanced:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.CloudCityEnhanced:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.JabbasPalaceEnhanced:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.JediPack:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.ThirdAnthology:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.PremiereSealedDeck:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.JabbasPalaceSealedDeck:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Promotional:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Starter1:
-                    switch (rarity)
-                    {
-
-                        case "F": return 1;
-                    }
-                    return -1;
-                case CardSetConstants.Starter2:
-                    switch (rarity)
-                    {
-                        case "F": return 1;
-                    }
-                    return -1;
-                default:
-                    return -1;
+                StaticHelpers.Logger.LogError($"Multiple cards with name '{cardName}' found!");
+                return null;
             }
+
+            return foundCards.FirstOrDefault();
         }
     }
 

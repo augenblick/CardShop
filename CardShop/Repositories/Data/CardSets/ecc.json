@@ -1,11 +1,132 @@
 {
   "code": "ecc",
   "cycle_code": "premium",
-  "date_release": "1999-01-01",
+  "date_release": "1999-12-08",
   "name": "Enhanced Cloud City",
   "position": 7,
   "size": 12,
-  
+
+
+  "products": [
+
+    {
+      "code": "19s01",
+      "name": "Enhanced Cloud City Pack (Boba Fett In Slave One)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19008",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19006",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19007",
+          "count": 1
+        },
+        {
+          "setCodes": [ "cc" ],
+          "code": "05p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "19s02",
+      "name": "Enhanced Cloud City Pack (Lando With Blaster Pistol)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19003",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19005",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19012",
+          "count": 1
+        },
+        {
+          "setCodes": [ "cc" ],
+          "code": "05p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "19s03",
+      "name": "Enhanced Cloud City Pack (IG-88 With Riot Gun)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19011",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19010",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19009",
+          "count": 1
+        },
+        {
+          "setCodes": [ "cc" ],
+          "code": "05p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "19s04",
+      "name": "Enhanced Cloud City Pack (Chewie With Blaster Rifle)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19001",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19002",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ecc" ],
+          "code": "19004",
+          "count": 1
+        },
+        {
+          "setCodes": [ "cc" ],
+          "code": "05p",
+          "count": 4
+        }
+      ]
+    }
+  ],
+
   "cards": [{
   "ability": 2,
   "armor": 0,

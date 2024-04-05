@@ -1,7 +1,7 @@
 {
   "code": "hoth",
   "cycle_code": "full",
-  "date_release": "1996-01-01",
+  "date_release": "1996-11-01",
   "name": "Hoth",
   "position": 3,
   "size": 162,
@@ -11,17 +11,30 @@
       "code": "03p",
       "name": "Hoth Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "costPer": 3.0,
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCodes": [ "hoth" ],
           "count": 10
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCodes": [ "hoth" ],
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCodes": [ "hoth" ],
           "count": 4
         }
       ]

@@ -1,7 +1,7 @@
 {
   "code": "edr",
   "cycle_code": "full",
-  "date_release": "1999-01-01",
+  "date_release": "1999-06-30",
   "name": "Endor",
   "position": 8,
   "size": 180,
@@ -11,17 +11,30 @@
       "code": "08p",
       "name": "Endor Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "costPer": 2.5,
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCodes": [ "edr" ],
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCodes": [ "edr" ],
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCodes": [ "edr" ],
           "count": 3
         }
       ]

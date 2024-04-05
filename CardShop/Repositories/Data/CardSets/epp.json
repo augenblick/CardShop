@@ -1,11 +1,129 @@
 {
   "code": "epp",
   "cycle_code": "premium",
-  "date_release": "1998-01-01",
+  "date_release": "1998-11-01",
   "name": "Enhanced Premiere",
   "position": 6,
   "size": 6,
-  
+
+  "products": [
+
+    {
+      "code": "18s01",
+      "name": "Enhanced Premiere Pack (Han With Heavy Blaster Pistol)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08001",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "18s02",
+      "name": "Enhanced Premiere Pack (Leia With Blaster Rifle)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08002",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "18s03",
+      "name": "Enhanced Premiere Pack (Luke With Lightsaber)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08003",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "18s04",
+      "name": "Enhanced Premiere Pack (Obi-Wan With Lightsaber)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08004",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "18s05",
+      "name": "Enhanced Premiere Pack (Boba Fett With Blaster Rifle)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08005",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "18s06",
+      "name": "Enhanced Premiere Pack (Darth Vader With Lightsaber)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "epp" ],
+          "code": "08006",
+          "count": 1
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 4
+        }
+      ]
+    }
+  ],
+
   "cards": [{
   "ability": 3,
   "armor": 0,

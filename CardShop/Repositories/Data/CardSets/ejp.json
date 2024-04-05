@@ -1,11 +1,131 @@
 {
   "code": "ejp",
   "cycle_code": "premium",
-  "date_release": "1999-01-01",
+  "date_release": "2000-01-12",
   "name": "Enhanced Jabba's Palace",
   "position": 8,
   "size": 12,
-  
+
+  "products": [
+
+    {
+      "code": "20s01",
+      "name": "Enhanced Jabba's Palace Pack (Boushh)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20001",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20012",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20006",
+          "count": 1
+        },
+        {
+          "setCodes": [ "jp" ],
+          "code": "06p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "20s02",
+      "name": "Enhanced Jabba's Palace Pack (Mara Jade, The Emperor‟s Hand)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20011",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20005",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20004",
+          "count": 1
+        },
+        {
+          "setCodes": [ "jp" ],
+          "code": "06p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "20s03",
+      "name": "Enhanced Jabba's Palace Pack (Master Luke)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20002",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20007",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20008",
+          "count": 1
+        },
+        {
+          "setCodes": [ "jp" ],
+          "code": "06p",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "code": "20s04",
+      "name": "Enhanced Jabba's Palace Pack (See-Threepio)",
+      "productType": "EnhancedPack",
+      "costPer": "14.95",
+
+      "contents": [
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20003",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20009",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ejp" ],
+          "code": "20010",
+          "count": 1
+        },
+        {
+          "setCodes": [ "jp" ],
+          "code": "06p",
+          "count": 4
+        }
+      ]
+    }
+  ],
+
   "cards": [{
   "ability": 4,
   "armor": 4,

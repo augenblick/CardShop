@@ -1,13 +1,14 @@
-﻿using CardShop.Enums;
+﻿using CardShop.ConfigurationClasses;
+using CardShop.Enums;
 using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
-using CardShop.Repositories;
 using CardShop.Repositories.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace CardShop.Controllers
@@ -45,9 +46,9 @@ namespace CardShop.Controllers
         }
 
         [HttpPost]
-        public bool TestRarityPoolLogic(string rarityCode, int testCount, bool peekDontDraw = true, Enums.CardSetCode cardSetCode = Enums.CardSetCode.Premiere)
+        public bool TestRarityPoolLogic(List<string> rarityCodes, int testCount, bool peekDontDraw = true, Enums.CardSetCode cardSetCode = Enums.CardSetCode.Premiere)
         {
-            return _cardProductBuilder.TestCardSetRarityPool(cardSetCode, rarityCode.ToUpper(), testCount, peekDontDraw);
+            return _cardProductBuilder.TestCardSetRarityPool(cardSetCode, rarityCodes.Select(x => x.ToUpper()).AsList(), testCount, peekDontDraw);
         }
 
         [HttpPost]
@@ -197,6 +198,45 @@ namespace CardShop.Controllers
                 _logger.LogError(ex, "An unhandled exception occurred.");
                 return Problem("An unexpected error occurred.", statusCode: StatusCodes.Status500InternalServerError);
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public List<string> GetCardsByName(List<string> cardNames, string rarityCode, bool makeFoil, string productCodeSuffix, string setCode)
+        {
+            var returnList = new List<string>();
+
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                ContractResolver = new SnakeCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
+            if (cardNames != null)
+            {
+                foreach (var cardName in cardNames)
+                {
+                    // search for matching card
+                    var foundCard = _cardProductBuilder.GetCardByName(cardName);
+
+                    if (foundCard != null)
+                    {
+                        foundCard.RarityCode = string.IsNullOrWhiteSpace(rarityCode) ? foundCard.RarityCode : rarityCode;
+                        foundCard.Code = string.IsNullOrWhiteSpace(productCodeSuffix) ? foundCard.Code : foundCard.Code + productCodeSuffix;
+                        foundCard.SetCode = string.IsNullOrWhiteSpace(setCode) ? foundCard.SetCode : setCode;
+                        foundCard.IsFoil = makeFoil;
+
+
+                        returnList.Add(JsonConvert.SerializeObject(foundCard, settings));
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"No card found for card name '{cardName}'");
+                    }
+                }
+            }
+
+            return returnList;
         }
     }
 }

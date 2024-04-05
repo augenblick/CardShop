@@ -1,7 +1,7 @@
 {
   "code": "jp",
   "cycle_code": "full",
-  "date_release": "1998-01-01",
+  "date_release": "1998-04-01",
   "name": "Jabba's Palace",
   "position": 6,
   "size": 180,
@@ -12,17 +12,30 @@
       "code": "06p",
       "name": "Jabba's Palace Booster Pack",
       "productType": "BoosterPack",
-      "packContentSpecs": [
+      "costPer": 2.5,
+      "contents": [
         {
-          "overallRarity": "C",
+          "randomPickParameters": {
+            "overallRarities": [ "C" ],
+            "side": null
+          },
+          "setCodes": [ "jp" ],
           "count": 5
         },
         {
-          "overallRarity": "R",
+          "randomPickParameters": {
+            "overallRarities": [ "R" ],
+            "side": null
+          },
+          "setCodes": [ "jp" ],
           "count": 1
         },
         {
-          "overallRarity": "U",
+          "randomPickParameters": {
+            "overallRarities": [ "U" ],
+            "side": null
+          },
+          "setCodes": [ "jp" ],
           "count": 3
         }
       ]
