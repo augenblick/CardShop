@@ -29,7 +29,8 @@ namespace CardShop.Enums
         JabbasSealedDeck,
         Reflections2,
         ThirdAnthology,
-        Reflections3
+        Reflections3,
+        Reflections1,
     }
     
     public static class CardSetHelpers
@@ -109,6 +110,9 @@ namespace CardShop.Enums
 
                 case CardSetCode.Reflections3:
                     return "ref3";
+
+                case CardSetCode.Reflections1:
+                    return "ref1";
 
                 default:
                     return "unknown";
@@ -191,6 +195,9 @@ namespace CardShop.Enums
 
                 case "ref3":
                     return CardSetCode.Reflections3;
+
+                case "ref1":
+                    return CardSetCode.Reflections1;
 
                 default:
                     return CardSetCode.undefined;

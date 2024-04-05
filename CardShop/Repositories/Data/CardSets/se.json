@@ -1,7 +1,7 @@
 {
   "code": "se",
   "cycle_code": "full",
-  "date_release": "1998-01-01",
+  "date_release": "1998-11-01",
   "name": "Special Edition",
   "position": 7,
   "size": 324,
@@ -11,13 +11,14 @@
       "code": "07p",
       "name": "Special Edition Booster Pack",
       "productType": "BoosterPack",
+      "costPer": 2.5,
       "contents": [
         {
           "randomPickParameters": {
             "overallRarities": [ "C" ],
             "side": null
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 5
         },
         {
@@ -25,7 +26,7 @@
             "overallRarities": [ "R" ],
             "side": null
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 1
         },
         {
@@ -33,7 +34,7 @@
             "overallRarities": [ "U" ],
             "side": null
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 3
         }
       ]
@@ -55,6 +56,7 @@
       "code": "07s01",
       "name": "Special Edition Starter Deck (Light Side)",
       "productType": "StarterDeck",
+      "costPer": 12.95,
 
       "contents": [
         {
@@ -62,7 +64,7 @@
             "overallRarities": [ "C" ],
             "side": "light"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 22
         },
         {
@@ -70,7 +72,7 @@
             "overallRarities": [ "U" ],
             "side": "light"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 14
         },
         {
@@ -78,117 +80,117 @@
             "overallRarities": [ "R" ],
             "side": "light"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 2
         },
 
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07001",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07007",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07011",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07034",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07037",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07046",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07048",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07049",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07067",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07068",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07070",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07105",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07121",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07123",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07129",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07130",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07131",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07137",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07141",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07152",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07157",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07161",
           "count": 1
         }
@@ -198,6 +200,7 @@
       "code": "07s02",
       "name": "Special Edition Starter Deck (Dark Side)",
       "productType": "StarterDeck",
+      "costPer": 12.95,
 
       "contents": [
         {
@@ -205,7 +208,7 @@
             "overallRarities": [ "C" ],
             "side": "dark"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 22
         },
         {
@@ -213,7 +216,7 @@
             "overallRarities": [ "U" ],
             "side": "dark"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 14
         },
         {
@@ -221,117 +224,117 @@
             "overallRarities": [ "R" ],
             "side": "dark"
           },
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "count": 2
         },
 
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07188",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07205",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07209",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07223",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07231",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07237",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07243",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07253",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07279",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07282",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07286",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07287",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07290",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07298",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07299",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07300",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07301",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07304",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07305",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07307",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07311",
           "count": 1
         },
         {
-          "setCode": "se",
+          "setCodes": [ "se" ],
           "code": "07315",
           "count": 1
         }

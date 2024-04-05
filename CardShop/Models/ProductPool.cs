@@ -1,174 +1,148 @@
 ﻿namespace CardShop.Models
 {
-    public class CardPool
+    public class Pool<T> where T : IEquatable<T>
     {
-        private List<CardPoolNode> _cards = new List<CardPoolNode>();
+        private List<PoolNode> _items = new List<PoolNode>();
         private Random _random = new Random();
-        public int TotalCardCount
+        public int TotalItemCount
         {
-            get { return _cards.Sum(card => card.Duplicates); }
+            get { return _items.Sum(item => item.Duplicates); }
             set { }
         }
 
         public string PoolRarityCode { get; set; }
 
-        public CardPool(string poolRarityCode)
+        public Pool(string poolRarityCode)
         {
             PoolRarityCode = poolRarityCode;
         }
 
-        public CardPool(string rarityCode, List<KeyValuePair<Card, int>> cards)
+        public Pool(string rarityCode, List<KeyValuePair<T, int>> items)
         {
             PoolRarityCode = rarityCode;
-            foreach(var card in cards)
+            foreach(var item in items)
             {
-                AddCard(card.Key, card.Value);
+                Add(item.Key, item.Value);
             }
         }
 
-        public CardPool(List<CardPool> cardPools, string poolRarityCode)
+        public Pool(List<Pool<T>> pools, string poolRarityCode)
         {
             PoolRarityCode = poolRarityCode;
 
-            foreach (var cardPool in cardPools)
+            foreach (var pool in pools)
             {
-                AppendNodes(cardPool.GetAllNodes());
+                AppendNodes(pool.GetAllNodes());
             }
         }
 
-        public void AddCard(Card card, int count)
+        public void Add(T item, int count)
         {
-            _cards.Add(new CardPoolNode(card, count));
+            _items.Add(new PoolNode(item, count));
         }
 
         /// <summary>
-        /// Checks for prior existance of given card within the pool and simply adds to the count if found.
+        /// Checks for prior existance of given item within the pool and simply adds to the count if found.
         /// Otherwise creates a new entry as usual.
         /// </summary>
-        /// <param name="card"></param>
+        /// <param name="item"></param>
         /// <param name="count"></param>
-        public void AddCardNoDuplicates(Card card, int count)
+        public void AddItemNoDuplicates(T item, int count)
         {
-            var existingCardIndex = _cards.FindIndex(x => x.Card.Code == card.Code);
+            var existingItemIndex = _items.FindIndex(x => x.Equals(item));
 
-            if (existingCardIndex < 0) { AddCard(card, count); return; }
+            if (existingItemIndex < 0) { Add(item, count); return; }
 
-            _cards[existingCardIndex].Duplicates += count;
+            _items[existingItemIndex].Duplicates += count;
         }
 
-        public void AppendNodes(List<CardPoolNode> nodes)
+        public void AppendNodes(List<PoolNode> nodes)
         {
             if (nodes == null) { return; }
-            _cards.AddRange(nodes);
+            _items.AddRange(nodes);
         }
 
-        public List<CardPoolNode> GetAllNodes()
+        public List<PoolNode> GetAllNodes()
         {
-            return _cards;
+            return _items;
         }
 
-        public Card DrawCard(string? cardSide = null)
+        public T? Draw()
         {
-            var card = DrawCard(false, cardSide);
-
-            return card;
+            return Draw(false);
         }
 
-        public Card PeekCard(string? cardSide = null)
+        public T? Peek()
         {
-            return DrawCard(true, cardSide);
+            return Draw(true);
         }
 
-        public List<Card> PeekCards(int count)
+        public List<T> Peek(int count)
         {
-            var list = new List<Card>();
+            var list = new List<T>();
 
             if (count < 1) { return list; }
 
             for (int i = 0; i < count; i++)
             {
-                list.Add(PeekCard());
+                list.Add(Peek());
             }
 
             return list;
         }
 
-        private Card DrawCard(bool peekWithoutDrawing, string? cardSide)
+        private T? Draw(bool peekWithoutDrawing)
         {
-            // Separate cards based on SideCode
-            var relevantCards = _cards.Where(card => cardSide == null || card.Card.SideCode == cardSide);
-
-            if (relevantCards.Count() < 1) 
+            if (_items.Count < 1) 
             { 
                 RefreshPool();
-                relevantCards = _cards.Where(card => cardSide == null || card.Card.SideCode == cardSide);
             }
 
-            double totalWeight = relevantCards.Sum(card => card.Duplicates);
+            double totalWeight = _items.Sum(card => card.Duplicates);
             double randomNumber = _random.NextDouble() * totalWeight;
 
             double cumulativeWeight = 0.0;
 
-            foreach (CardPoolNode card in relevantCards)
+            foreach (PoolNode item in _items)
             {
-                cumulativeWeight += card.Duplicates;
+                cumulativeWeight += item.Duplicates;
 
                 if (randomNumber < cumulativeWeight)
                 {
-                    if (card.Duplicates > 0)
+                    if (item.Duplicates > 0)
                     {
                         if (!peekWithoutDrawing)
                         {
-                            card.Duplicates--;
+                            item.Duplicates--;
                         }
 
-                        return card.Card;
+                        return item.PoolItem;
                     }
                 }
             }
 
-            StaticHelpers.Logger.LogError("Unable to draw a card as requested.");
-            return null;
+            StaticHelpers.Logger.LogError("Unable to draw an item as requested.");
+            return default(T);
         }
 
         public void RefreshPool()
         {
-            foreach (CardPoolNode card in _cards)
+            foreach (PoolNode item in _items)
             {
                 // Reset duplicates count to its original value
-                card.Duplicates = card.InitialDuplicates;
+                item.Duplicates = item.InitialDuplicates;
             }
         }
 
-        public PoolStatistics GetPoolStatistics()
+        public class PoolNode
         {
-            var stats = new PoolStatistics();
-            double totalWeight = _cards.Sum(card => card.Duplicates);
-
-            stats.TotalCardCount = TotalCardCount;
-
-            foreach (var entry in _cards)
-            {
-                stats.PerEntryStatistics.Add(new StatisticsEntry
-                {
-                    CardName = entry.Card.Name, 
-                    CardRarity = entry.Card.RarityCode.ToString(),
-                    PercentOfTotal = (double)entry.Duplicates / totalWeight
-                }); 
-            }
-
-            return stats;
-        }
-
-        public class CardPoolNode
-        {
-            public Card Card { get; set; }
-            public int Duplicates { get; set; } // Number of duplicates of this card in the pool
+            public T PoolItem { get; set; }
+            public int Duplicates { get; set; } // Number of duplicates of this item in the pool
             public int InitialDuplicates { get; set; }
 
-            public CardPoolNode(Card card, int duplicates)
+            public PoolNode(T poolItem, int duplicates)
             {
-                Card = card;
+                PoolItem = poolItem;
                 Duplicates = duplicates;
                 InitialDuplicates = duplicates;
             }
@@ -178,11 +152,11 @@
         public class PoolStatistics
         {
             public List<StatisticsEntry> PerEntryStatistics { get; set; } = new List<StatisticsEntry>();
-            public int TotalCardCount { get; set; }
+            public int TotalItemCount { get; set; }
 
             public void PrintStatistics()
             {
-                StaticHelpers.Logger.LogInformation($"Total Cards in pool: '{TotalCardCount}'");
+                StaticHelpers.Logger.LogInformation($"Total Items in pool: '{TotalItemCount}'");
                 
                 foreach(var breakdown in GetStatBreakdown())
                 {

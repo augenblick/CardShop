@@ -42,73 +42,87 @@ namespace CardShop.Logic
 
             _shopKeeperUserId = shopUser.UserId;
 
-            var existingInventory = await GetShopInventory();
+            var productList = BuildProductOrder();
 
-            var availableSets = _cardProductBuilder.GetAvailableCardSets(new List<string> { "full", "premium" });
-            var requestList = new List<(ProductType, CardSetCode, int)>();
-            const int maxBoxCount = 5;
-            const int maxPackCount = 30;
-            const int maxDeckCount = 10;
-            const int maxSealedDeckCount = 5;
-            const int maxMiscCount = 10;
-
-            foreach (var set in availableSets)
-            {
-                var matchingBoxInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterBox);
-                var matchingPackInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.BoosterPack);
-                var matchingDeckInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.StarterDeck);
-                var matchingSealedDeckInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.SealedDeck);
-                var matchingMiscInventory = existingInventory.Where(x => x.Product.SetCode == set && x.Product.ProductType == ProductType.Miscellaneous);
-
-                var currentBoxCount = matchingBoxInventory.Sum(x => x.Count);
-                var currentPackCount = matchingPackInventory.Sum(x => x.Count);
-                var currentDeckCount = matchingDeckInventory.Sum(x => x.Count);
-                var currentSealedDeckCount = matchingDeckInventory.Sum(x => x.Count);
-                var currentMiscCount = matchingDeckInventory.Sum(x => x.Count);
-
-                if (currentBoxCount < (maxBoxCount * 0.3))
-                {
-                    requestList.Add((ProductType.BoosterBox, set, maxBoxCount - currentBoxCount));
-                }
-
-                if (currentPackCount < (maxPackCount * 0.3))
-                {
-                    requestList.Add((ProductType.BoosterPack, set, maxPackCount - currentPackCount));
-                }
-
-                if (currentDeckCount < (maxDeckCount * 0.3))
-                {
-                    requestList.Add((ProductType.StarterDeck, set, maxDeckCount - currentPackCount));
-                }
-
-                if (currentSealedDeckCount < (maxSealedDeckCount * 0.3))
-                {
-                    requestList.Add((ProductType.SealedDeck, set, maxSealedDeckCount - currentPackCount));
-                }
-
-                if (currentMiscCount < (maxMiscCount * 0.3))
-                {
-                    requestList.Add((ProductType.Miscellaneous, set, maxMiscCount - currentPackCount));
-                }
-            }
-
-            var productList = new List<KeyValuePair<Product, int>>();
-
-            foreach (var request in requestList)
-            {
-                var product = _cardProductBuilder.GetProductByProductType(request.Item1, request.Item2);
-
-                if (product != null && product.SetCode != CardSetCode.undefined)
-                {
-                    productList.Add(new KeyValuePair<Product, int>(product, request.Item3));
-                }
-            }
-
+            var clearInventoryResult = _inventoryManager.ClearUserInventory(_shopKeeperUserId);
             var inventoryAdd = await _inventoryManager.AddInventory(productList, _shopKeeperUserId);
 
             stopWatch.Stop();
 
             _logger.LogInformation($">>> Shop Initialization took '{stopWatch.ElapsedMilliseconds}'ms.");
+        }
+
+        private List<InventoryItem> BuildProductOrder()
+        {
+            var buildSimple = _configuration.GetValue<bool>("BuildSimpleShopInventory", true);
+
+            decimal availableFunds = 500.0M;
+
+            // TODO:
+            // get data used to set order-per-product probabilities
+            //// recent orders
+            //// current date
+            //// recent purchases
+            //// recent requests
+
+            var availableProducts = _cardProductBuilder.GetAllExistingProducts().Select(x => new InventoryItem { Product = x, Count = 1 }).AsList();
+
+            if (availableProducts == null)
+            {
+                _logger.LogError($"No available products for the shop to order!");
+            }
+
+            var orderList = new List<InventoryItem>();
+
+            if (!buildSimple)
+            {
+                foreach (var product in availableProducts)
+                {
+                    // TODO build initial purchase likelihood for each product
+                }
+
+                // insert products into pool
+                var productPool = new Pool<Product>("InitialProductPool", availableProducts.Select(x => new KeyValuePair<Product, int>(x.Product, x.Count)).AsList());
+
+                do
+                {
+                    var chosenProduct = productPool.Draw();
+
+                    if (chosenProduct == null)
+                    {
+                        _logger.LogError($"Unable to draw a product from the product pool.");
+                        break;
+                    }
+
+                    var cost = chosenProduct.CostPer;
+                    var countToAdd = 1;
+
+                    if (chosenProduct.ProductType == ProductType.BoosterPack)
+                    {
+                        cost *= 10;
+                        countToAdd *= 10;
+                    }
+
+                    availableFunds -= cost;
+
+                    orderList.Add(new InventoryItem { Product = chosenProduct, Count = countToAdd });
+                }
+                while (availableFunds > 0.0M);
+            }
+            else
+            {
+                var purchasableItems = availableProducts.Where(x => x.Product.IsPurchasable);
+                foreach (var product in purchasableItems)
+                {
+                    var orderCountDecimal = 80M / product.Product.CostPer;
+
+                    product.Count = (int)Math.Floor(orderCountDecimal);
+                }
+
+                orderList = purchasableItems.AsList();
+            }
+
+            return orderList;
         }
 
         /// <summary>
@@ -264,9 +278,12 @@ namespace CardShop.Logic
             }
 
             // TODO: rework this, incl. probably defining starting items elsewhere
-            var startingProductList = new List<KeyValuePair<Product, int>>
+            var startingProductList = new List<InventoryItem>
             {
-                new KeyValuePair<Product, int>(_cardProductBuilder.GetProduct("013s", CardSetCode.PremiereTwoPlayer), 1)
+                new InventoryItem
+                {
+                    Product = _cardProductBuilder.GetProduct("013s", CardSetCode.PremiereTwoPlayer), Count = 1
+                }
             };
 
             return await _inventoryManager.AddInventory(startingProductList, user.UserId);

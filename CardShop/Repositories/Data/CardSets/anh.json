@@ -1,7 +1,7 @@
 {
     "code": "anh",
     "cycle_code": "full",
-    "date_release": "1996-01-01",
+    "date_release": "1996-07-01",
     "name": "A New Hope",
     "position": 2,
     "size": 162,
@@ -11,13 +11,14 @@
         "code": "02p",
         "name": "A New Hope Booster Pack",
         "productType": "BoosterPack",
+        "costPer": 3.0,
         "contents": [
           {
             "randomPickParameters": {
               "overallRarities": [ "C" ],
               "side": null
             },
-            "setCode": "anh",
+            "setCodes": [ "anh" ],
             "count": 10
           },
           {
@@ -25,7 +26,7 @@
               "overallRarities": [ "R" ],
               "side": null
             },
-            "setCode": "anh",
+            "setCodes": [ "anh" ],
             "count": 1
           },
           {
@@ -33,7 +34,7 @@
               "overallRarities": [ "U" ],
               "side": null
             },
-            "setCode": "anh",
+            "setCodes": [ "anh" ],
             "count": 4
           }
         ]

@@ -1,7 +1,7 @@
 {
   "code": "ds2",
   "cycle_code": "full",
-  "date_release": "2000-01-01",
+  "date_release": "2000-07-19",
   "name": "Death Star II",
   "position": 9,
   "size": 182,
@@ -11,13 +11,14 @@
       "code": "09p",
       "name": "Death Star II Booster Pack",
       "productType": "BoosterPack",
+      "costPer": 3.29,
       "contents": [
         {
           "randomPickParameters": {
             "overallRarities": [ "C" ],
             "side": null
           },
-          "setCode": "ds2",
+          "setCodes": [ "ds2" ],
           "count": 7
         },
         {
@@ -25,7 +26,7 @@
             "overallRarities": [ "R" ],
             "side": null
           },
-          "setCode": "ds2",
+          "setCodes": [ "ds2" ],
           "count": 1
         },
         {
@@ -33,7 +34,7 @@
             "overallRarities": [ "U" ],
             "side": null
           },
-          "setCode": "ds2",
+          "setCodes": [ "ds2" ],
           "count": 3
         }
       ]

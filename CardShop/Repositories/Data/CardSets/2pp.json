@@ -1,7 +1,7 @@
 {
   "code": "2pp",
   "cycle_code": "premium",
-  "date_release": "1995-12-01",
+  "date_release": "1996-02-01",
   "name": "Premiere Two-Player Game",
   "position": 1,
   "size": 6,
@@ -11,12 +11,12 @@
     {
       "code": "13s",
       "name": "Premiere Introductory Two-Player Game",
-      "productType": "Miscellaneous",
+      "productType": "StarterSet",
       "costPer": "19.95",
 
       "contents": [
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01p",
           "count": 1
         },
@@ -39,37 +39,37 @@
       "contents": [
         // Death Star Trooper
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01199",
           "count": 2
         },
         // Imperial Trooper Guard
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01234",
           "count": 2
         },
         // Jawa
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01238",
           "count": 2
         },
         // LIN-V8M
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01245",
           "count": 2
         },
         // Stormtrooper
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01284",
           "count": 7
         },
         // Tusken Raider
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01308",
           "count": 5
         },
@@ -80,73 +80,73 @@
         },
         // Comlink
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01184",
           "count": 1
         },
         // Stormtrooper Utility Belt
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01286",
           "count": 2
         },
         // Ket Maliss
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01242",
           "count": 1
         },
         // Macroscan
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01261",
           "count": 1
         },
         // Collateral Damage
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01182",
           "count": 1
         },
         // Counter Assault
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01186",
           "count": 2
         },
         //Imperial Reinforcements
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01233",
           "count": 1
         },
         // It's Worse
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01237",
           "count": 1
         },
         // Kintan Strider
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01243",
           "count": 1
         },
         // Set For Stun
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01283",
           "count": 1
         },
         // Takeel
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01292",
           "count": 1
         },
         // Tusken Scavengers
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01309",
           "count": 1
         },
@@ -157,19 +157,19 @@
         },
         // You Overestimate Their Chances
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01322",
           "count": 1
         },
         // Death Star: Detention Block Corridor
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01201",
           "count": 1
         },
         // Death Star: Docking Bay 327
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01202",
           "count": 2
         },
@@ -180,67 +180,67 @@
         },
         // Tatooine: Docking Bay 94
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01296",
           "count": 1
         },
         //Tatooine: Jawa Camp
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01297",
           "count": 1
         },
         // Tatooine: Judland Wastes
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01298",
           "count": 1
         },
         // Tatooine: Mos Eisley
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01300",
           "count": 1
         },
         // Imperial Barrier
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01229",
           "count": 1
         },
         // Omni Box
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01267",
           "count": 1
         },
         // Scanning Crew
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01280",
           "count": 1
         },
         // Blaster Rifle
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01012",
           "count": 1
         },
         // Gaderffii Stick
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01219",
           "count": 1
         },
         // Imperial Blaster
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01230",
           "count": 2
         },
         // Timer Mine
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01303",
           "count": 3
         }
@@ -255,19 +255,19 @@
       "contents": [
         // CZ-3
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01015",
           "count": 1
         },
         // Jawa
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01058",
           "count": 2
         },
         // LIN-V8K
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01069",
           "count": 2
         },
@@ -278,67 +278,67 @@
         },
         // Rebel Guard
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01104",
           "count": 2
         },
         //Rebel Tooper
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01108",
           "count": 7
         },
         // Shistavanen Wolfman
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01121",
           "count": 3
         },
         // Talz
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01129",
           "count": 3
         },
         // Electrobinoculars
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01034",
           "count": 1
         },
         // Tatooine Utility Belt
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01133",
           "count": 2
         },
         // Sai-torr Kal Fas
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01117",
           "count": 1
         },
         // Don't Underestimate Our Chances
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01031",
           "count": 1
         },
         // Friendly Fire
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01039",
           "count": 2
         },
         // Old Ben
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01090",
           "count": 1
         },
         // Rebel Reinforcements
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01107",
           "count": 1
         },
@@ -349,13 +349,13 @@
         },
         // Surprise Assault
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01127",
           "count": 2
         },
         // Death Star: Docking Bay 327
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01025",
           "count": 1
         },
@@ -366,85 +366,85 @@
         },
         // Tatooine: Docking Bay 94
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01135",
           "count": 2
         },
         // Tatooine: Dune Sea
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01136",
           "count": 1
         },
         // Tatooine: Jawa Camp
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01137",
           "count": 2
         },
         // Tatoine: Lars' Moisture Farm
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01138",
           "count": 1
         },
         // Han's Dice
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01048",
           "count": 1
         },
         // It Could Be Worse
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01057",
           "count": 2
         },
         // I've Got a Bad Feeling About This
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01055",
           "count": 1
         },
         // Narrow Escape
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01084",
           "count": 1
         },
         // Rebel Barrier
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01103",
           "count": 1
         },
         // The Bith Shuffle
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01142",
           "count": 1
         },
         // We're Doomed
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01152",
           "count": 1
         },
         // Blaster
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01011",
           "count": 2
         },
         // Blaster Rifle
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01012",
           "count": 1
         },
         // Timer Mine
         {
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "code": "01145",
           "count": 3
         }

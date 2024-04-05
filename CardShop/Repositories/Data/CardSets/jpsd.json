@@ -1,7 +1,7 @@
 {
   "code": "jpsd",
   "cycle_code": "premium",
-  "date_release": "2000-01-01",
+  "date_release": "2000-10-25",
   "name": "Jabba's Palace Sealed Deck",
   "position": 9,
   "size": 20,
@@ -15,107 +15,107 @@
 
       "contents": [
         {
-          "setCode": "jp",
+          "setCodes": [ "jp" ],
           "code": "06p",
           "count": 6
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21001",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21002",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21003",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21004",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21005",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21006",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21007",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21008",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21009",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21010",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21011",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21012",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21013",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21014",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21015",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21016",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21017",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21018",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21019",
           "count": 1
         },
         {
-          "setCode": "jpsd",
+          "setCodes": [ "jpsd" ],
           "code": "21020",
           "count": 1
         }

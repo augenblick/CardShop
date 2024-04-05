@@ -11,13 +11,14 @@
       "code": "01p",
       "name": "Premiere Booster Pack",
       "productType": "BoosterPack",
+      "costPer": 3.0,
       "contents": [
         {
           "randomPickParameters": {
             "overallRarities": [ "C" ],
             "side": null
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 10
         },
         {
@@ -25,7 +26,7 @@
             "overallRarities": [ "R" ],
             "side": null
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 1
         },
         {
@@ -33,7 +34,7 @@
             "overallRarities": [ "U" ],
             "side": null
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 4
         }
       ]
@@ -54,6 +55,7 @@
       "code": "01s",
       "name": "Premiere Starter Set",
       "productType": "StarterDeck",
+      "costPer": 9.95,
 
       "contents": [
         {
@@ -61,7 +63,7 @@
             "overallRarities": [ "C" ],
             "side": "light"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 22
         },
 
@@ -70,7 +72,7 @@
             "overallRarities": [ "U" ],
             "side": "light"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 7
         },
         {
@@ -78,7 +80,7 @@
             "overallRarities": [ "R" ],
             "side": "light"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 1
         },
         {
@@ -86,7 +88,7 @@
             "overallRarities": [ "R" ],
             "side": "dark"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 1
         },
         {
@@ -94,7 +96,7 @@
             "overallRarities": [ "U" ],
             "side": "dark"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 7
         },
         {
@@ -102,7 +104,7 @@
             "overallRarities": [ "C" ],
             "side": "dark"
           },
-          "setCode": "pr",
+          "setCodes": [ "pr" ],
           "count": 22
         }
       ]

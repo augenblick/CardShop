@@ -77,9 +77,17 @@ namespace CardShop.Logic
                 content.Count *= multiplier;
 
                 // TODO: this cardsetcode stuff is a mess and needs to be cleaned up
-                if (!string.IsNullOrWhiteSpace(content.SetCode))
+                if (content.SetCodes != null && content.SetCodes.Count > 0)
                 {
-                    sourceCardSet = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
+                    var chosenSetCode = content.SetCodes.First();
+                    if (content.SetCodes.Count > 1)
+                    {
+                        // choose a setcode at random from those provided
+                        var setCodeIndex = _randomizer.Next(content.SetCodes.Count);
+                        chosenSetCode = content.SetCodes[setCodeIndex];
+                    }
+
+                    sourceCardSet = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(chosenSetCode));
                 }
                 else
                 {
@@ -103,44 +111,7 @@ namespace CardShop.Logic
                 }
             }
 
-            //var contents = new List<Content>();
-            //if (product is BoosterBox) { contents = ((BoosterBox)product).Contents; }
-            //else if (product is StarterDeck) { contents = ((StarterDeck)product).Contents; }
-            //else { _logger.LogError($"ProductType for not '{product.Code}' not supported!"); }
-
-            //foreach (var content in contents)
-            //{
-            //    var setForThisContent = cardSet;
-            //    if (!string.IsNullOrWhiteSpace(content.SetCode))
-            //    {
-            //        // a specific set is defined for this content, so use it.
-            //        setForThisContent = GetCardSetByCardSetCode(CardSetHelpers.GetCardSetCode(content.SetCode));
-            //    }
-
-            //    var selectedContent = setForThisContent.GetCardSetProduct(content.Code);
-
-            //    if (selectedContent != null)
-            //    {
-            //        returnProductList.Add(new InventoryItem
-            //        {
-            //            Product = selectedContent,
-            //            Count = content.Count
-            //        });
-            //    }
-            //    else
-            //    {
-            //        StaticHelpers.Logger.LogError($"No matching product '{product.Code}' found in set '{setForThisContent.SetCode}' while opening products!");
-            //    }
-            //}
-
-            // consolidate any like Contents
-            //var consolidatedList = returnProductList
-            //    .GroupBy(x => x.Product.Code)
-            //    .Select(y => new InventoryItem
-            //    {
-            //        Product = y.First().Product,
-            //        Count = y.Sum(c => c.Count)
-            //    }).AsList();
+            
 
             var consolidatedList = returnProductList.Consolidate();
 
@@ -259,10 +230,11 @@ namespace CardShop.Logic
 
         private CardSet GetCardSetByCardSetCode(CardSetCode cardSetCode)
         {
+            var code = cardSetCode.GetCardSetCodeString();
             return _cardSets.FirstOrDefault(x => x.SetCode == cardSetCode.GetCardSetCodeString());
         }
 
-        public bool TestCardSetRarityPool(CardSetCode cardSetCode, string rarityCode, int testCount, bool peekDontDraw)
+        public bool TestCardSetRarityPool(CardSetCode cardSetCode, List<string> rarityCodes, int testCount, bool peekDontDraw)
         {
             //var cardSetCodeName = cardSetCode.GetCardSetCodeString();
             var cardSet = GetCardSetByCardSetCode(cardSetCode);
@@ -273,7 +245,7 @@ namespace CardShop.Logic
 
                 for (int i = 0; i < testCount; i++)
                 {
-                    cardPool.AddCardNoDuplicates(cardSet.DrawRandomCardFromSet(rarityCode, null, peekDontDraw), 1);
+                    cardPool.AddCardNoDuplicates(cardSet.DrawRandomCardFromSet(rarityCodes, null, peekDontDraw), 1);
                 }
 
                 var poolStats = cardPool.GetPoolStatistics();
@@ -283,7 +255,7 @@ namespace CardShop.Logic
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"Exception while drawing card into new pool for statistics check.", new[] { new { CardSet = cardSet, RarityCode = rarityCode } });
+                _logger.LogError(ex, $"Exception while drawing card into new pool for statistics check.", new[] { new { CardSet = cardSet, RarityCodes = rarityCodes } });
                 return false;
             }
 
@@ -298,7 +270,7 @@ namespace CardShop.Logic
             {
                 _cardSets = IngestJsonData<CardSet>("Repositories/Data/CardSets");
 
-                foreach(var set in _cardSets.Where(x => x.CycleCode == "full"))
+                foreach(var set in _cardSets.Where(x => x.CycleCode == "full" || x.CycleCode == "premium"))
                 {
                     initTaskList.Add(set.Initialize());
                 }
@@ -318,9 +290,46 @@ namespace CardShop.Logic
             return _allExistingProducts;
         }
 
-        public List<Card> GetAllExistingCards()
+        public List<Card> GetAllExistingCards(string cardSetName = null)
         {
+            if (string.IsNullOrWhiteSpace(cardSetName))
+            {
+                return GetExistingCardsFromSet(cardSetName);
+            }
+
             return _allExistingCards;
+        }
+
+        public Card? GetCardByName(string cardName)
+        {
+            Card? returnCard = null;
+
+            foreach (var cardSet in _cardSets)
+            {
+                var card = cardSet.GetCardByName(cardName);
+
+                if (card != null )
+                {
+                    if (returnCard != null)
+                    {
+                        // duplicate match found!
+                        return null;
+                    }
+
+                    returnCard = card;
+                }
+            }
+
+            return returnCard;
+        }
+
+        private List<Card> GetExistingCardsFromSet(string cardSetName)
+        {
+            var cardSet = _cardSets.FirstOrDefault(x => x.SetCode == cardSetName);
+
+            if (cardSet == null) { return new List<Card>(); }
+
+            return cardSet.Cards;
         }
 
         private void BuildAllExistingProducts()
@@ -340,24 +349,34 @@ namespace CardShop.Logic
 
         private List<T> IngestJsonData<T>(string jsonDirectoryPath)
         {
-
+            
             var allObjects = new List<T>();
+            var currentFileName = string.Empty;
 
-            var files = Directory.GetFiles(jsonDirectoryPath);
-
-            foreach (var file in files)
+            try
             {
-                if (file.Contains(".json"))
-                {
-                    using StreamReader reader = new StreamReader(file);
-                    var json = reader.ReadToEnd();
-                    var obj = JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
+                var files = Directory.GetFiles(jsonDirectoryPath);
+                
 
-                    if (obj != null)
+                foreach (var file in files)
+                {
+                    if (file.Contains(".json"))
                     {
-                        allObjects.Add(obj);
+                        currentFileName = file;
+                        using StreamReader reader = new StreamReader(file);
+                        var json = reader.ReadToEnd();
+                        var obj = JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
+
+                        if (obj != null)
+                        {
+                            allObjects.Add(obj);
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"An exception occurred while ingesting file '{currentFileName}'.");
             }
 
             return allObjects;
@@ -383,10 +402,14 @@ namespace CardShop.Logic
                         return jsonObject.ToObject<BoosterBox>(serializer);
                     case "StarterDeck":
                         return jsonObject.ToObject<StarterDeck>(serializer);
-                    case "Miscellaneous":
-                        return jsonObject.ToObject<Miscellaneous>(serializer);
+                    case "EnhancedPack":
+                        return jsonObject.ToObject<EnhancedPack>(serializer);
+                    case "PromotionalSet":
+                        return jsonObject.ToObject<PromotionalSet>(serializer);
                     case "SealedDeck":
                         return jsonObject.ToObject<SealedDeck>(serializer);
+                    case "StarterSet":
+                        return jsonObject.ToObject<StarterSet>(serializer);
                     default:
                         throw new JsonSerializationException($"Unknown product type: {productType}");
                 }

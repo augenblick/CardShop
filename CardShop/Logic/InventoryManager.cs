@@ -46,32 +46,27 @@ namespace CardShop.Logic
             return await _inventoryRepository.UpsertMultipleInventory(inventoryRequests);
         }
 
-        public async Task<bool> AddInventory(List<KeyValuePair<Product, int>> productsToAdd, int userId)
+        public async Task<bool> AddInventory(List<InventoryItem> productsToAdd, int userId)
         {
             if (productsToAdd == null || productsToAdd.Count < 1)
             {
                 return true;
             }
 
-            var groupedProductToAdd = productsToAdd
-            .GroupBy(
-                pair => new { pair.Key.Code, pair.Key.SetCode }, // keySelector
-                pair => pair.Value, // elementSelector
-                (key, quantities) => new KeyValuePair<Product, int>(new Product { Code = key.Code, SetCode = key.SetCode }, quantities.Sum()) // resultSelector
-            ).ToList();
+            var groupedProductToAdd = productsToAdd.Consolidate();
 
             var userInventory = await _inventoryRepository.GetUserInventory(userId);
 
             var inventoryToAdd = new List<Inventory>();
 
             
-            foreach (var product in groupedProductToAdd)
+            foreach (var item in groupedProductToAdd)
             {
-                var count = product.Value;
+                var count = item.Count;
 
                 if (userInventory.Count > 0)
                 {
-                    var existing = userInventory.FirstOrDefault(x => x.SetCode == product.Key.SetCode && x.ProductCode == product.Key.Code);
+                    var existing = userInventory.FirstOrDefault(x => x.SetCode == item.Product.SetCode && x.ProductCode == item.Product.Code);
 
                     if (existing != null)
                     {
@@ -81,8 +76,8 @@ namespace CardShop.Logic
 
                 inventoryToAdd.Add(
                     new Inventory{
-                        SetCode = product.Key.SetCode,
-                        ProductCode = product.Key.Code,
+                        SetCode = item.Product.SetCode,
+                        ProductCode = item.Product.Code,
                         UserId = userId,
                         Count = count
                     });

@@ -6,7 +6,7 @@ namespace CardShop.Interfaces
 {
     public interface IInventoryManager
     {
-        Task<bool> AddInventory(List<KeyValuePair<Product, int>> productsToAdd, int userId);
+        Task<bool> AddInventory(List<InventoryItem> productsToAdd, int userId);
         Task<bool> UpdateMultipleInventory(List<List<Inventory>> inventoryRequests);
         Task<List<Inventory>> GetUserInventory(int userId);
         Task<List<InventoryItem>> GetUserInventoryItems(int userId, ProductType? productTypeFilter = null);

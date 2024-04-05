@@ -1,7 +1,7 @@
 {
   "code": "tp",
   "cycle_code": "full",
-  "date_release": "2001-01-01",
+  "date_release": "2001-11-01",
   "name": "Theed Palace",
   "position": 12,
   "size": 120,
@@ -11,13 +11,14 @@
       "code": "12p",
       "name": "Theed Palace Booster Pack",
       "productType": "BoosterPack",
+      "costPer": 3.29,
       "contents": [
         {
           "randomPickParameters": {
             "overallRarities": [ "CU" ],
             "side": null
           },
-          "setCode": "tp",
+          "setCodes": [ "tp" ],
           "count": 10
         },
         {
@@ -25,7 +26,7 @@
             "overallRarities": [ "R" ],
             "side": null
           },
-          "setCode": "tp",
+          "setCodes": [ "tp" ],
           "count": 1
         }
       ]

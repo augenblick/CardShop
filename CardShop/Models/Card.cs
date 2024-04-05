@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 
 namespace CardShop.Models
 {
@@ -198,6 +195,14 @@ namespace CardShop.Models
 
         [JsonProperty("warrior", NullValueHandling = NullValueHandling.Ignore)]
         public bool? Warrior { get; set; }
+
+        [JsonProperty("is_foil", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsFoil { get; set; } = false;
+
+        [JsonProperty("is_japanese", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsJapanese { get; set; } = false;
+
+        public override decimal CostPer { get; set; } = 0M;
 
         public Card()
         {
