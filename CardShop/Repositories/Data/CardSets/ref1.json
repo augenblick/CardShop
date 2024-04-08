@@ -16,7 +16,7 @@
       "contents": [
         {
           "randomPickParameters": {
-            "overallRarities": [ "C", "U", "R" ],
+            "overallRarities": [ "5:C", "3:U", "R" ],
             "side": null
           },
           "setCodes": [ "se" ],
@@ -24,7 +24,7 @@
         },
         {
           "randomPickParameters": {
-            "overallRarities": [ "C", "U", "R" ],
+            "overallRarities": [ "5:C", "3:U", "R" ],
             "side": null
           },
           "setCodes": [ "jp" ],
@@ -32,7 +32,7 @@
         },
         {
           "randomPickParameters": {
-            "overallRarities": [ "C", "U", "R" ],
+            "overallRarities": [ "5:C", "3:U", "R" ],
             "side": null
           },
           "setCodes": [ "cc" ],
@@ -40,11 +40,19 @@
         },
         {
           "randomPickParameters": {
-            "overallRarities": [ "C", "U", "R" ],
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "cc", "pr" ],
+          "count": 1
+        },
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
             "side": null
           },
           "setCodes": [ "pr" ],
-          "count": 4
+          "count": 3
         },
         {
           "randomPickParameters": {
@@ -56,7 +64,7 @@
         },
         {
           "randomPickParameters": {
-            "overallRarities": [ "C", "U", "R" ],
+            "overallRarities": [ "5:C", "3:U", "1:R" ],
             "side": null
           },
           "setCodes": [ "dah", "anh", "hoth" ],

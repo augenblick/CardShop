@@ -1,11 +1,73 @@
 {
   "code": "ta",
   "cycle_code": "premium",
-  "date_release": "2000-01-01",
+  "date_release": "2000-06-14",
   "name": "Third Anthology",
   "position": 11,
   "size": 6,
-  
+
+  "products": [
+    {
+      "code": "23b",
+      "name": "Third Anthology",
+      "productType": "AnthologySet",
+      "costPer": 34.95,
+
+      "contents": [
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "jp" ],
+          "code": "06p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07s01",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07s02",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23001",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23002",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23003",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23004",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23005",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ta" ],
+          "code": "23006",
+          "count": 1
+        }
+      ]
+    }
+  ],
+
   "cards": [{
   "characteristics": "",
   "code": "23001",

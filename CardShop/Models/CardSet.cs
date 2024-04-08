@@ -79,8 +79,41 @@ namespace CardShop.Models
                 cardPool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == uniqueCombinedName);
                 if ( cardPool == null)
                 {
-                    var suitableCardPools = _cardRarityPools.Where(x => overallRarityCodes.Contains(x.PoolRarityCode)).AsList();
-                    if (suitableCardPools.Count < 2)
+                    var suitableCardPools = new List<CardPool>();
+
+                    foreach(var poolRequest in overallRarityCodes)
+                    {
+                        var multiplier = 1;
+                        var request = poolRequest;
+                        if (poolRequest.Contains(':'))
+                        {
+                            // pool definition includes multiplier
+                            var split = poolRequest.Split(':');
+                            if (!int.TryParse(split[0], out multiplier))
+                            {
+                                StaticHelpers.Logger.LogError($"Unable to parse the pool request '{poolRequest}'");
+                                continue;
+                            }
+
+                            request = split[1];
+                        }
+
+                        var suitablePool = _cardRarityPools.FirstOrDefault(x => x.PoolRarityCode == request);
+                        if (suitablePool == null) 
+                        { 
+                            StaticHelpers.Logger.LogError($"Unable to find the pool '{request}' in set '{Name}'");
+                            continue;
+                        }
+
+                        if (multiplier > 1)
+                        {
+                            suitablePool.ApplyMultiplier(multiplier);
+                        }
+
+                        suitableCardPools.Add(suitablePool);
+                    }
+
+                    if (suitableCardPools.Count < overallRarityCodes.Count)
                     {
                         StaticHelpers.Logger.LogError($"Not all of requested rarity codes '{overallRarityCodes.Select(x => $"{x}, ")}' found in cardset '{Name}'");
                         return null;

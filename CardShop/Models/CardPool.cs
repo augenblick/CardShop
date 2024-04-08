@@ -1,4 +1,6 @@
-﻿namespace CardShop.Models
+﻿using CardShop.Models.Response;
+
+namespace CardShop.Models
 {
     public class CardPool
     {
@@ -54,6 +56,15 @@
             if (existingCardIndex < 0) { AddCard(card, count); return; }
 
             _cards[existingCardIndex].Duplicates += count;
+        }
+
+        public void ApplyMultiplier(int multiplier)
+        {
+            _cards.ForEach(x =>
+            {
+                x.Duplicates *= multiplier;
+                x.InitialDuplicates *= multiplier;
+            });
         }
 
         public void AppendNodes(List<CardPoolNode> nodes)

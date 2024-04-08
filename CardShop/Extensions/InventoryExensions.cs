@@ -38,5 +38,14 @@ namespace CardShop.Extensions
                                     Count = y.Sum(c => c.Count)
                                 }).ToList();
         }
+
+        public static void MaskInnerContents(this List<InventoryItem> inventoryList, bool doMaskContents = true)
+        {
+            foreach(var item in inventoryList)
+            {
+                if (item?.Product.Contents == null) { continue; }
+                item.Product.Contents = null;
+            }
+        }
     }
 }

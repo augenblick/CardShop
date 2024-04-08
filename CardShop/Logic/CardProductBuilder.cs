@@ -62,15 +62,6 @@ namespace CardShop.Logic
 
             var returnProductList = new List<InventoryItem>();
 
-            //var cardSet = GetCardSetByCardSetCode(product.SetCode);
-
-            //if (product is BoosterPack)
-            //{
-            //    var packContents = cardSet.OpenBoosterPack(product as BoosterPack);
-
-            //    return packContents;
-            //}
-
             foreach(var content in product.Contents)
             {
                 CardSet sourceCardSet;
@@ -410,6 +401,8 @@ namespace CardShop.Logic
                         return jsonObject.ToObject<SealedDeck>(serializer);
                     case "StarterSet":
                         return jsonObject.ToObject<StarterSet>(serializer);
+                    case "AnthologySet":
+                        return jsonObject.ToObject<AnthologySet>(serializer);
                     default:
                         throw new JsonSerializationException($"Unknown product type: {productType}");
                 }

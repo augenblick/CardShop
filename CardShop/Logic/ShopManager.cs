@@ -116,7 +116,9 @@ namespace CardShop.Logic
                 {
                     var orderCountDecimal = 80M / product.Product.CostPer;
 
-                    product.Count = (int)Math.Floor(orderCountDecimal);
+                    var orderCount = (int)Math.Floor(orderCountDecimal);
+
+                    product.Count = orderCount < 1 ? 1 : orderCount;
                 }
 
                 orderList = purchasableItems.AsList();
