@@ -17,7 +17,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08001",
+          "code": "18001",
           "count": 1
         },
         {
@@ -36,7 +36,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08002",
+          "code": "18002",
           "count": 1
         },
         {
@@ -55,7 +55,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08003",
+          "code": "18003",
           "count": 1
         },
         {
@@ -74,7 +74,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08004",
+          "code": "18004",
           "count": 1
         },
         {
@@ -93,7 +93,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08005",
+          "code": "18005",
           "count": 1
         },
         {
@@ -112,7 +112,7 @@
       "contents": [
         {
           "setCodes": [ "epp" ],
-          "code": "08006",
+          "code": "18006",
           "count": 1
         },
         {

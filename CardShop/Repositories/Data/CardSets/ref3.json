@@ -6,16 +6,87 @@
   "position": 12,
   "size": 100,
 
-  // PM
-  // VRF
-  // URF
-  // SRF
-  // SRJF - super rare japanese foil
-  // SRAF - super rare alternate image foil
-  // VRJF
-  // URAF
+  "products": [
+    {
+      "code": "24p",
+      "name": "Reflections III Booster Pack",
+      "productType": "BoosterPack",
+      "costPer": 4.95,
+      "contents": [
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "pr", "anh", "hoth", "dah", "cc", "jp", "se", "edr" ],
+          "count": 14
+        },
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "RF" ],
+            "side": null
+          },
+          "setCodes": [ "ref3" ],
+          "count": 1
+        },
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "PM" ],
+            "side": null
+          },
+          "setCodes": [ "ref3" ],
+          "count": 3
+        }
+      ]
+    }
+  ],
 
-  "cards": [
+  "cardRarityMap": [
+    {
+      "Rarity": "VRF",
+      "Count": 3,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "SRF",
+      "Count": 2,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "URF",
+      "Count": 1,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "SRJF", // super rare japanese foil
+      "Count": 2,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "SRAF", // super rare alternate image foil
+      "Count": 2,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "VRJF", // very rare japanese foil
+      "Count": 3,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "URAF", // ultra rare alternate image foil
+      "Count": 1,
+      "OverallRarity": "RF"
+    },
+    {
+      "Rarity": "PM",
+      "Count": 1,
+      "OverallRarity": "PM"
+    }
+  ],
+
+  "cards":
+
+  [
     {
       "code": "24001",
       "destiny": 0,
@@ -5768,6 +5839,44 @@
       "warrior": false,
       "is_alternate_image": true,
       "is_foil": true
+    },
+    {
+      "ability": 0,
+      "armor": 4,
+      "characteristics": "\\b leader\\b0, \\b Trade Federation\\b0",
+      "clone_army": false,
+      "code": "11150f",
+      "deploy": 4,
+      "destiny": 3,
+      "episode_1": true,
+      "episode_7": false,
+      "force_aptitude": "",
+      "forfeit": 4,
+      "gametext": "Permanent weapon is Twin Cannons (may target a character or vehicle for free; draw destiny; if destiny +1 > defense value, target hit and opponent loses 2 Force). Draws one battle destiny if unable to otherwise. Immune to attrition < 4.",
+      "has_errata": false,
+      "image_url": "Coruscant-Dark\/large\/p59.gif",
+      "lore": "Trade Federation destroyer droid squad \\b leader\\b0. Charged with removing the threat posed by Qui-Gon Jinn and Obi-Wan Kenobi. Found the Jedi hard to kill, but forced their retreat.",
+      "maneuver": 0,
+      "model_type": "Destroyer Droid",
+      "name": "P-59",
+      "nav_computer": false,
+      "permanent_weapon": true,
+      "pilot": false,
+      "politics": 0,
+      "position": 150,
+      "power": 4,
+      "presence": true,
+      "rarity_code": "URF",
+      "republic": false,
+      "separatist": false,
+      "set_code": "ref3",
+      "side_code": "dark",
+      "subtype_code": "droid",
+      "type_code": "character",
+      "uniqueness": "*",
+      "warrior": false,
+      "is_foil": true
     }
+    // TODO: tournament foils: Qui-Gon Jinn with lightsaber, Darth Maul with lightsaber
   ]
 }

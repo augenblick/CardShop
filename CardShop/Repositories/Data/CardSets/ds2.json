@@ -5,8 +5,8 @@
   "name": "Death Star II",
   "position": 9,
   "size": 182,
-  
-  "products":[
+
+  "products": [
     {
       "code": "09p",
       "name": "Death Star II Booster Pack",
@@ -45,13 +45,143 @@
       "productType": "BoosterBox",
 
       "contents": [
-        { 
-          "code":"09p",
+        {
+          "code": "09p",
           "count": 36
         }
       ]
 
     }
+
+    /*
+    * — Exclusive Rare card found only in this Starter Deck
+    Also, note that those cards that were re-printed from earlier expansion sets have a 
+    “2000” copyright date and possibly revised texted from their initial release 
+    (e.g. Monnok or Grimtaash).
+
+
+    Light Side Pre-constructed Deck List:
+
+      [Character]
+        *Admiral Ackbar
+        Captain Yutani
+        Chewbacca Of Kashyyyk
+        Corporal Beezer
+        Corporal Delevar
+        Corporal Janse
+        Corporal Midge
+        Derek ‘Hobbie’ Klivian
+        Dresselian Commando (x2)
+        General Solo
+        Gray Squadron Y-wing Pilot (x2)
+        Karie Neth
+        Keir Santage
+        Kin Kian
+        Sergeant Junkin
+
+      [Effect]
+        Battle Plan
+        Squadron Assignments
+        Superficial Damage
+
+      [Interrupt]
+        A Few Maneuvers (x2)
+        Careful Planning
+        Grimtaash (x2)
+        Heading For The Medical Frigate
+        Houjix
+        Steady Aim
+        Take The Initiative
+
+      [Location]
+        Bespin
+        Endor
+        Endor: Back Door
+        Endor: Great Forest
+        Endor: Hidden Forest Trail
+        Endor: Landing Platform (Docking Bay)
+        Sullust
+        Tatooine
+
+      [Starship]
+        A-wing (x3)
+        B-wing Bomber (x3)
+        Gray Squadron 1
+        Gray Squadron 2
+        Nebulon-B Frigate (x3)
+        Red Squadron 4
+        Red Squadron 7
+        X-wing (x2)
+        Y-wing
+
+      [Weapon]
+        BlasTech E-11B Blaster Rifle (x2)
+        Concussion Missiles (x2)
+        Enhanced Proton Torpedoes
+        Intruder Missile (x2)
+
+    Dark Side Pre-constructed Deck List:
+
+      [Character]
+        *Admiral Piett
+        Captain Jonus
+        Corporal Drazin
+        DS-181-3
+        DS-181-4
+        Elite Squadron Stormtrooper (x3)
+        Lieutenant Arnet
+        Lieutenant Grond
+        Lieutenant Hebsly
+        Reserve Pilot
+        Sergeant Tarl
+
+      [Effect]
+        Battle Order
+        Combat Response
+        Inconsequential Losses
+
+      [Interrupt]
+        Combat Readiness
+        Dark Maneuvers (x2)
+        Flawless Marksmanship
+        Ghhhk
+        Imperial Reinforcements
+        Monnok (x2)
+        Prepared Defenses
+
+      [Location]
+        Endor
+        Endor: Ancient Forest
+        Endor: Back Door
+        Endor: Great Forest
+        Endor: Landing Platform (Docking Bay)
+        Kessel
+        Mon Calamari
+        Sullust
+
+      [Starship]
+        Black 3
+        Saber 3
+        Saber 4
+        Scimitar 2
+        Scythe 3
+        Scythe Squadron TIE (x2)
+        TIE Defender Mark I (x3)
+        TIE Interceptor (x3)
+        Victory-Class Star Destroyer (x3)
+
+      [Vehicle]
+        Tempest 1
+        Tempest Scout (x2)
+        Tempest Scout 3
+
+      [Weapon]
+      Blaster Rifle (x2)
+      Concussion Missiles
+      Enhanced TIE Laser Cannon
+      Intruder Missile (x2)
+      SFS L-s7.2 TIE Cannon
+    */
   ],
 
   "cardRarityMap":[

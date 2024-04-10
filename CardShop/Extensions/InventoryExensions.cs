@@ -41,6 +41,7 @@ namespace CardShop.Extensions
 
         public static void MaskInnerContents(this List<InventoryItem> inventoryList, bool doMaskContents = true)
         {
+            return;
             foreach(var item in inventoryList)
             {
                 if (item?.Product.Contents == null) { continue; }

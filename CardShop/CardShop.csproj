@@ -42,8 +42,6 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
-    <Folder Include="Repositories\Databases\" />
-    <Folder Include="Repositories\Data\CardSets\v1_sets\" />
   </ItemGroup>
 
 </Project>

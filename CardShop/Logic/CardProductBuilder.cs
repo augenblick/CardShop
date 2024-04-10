@@ -263,10 +263,32 @@ namespace CardShop.Logic
 
                 foreach(var set in _cardSets.Where(x => x.CycleCode == "full" || x.CycleCode == "premium"))
                 {
+                    var emptyContentProducts = set.Products.Where(x => x.Contents == null || x.Contents.Count < 1);
+                    if (emptyContentProducts.Any())
+                    {
+                        _logger.LogError($">>>>>>>>>>>>>>>>>>>>>> set '{set.Name}'!");
+                        foreach(var emptyProduct in emptyContentProducts)
+                        {
+                            _logger.LogError($":::::: product '{emptyProduct.Name}'");
+                        }
+                    }
                     initTaskList.Add(set.Initialize());
                 }
 
                 await Task.WhenAll(initTaskList);
+
+                foreach(var cardSet in _cardSets)
+                {
+                    var emptyContentProducts = cardSet.Products.Where(x => x.Contents == null || x.Contents.Count < 1);
+                    if (emptyContentProducts.Any())
+                    {
+                        _logger.LogError($">>>>***************>>>>> set '{cardSet.Name}'!");
+                        foreach (var emptyProduct in emptyContentProducts)
+                        {
+                            _logger.LogError($":::********::: product '{emptyProduct.Name}'");
+                        }
+                    }
+                }
 
                 BuildAllExistingProducts();
             }
