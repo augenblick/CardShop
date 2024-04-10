@@ -38,7 +38,8 @@
         "CardShopConnectionString": "Data Source=./Repositories/CardShop.db",
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080",
-        "BuildSimpleShopInventory": "true"
+        "BuildSimpleShopInventory": "true",
+        "MaskProductInnerContentsFromUsers": "true"
       },
       "publishAllPorts": true,
       "useSSL": true

@@ -5,13 +5,10 @@ using CardShop.Repositories;
 using Serilog.Events;
 using Serilog;
 using System.Diagnostics;
-using CardShop.Models;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
-using CardShop.Repositories.Models;
 
 // CORS
 var MyAllowAnyOrigins = "_myAllowAnyOrigins";
@@ -164,7 +161,7 @@ var dbBuilder = app.Services.GetRequiredService<DbBuilder>();
 var timer = new Stopwatch();
 timer.Start();
 
-var logThing = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<ShopManager>>();
+var logThing = app.Services.GetRequiredService<ILogger<ShopManager>>();
 
 StaticHelpers.Logger = logThing;
 

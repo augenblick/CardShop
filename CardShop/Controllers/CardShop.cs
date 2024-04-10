@@ -1,4 +1,5 @@
-﻿using CardShop.Interfaces;
+﻿using CardShop.Extensions;
+using CardShop.Interfaces;
 using CardShop.Models;
 using CardShop.Models.Request;
 using CardShop.Models.Response;
@@ -19,15 +20,17 @@ namespace CardShop.Controllers
         private readonly IInventoryManager _inventoryManager;
         private readonly ICardProductBuilder _cardProductBuilder;
         private readonly IUserManager _userManager;
+        private readonly IConfiguration _configuration;
 
 
-        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder, IUserManager userManager)
+        public CardShop(IShopManager shopManager, ILogger<CardShop> logger, IInventoryManager inventoryManager, ICardProductBuilder cardProductBuilder, IUserManager userManager, IConfiguration configuration)
         {
             _shopManager = shopManager;
             _logger = logger;
             _inventoryManager = inventoryManager;
             _cardProductBuilder = cardProductBuilder;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -47,6 +50,8 @@ namespace CardShop.Controllers
                 _logger.LogError(ex, $"Exception while trying to return shop inventory.");
                 response.ErrorMessage = ex.Message;
             }
+
+            response.Inventory = response.Inventory.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
 
             return response;
         }
@@ -73,10 +78,12 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse { ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ?  "An error occurred while trying to make a purchase from the shop!" : errorMessage };
             }
 
-            return new PurchaseProductResponse { 
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+
+            return new PurchaseProductResponse {
                 RemainingUserBalance = remainingBalance,
                 TotalCost = totalCost,
-                InventoryItems = items 
+                InventoryItems = items
             };
         }
 
@@ -99,6 +106,8 @@ namespace CardShop.Controllers
 
             _logger.LogInformation($"total time to open products = {watch.ElapsedMilliseconds}ms");
 
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+
             return new OpenInventoryProductsResponse
             {
                 ErrorMessage = errorMessage,
@@ -113,6 +122,8 @@ namespace CardShop.Controllers
         {
             var products = _cardProductBuilder.GetAllExistingProducts();
             var cards = includeCards ? _cardProductBuilder.GetAllExistingCards() : new List<Card>();
+
+            products.ForEach(x => x.Contents = null);
 
             return new GetAllAvailableProductInfoResponse
             {
@@ -172,24 +183,27 @@ namespace CardShop.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<InventoryItem>>> GetUserInventory()
+        public async Task<ActionResult<List<InventoryItemInternal>>> GetUserInventory()
         {
             var userName = HttpContext?.User?.Identity?.Name;
             var user = await _userManager.GetUser(userName);
 
             if (string.IsNullOrWhiteSpace(user.Username))
             {
-                return NotFound(new List<InventoryItem>());
+                return NotFound(new List<InventoryItemInternal>());
             }
 
             var currentInventory = await _inventoryManager.GetUserInventory(user.UserId);
 
             if (currentInventory == null || currentInventory.Count < 1) 
             {
-                return Ok(new List<InventoryItem>());
+                return Ok(new List<InventoryItemInternal>());
             }
 
-            return Ok(_inventoryManager.InventoryItemsFromInventory(currentInventory));
+            var items = _inventoryManager.InventoryItemsFromInventory(currentInventory);
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+
+            return Ok(items);
 
         }
 

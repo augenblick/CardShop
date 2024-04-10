@@ -13,7 +13,77 @@
       "productType": "BoosterPack",
       "costPer": 4.95,
       "contents": [
-        // TODO
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "pr" ],
+          "count": 3
+        },
+        {
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "jp" ],
+          "count": 3
+        },
+        {
+          // 1x foil
+          "randomPickParameters": {
+            "overallRarities": [ "RF" ],
+            "side": null
+          },
+          "setCodes": [ "ref2" ],
+          "count": 1
+        },
+        {
+          // 3x cloud city
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "cc" ],
+          "count": 3
+        },
+        {
+          // 2x ref2 premium
+          "randomPickParameters": {
+            "overallRarities": [ "PM" ],
+            "side": null
+          },
+          "setCodes": [ "ref2" ],
+          "count": 2
+        },
+        {
+          // 1x japanese
+          // Is the the only source of japanese cards for this set?
+          "randomPickParameters": {
+            "overallRarities": [ "JF" ],
+            "side": null
+          },
+          "setCodes": [ "ref2" ],
+          "count": 1
+        },
+        {
+          // 3x special edition
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "se" ],
+          "count": 3
+        },
+        {
+          // 2x premiere
+          "randomPickParameters": {
+            "overallRarities": [ "5:C", "3:U", "R" ],
+            "side": null
+          },
+          "setCodes": [ "pr" ],
+          "count": 2
+        }
       ]
     },
     {
@@ -23,18 +93,44 @@
 
       "contents": [
         {
+          "randomPickParameters": {
+            "overallRarities": [ "TP" ],
+            "side": null
+          },
+          "setCodes": [ "ref2" ],
+          "count": 1
+        },
+        {
           "code": "22p",
           "count": 30
         }
       ]
-    }
+    },
+    {
+      "code": "22c",
+      "name": "Reflections II Booster Box Case",
+      "productType": "BoosterBox",
+      "costPer": 750.0,
 
+      "contents": [
+        {
+          "setCodes": [ "ref2" ],
+          "code": "01195jf",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ref2" ],
+          "code": "22b",
+          "count": 6
+        }
+      ]
+    }
   ],
 
   "cardRarityMap": [
     {
       "Rarity": "VRF",
-      "Count": 4,
+      "Count": 3,
       "OverallRarity": "RF"
     },
     {
@@ -45,7 +141,7 @@
     {
       "Rarity": "SRJF",
       "Count": 2,
-      "OverallRarity": "RF"
+      "OverallRarity": "JF"
     },
     {
       "Rarity": "URF",

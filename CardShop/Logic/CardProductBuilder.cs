@@ -45,7 +45,7 @@ namespace CardShop.Logic
             return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
-        public List<InventoryItem> OpenProductOld(Product product)
+        public List<InventoryItemInternal> OpenProductOld(Product product)
         {
             var cardSet = GetCardSetByCardSetCode(product.SetCode);
             var contents = cardSet.OpenProduct(product);
@@ -53,23 +53,14 @@ namespace CardShop.Logic
             return contents;
         }
 
-        public List<InventoryItem> OpenProduct(Product product, int multiplier)
+        public List<InventoryItemInternal> OpenProduct(Product product, int multiplier)
         {
             if (product == null)
             {
-                return new List<InventoryItem>();
+                return new List<InventoryItemInternal>();
             }
 
-            var returnProductList = new List<InventoryItem>();
-
-            //var cardSet = GetCardSetByCardSetCode(product.SetCode);
-
-            //if (product is BoosterPack)
-            //{
-            //    var packContents = cardSet.OpenBoosterPack(product as BoosterPack);
-
-            //    return packContents;
-            //}
+            var returnProductList = new List<InventoryItemInternal>();
 
             foreach(var content in product.Contents)
             {
@@ -272,10 +263,32 @@ namespace CardShop.Logic
 
                 foreach(var set in _cardSets.Where(x => x.CycleCode == "full" || x.CycleCode == "premium"))
                 {
+                    var emptyContentProducts = set.Products.Where(x => x.Contents == null || x.Contents.Count < 1);
+                    if (emptyContentProducts.Any())
+                    {
+                        _logger.LogError($">>>>>>>>>>>>>>>>>>>>>> set '{set.Name}'!");
+                        foreach(var emptyProduct in emptyContentProducts)
+                        {
+                            _logger.LogError($":::::: product '{emptyProduct.Name}'");
+                        }
+                    }
                     initTaskList.Add(set.Initialize());
                 }
 
                 await Task.WhenAll(initTaskList);
+
+                foreach(var cardSet in _cardSets)
+                {
+                    var emptyContentProducts = cardSet.Products.Where(x => x.Contents == null || x.Contents.Count < 1);
+                    if (emptyContentProducts.Any())
+                    {
+                        _logger.LogError($">>>>***************>>>>> set '{cardSet.Name}'!");
+                        foreach (var emptyProduct in emptyContentProducts)
+                        {
+                            _logger.LogError($":::********::: product '{emptyProduct.Name}'");
+                        }
+                    }
+                }
 
                 BuildAllExistingProducts();
             }
@@ -410,6 +423,8 @@ namespace CardShop.Logic
                         return jsonObject.ToObject<SealedDeck>(serializer);
                     case "StarterSet":
                         return jsonObject.ToObject<StarterSet>(serializer);
+                    case "AnthologySet":
+                        return jsonObject.ToObject<AnthologySet>(serializer);
                     default:
                         throw new JsonSerializationException($"Unknown product type: {productType}");
                 }

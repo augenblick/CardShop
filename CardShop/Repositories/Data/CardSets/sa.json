@@ -1,0 +1,67 @@
+{
+  "code": "sa",
+  "cycle_code": "premium",
+  "date_release": "1998-07-01",
+  "name": "Second Anthology",
+  "position": 111,  // TODO: fit this into correct order
+  "size": 0,
+
+  "products": [
+    {
+      "code": "111b", // TODO: correct product code after position it corrected
+      "name": "Second Anthology",
+      "productType": "AnthologySet",
+      "costPer": 32.0,
+
+      "contents": [
+        {
+          "setCodes": [ "dah" ],
+          "code": "04p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "cc" ],
+          "code": "05p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "pr" ],
+          "code": "01p",
+          "count": 8
+        },
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09127",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07288",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09177",
+          "count": 1
+        },
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09065",
+          "count": 1
+        },
+        {
+          "setCodes": [ "edr" ],
+          "code": "08064",
+          "count": 1
+        },
+        {
+          "setCodes": [ "edr" ],
+          "code": "08068",
+          "count": 1
+        }
+      ]
+    }
+  ],
+
+  "cards": []
+}

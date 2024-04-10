@@ -5,8 +5,8 @@
   "name": "Death Star II",
   "position": 9,
   "size": 182,
-  
-  "products":[
+
+  "products": [
     {
       "code": "09p",
       "name": "Death Star II Booster Pack",
@@ -45,14 +45,601 @@
       "productType": "BoosterBox",
 
       "contents": [
-        { 
-          "code":"09p",
+        {
+          "code": "09p",
           "count": 36
         }
       ]
 
+    },
+    {
+      "code": "09d01",
+      "name": "Death Star II Starter Deck (Light Side)",
+      "productType": "StarterDeck",
+      "costPer": 10.95,
+
+      "contents": [
+        // *Admiral Ackbar  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09003",
+          "count": 1
+        },
+        // Captain Yutani //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08005",
+          "count": 1
+        },
+        // Chewbacca Of Kashyyyk  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08008",
+          "count": 1
+        },
+        // Corporal Beezer  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08013",
+          "count": 1
+        },
+        // Corporal Delevar
+        {
+          "setCodes": [ "edr" ],
+          "code": "08014",
+          "count": 1
+        },
+        // Corporal Janse
+        {
+          "setCodes": [ "edr" ],
+          "code": "08015",
+          "count": 1
+        },
+        // Corporal Midge //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09019",
+          "count": 1
+        },
+        // Derek ‘Hobbie’ Klivian
+        {
+          "setCodes": [ "hoth" ],
+          "code": "03012",
+          "count": 1
+        },
+        // Dresselian Commando (x2) //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08021",
+          "count": 2
+        },
+        // General Solo //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08049",
+          "count": 1
+        },
+        // Gray Squadron Y-wing Pilot (x2)  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09029",
+          "count": 2
+        },
+        // Karie Neth //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09047",
+          "count": 1
+        },
+        // Keir Santage //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09048",
+          "count": 1
+        },
+        // Kin Kian //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09049",
+          "count": 1
+        },
+        // Sergeant Junkin
+        {
+          "setCodes": [ "edr" ],
+          "code": "08073",
+          "count": 1
+        },
+
+        // Battle Plan  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08003",
+          "count": 1
+        },
+        // Squadron Assignments //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09074",
+          "count": 1
+        },
+        // Superficial Damage //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09079",
+          "count": 1
+        },
+
+
+        // A Few Maneuvers (x2) //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01002",
+          "count": 2
+        },
+        // Careful Planning //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08006",
+          "count": 1
+        },
+        // Grimtaash (x2) //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02027",
+          "count": 2
+        },
+        // Heading For The Medical Frigate  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09036",
+          "count": 1
+        },
+        // Houjix //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02029",
+          "count": 1
+        },
+        // Steady Aim //
+        {
+          "setCodes": [ "se" ],
+          "code": "07135",
+          "count": 1
+        },
+        // Take The Initiative  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08077",
+          "count": 1
+        },
+
+        // Bespin //
+        {
+          "setCodes": [ "cc" ],
+          "code": "05009",
+          "count": 1
+        },
+        // Endor  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08022",
+          "count": 1
+        },
+        // Endor: Back Door //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08025",
+          "count": 1
+        },
+        // Endor: Great Forest  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08030",
+          "count": 1
+        },
+        // Endor: Hidden Forest Trail //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08031",
+          "count": 1
+        },
+        // Endor: Landing Platform (Docking Bay)  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08032",
+          "count": 1
+        },
+        // Sullust  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09078",
+          "count": 1
+        },
+        // Tatooine //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01132",
+          "count": 1
+        },
+
+        // A-wing (x3)  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09001",
+          "count": 3
+        },
+        // B-wing Bomber (x3) //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09007",
+          "count": 3
+        },
+        // Gray Squadron 1  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09027",
+          "count": 1
+        },
+        // Gray Squadron 2  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09028",
+          "count": 1
+        },
+        // Nebulon-B Frigate (x3) //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09066",
+          "count": 3
+        },
+        // Red Squadron 4 //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09072",
+          "count": 1
+        },
+        // Red Squadron 7
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09073",
+          "count": 1
+        },
+        // X-wing (x2)  //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01154",
+          "count": 2
+        },
+        // Y-wing //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01155",
+          "count": 1
+        },
+
+        // BlasTech E-11B Blaster Rifle (x2)
+        {
+          "setCodes": [ "edr" ],
+          "code": "08004",
+          "count": 2
+        },
+        // Concussion Missiles (x2) //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09017",
+          "count": 2
+        },
+        // Enhanced Proton Torpedoes  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09022",
+          "count": 1
+        },
+        // Intruder Missile (x2)  //
+        {
+          "setCodes": [ "se" ],
+          "code": "07067",
+          "count": 2
+        }
+
+      ]
+
+    },
+    {
+      "code": "09d02",
+      "name": "Death Star II Starter Deck (Dark Side)",
+      "productType": "StarterDeck",
+      "costPer": 10.95,
+
+      "contents": [
+        // *Admiral Piett //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09094",
+          "count": 1
+        },
+        // Captain Jonus  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09100",
+          "count": 1
+        },
+        // Corporal Drazin  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08107",
+          "count": 1
+        },
+        // DS-181-3 //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09109",
+          "count": 1
+        },
+        // DS-181-4 //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09110",
+          "count": 1
+        },
+        // Elite Squadron Stormtrooper (x3) //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08117",
+          "count": 3
+        },
+        // Lieutenant Arnet //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08141",
+          "count": 1
+        },
+        // Lieutenant Grond //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08142",
+          "count": 1
+        },
+        // Lieutenant Hebsly  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09140",
+          "count": 1
+        },
+        // Reserve Pilot  //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02138",
+          "count": 1
+        },
+        // Sergeant Tarl  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08165",
+          "count": 1
+        },
+
+        // Battle Order //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08097",
+          "count": 1
+        },
+        // Combat Response  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09106",
+          "count": 1
+        },
+        // Inconsequential Losses //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09133",
+          "count": 1
+        },
+
+        // Combat Readiness //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08103",
+          "count": 1
+        },
+        // Dark Maneuvers (x2)  //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01194",
+          "count": 2
+        },
+        // Flawless Marksmanship  //
+        {
+          "setCodes": [ "se" ],
+          "code": "07220",
+          "count": 1
+        },
+        // Ghhhk  //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02103",
+          "count": 1
+        },
+        // Imperial Reinforcements  //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01233",
+          "count": 1
+        },
+        // Monnok (x2)  //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02127",
+          "count": 2
+        },
+        // Prepared Defenses  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09154",
+          "count": 1
+        },
+
+        // Endor  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08119",
+          "count": 1
+        },
+        // Endor: Ancient Forest  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08122",
+          "count": 1
+        },
+        // Endor: Back Door
+        {
+          "setCodes": [ "edr" ],
+          "code": "08123",
+          "count": 1
+        },
+        // Endor: Great Forest  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08129",
+          "count": 1
+        },
+        // Endor: Landing Platform (Docking Bay)  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08130",
+          "count": 1
+        },
+        // Kessel
+        {
+          "setCodes": [ "pr" ],
+          "code": "01241",
+          "count": 1
+        },
+        // Mon Calamari //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09147",
+          "count": 1
+        },
+        // Sullust  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09171",
+          "count": 1
+        },
+
+        // Black 3  //
+        {
+          "setCodes": [ "pr" ],
+          "code": "01172",
+          "count": 1
+        },
+        // Saber 3  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09161",
+          "count": 1
+        },
+        // Saber 4  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09162",
+          "count": 1
+        },
+        // Scimitar 2 //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09164",
+          "count": 1
+        },
+        // Scythe 3 //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09167",
+          "count": 1
+        },
+        // Scythe Squadron TIE (x2)
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09168",
+          "count": 2
+        },
+        // TIE Defender Mark I (x3)
+        {
+          "setCodes": [ "se" ],
+          "code": "07307",
+          "count": 3
+        },
+        // TIE Interceptor (x3) //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09173",
+          "count": 3
+        },
+        // Victory-Class Star Destroyer (x3)  //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02160",
+          "count": 3
+        },
+
+        // Tempest 1  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08170",
+          "count": 1
+        },
+        // Tempest Scout (x2)
+        {
+          "setCodes": [ "edr" ],
+          "code": "08171",
+          "count": 2
+        },
+        // Tempest Scout 3  //
+        {
+          "setCodes": [ "edr" ],
+          "code": "08174",
+          "count": 1
+        },
+
+        // Blaster Rifle (x2)
+        {
+          "setCodes": [ "pr" ],
+          "code": "01175",
+          "count": 2
+        },
+        // Concussion Missiles  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09108",
+          "count": 1
+        },
+        // Enhanced TIE Laser Cannon  //
+        {
+          "setCodes": [ "anh" ],
+          "code": "02101",
+          "count": 1
+        },
+        // Intruder Missile (x2)  //
+        {
+          "setCodes": [ "se" ],
+          "code": "07237",
+          "count": 2
+        },
+        // SFS L-s7.2 TIE Cannon  //
+        {
+          "setCodes": [ "ds2" ],
+          "code": "09158",
+          "count": 1
+        }
+
+      ]
+
     }
-  ],
+
+   ],
 
   "cardRarityMap":[
     {"Rarity": "C", "Count": 1, "OverallRarity": "C"},

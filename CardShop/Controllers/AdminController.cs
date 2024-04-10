@@ -159,7 +159,7 @@ namespace CardShop.Controllers
         {
             try
             {
-                var cardLists = new List<List<InventoryItem>>();
+                var cardLists = new List<List<InventoryItemInternal>>();
 
                 var userInventory = await _inventoryManager.GetUserInventory(userId);
                 var userInventoryItems = _inventoryManager.InventoryItemsFromInventory(userInventory.Where(x => Enums.CardSetHelpers.GetCardSetCodeString(x.SetCode) == setCode || setCode == null).AsList());

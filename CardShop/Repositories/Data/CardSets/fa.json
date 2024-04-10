@@ -1,0 +1,72 @@
+{
+  "code": "fa",
+  "cycle_code": "premium",
+  "date_release": "1997-05-01",
+  "name": "First Anthology",
+  "position": 110,  // TODO: fit this into correct order
+  "size": 0,
+
+  "products": [
+    {
+      "code": "110b", // TODO: correct product code after position it corrected
+      "name": "First Anthology",
+      "productType": "AnthologySet",
+      "costPer": 32.0,
+
+      "contents": [
+        {
+          "setCodes": [ "pr" ],
+          "code": "01s",
+          "count": 2
+        },
+        {
+          "setCodes": [ "anh" ],
+          "code": "02p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "hoth" ],
+          "code": "03p",
+          "count": 2
+        },
+        {
+          "setCodes": [ "jpack" ],
+          "code": "14s",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07175",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07203",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07239",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07024",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07061",
+          "count": 1
+        },
+        {
+          "setCodes": [ "se" ],
+          "code": "07159",
+          "count": 1
+        }
+      ]
+    }
+  ],
+
+  "cards": []
+}

@@ -10,6 +10,7 @@ namespace CardShop.Models
     [JsonDerivedType(typeof(PromotionalSet), typeDiscriminator: "PromotionalSet")]
     [JsonDerivedType(typeof(StarterSet), typeDiscriminator: "StarterSet")]
     [JsonDerivedType(typeof(SealedDeck), typeDiscriminator: "SealedDeck")]
+    [JsonDerivedType(typeof(AnthologySet), typeDiscriminator: "AnthologySet")]
     [JsonDerivedType(typeof(Card), typeDiscriminator: "Card")]
     public class Product : IEquatable<Product>
     {
@@ -38,7 +39,8 @@ namespace CardShop.Models
         Card,
         StarterSet,
         PromotionalSet,
-        EnhancedPack
+        EnhancedPack,
+        AnthologySet
     }
 
     public class BoosterBox : Product
@@ -76,6 +78,10 @@ namespace CardShop.Models
     public class SealedDeck : Product
     {
         public override decimal CostPer { get; set; } = 19.95M;
+    }
+    public class AnthologySet : Product
+    {
+        public override decimal CostPer { get; set; } = 35.0M;
     }
 
     public class Content

@@ -202,6 +202,9 @@ namespace CardShop.Models
         [JsonProperty("is_japanese", NullValueHandling = NullValueHandling.Ignore)]
         public bool? IsJapanese { get; set; } = false;
 
+        [JsonProperty("is_alternate_image", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsAlternateImage { get; set; } = false;
+
         public override decimal CostPer { get; set; } = 0M;
 
         public Card()

@@ -52,7 +52,7 @@ namespace CardShop.Logic
             _logger.LogInformation($">>> Shop Initialization took '{stopWatch.ElapsedMilliseconds}'ms.");
         }
 
-        private List<InventoryItem> BuildProductOrder()
+        private List<InventoryItemInternal> BuildProductOrder()
         {
             var buildSimple = _configuration.GetValue<bool>("BuildSimpleShopInventory", true);
 
@@ -65,14 +65,14 @@ namespace CardShop.Logic
             //// recent purchases
             //// recent requests
 
-            var availableProducts = _cardProductBuilder.GetAllExistingProducts().Select(x => new InventoryItem { Product = x, Count = 1 }).AsList();
+            var availableProducts = _cardProductBuilder.GetAllExistingProducts().Select(x => new InventoryItemInternal { Product = x, Count = 1 }).AsList();
 
             if (availableProducts == null)
             {
                 _logger.LogError($"No available products for the shop to order!");
             }
 
-            var orderList = new List<InventoryItem>();
+            var orderList = new List<InventoryItemInternal>();
 
             if (!buildSimple)
             {
@@ -105,7 +105,7 @@ namespace CardShop.Logic
 
                     availableFunds -= cost;
 
-                    orderList.Add(new InventoryItem { Product = chosenProduct, Count = countToAdd });
+                    orderList.Add(new InventoryItemInternal { Product = chosenProduct, Count = countToAdd });
                 }
                 while (availableFunds > 0.0M);
             }
@@ -116,7 +116,9 @@ namespace CardShop.Logic
                 {
                     var orderCountDecimal = 80M / product.Product.CostPer;
 
-                    product.Count = (int)Math.Floor(orderCountDecimal);
+                    var orderCount = (int)Math.Floor(orderCountDecimal);
+
+                    product.Count = orderCount < 1 ? 1 : orderCount;
                 }
 
                 orderList = purchasableItems.AsList();
@@ -131,10 +133,10 @@ namespace CardShop.Logic
         /// <param name="userId"></param>
         /// <param name="requestedItems"></param>
         /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
-        public async Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems)
+        public async Task<(List<InventoryItemInternal>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems)
         {
             var errorMessage = string.Empty;
-            var returnList = new List<InventoryItem>();
+            var returnList = new List<InventoryItemInternal>();
             var totalCostFinal = 0.0M;  // should remain 0.0 until money actually removed from account
             var userBalance = 0.0M;
 
@@ -278,9 +280,9 @@ namespace CardShop.Logic
             }
 
             // TODO: rework this, incl. probably defining starting items elsewhere
-            var startingProductList = new List<InventoryItem>
+            var startingProductList = new List<InventoryItemInternal>
             {
-                new InventoryItem
+                new InventoryItemInternal
                 {
                     Product = _cardProductBuilder.GetProduct("013s", CardSetCode.PremiereTwoPlayer), Count = 1
                 }
@@ -289,11 +291,11 @@ namespace CardShop.Logic
             return await _inventoryManager.AddInventory(startingProductList, user.UserId);
         }
 
-        public async Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock)
+        public async Task<List<InventoryItemInternal>> GetVerboseShopInventory(bool includeOutOfStock)
         {
-            var returnItems = new List<InventoryItem>();
+            var returnItems = new List<InventoryItemInternal>();
 
-            var allPossibleInventory = _cardProductBuilder.GetAllExistingProducts().Where(y => y.IsPurchasable).Select( x => new InventoryItem
+            var allPossibleInventory = _cardProductBuilder.GetAllExistingProducts().Where(y => y.IsPurchasable).Select( x => new InventoryItemInternal
             {
                 Count = 0,
                 Product = x
@@ -328,9 +330,9 @@ namespace CardShop.Logic
             return _inventoryManager.ClearUserInventory(_shopKeeperUserId);
         }
 
-        private async Task<List<InventoryItem>> GetShopInventory()
+        private async Task<List<InventoryItemInternal>> GetShopInventory()
         {
-            var returnInventory = new List<InventoryItem>();
+            var returnInventory = new List<InventoryItemInternal>();
 
             var shopInventory = await _inventoryManager.GetUserInventory(_shopKeeperUserId);
 
