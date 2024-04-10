@@ -4,6 +4,6 @@ namespace CardShop.Models.Response
 {
     public class GetShopInventoryResponse : BaseResponse
     {
-        public List<InventoryItem> Inventory { get; set; }
+        public List<InventoryItemInternal> Inventory { get; set; }
     }
 }

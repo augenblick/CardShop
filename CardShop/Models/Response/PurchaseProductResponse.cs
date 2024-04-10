@@ -4,6 +4,6 @@
     {
         public decimal TotalCost { get; set; }
         public decimal RemainingUserBalance { get; set; }
-        public List<InventoryItem> InventoryItems {  get; set; }
+        public List<InventoryItemInternal> InventoryItems {  get; set; }
     }
 }

@@ -140,9 +140,9 @@ namespace CardShop.Models
             return cardPool.DrawCard(cardSide);
         }
 
-        public List<InventoryItem> OpenProduct(Product product)
+        public List<InventoryItemInternal> OpenProduct(Product product)
         {
-            var returnProductList = new List<InventoryItem>();
+            var returnProductList = new List<InventoryItemInternal>();
 
             foreach (var content in ((BoosterBox)product).Contents)
             {
@@ -150,7 +150,7 @@ namespace CardShop.Models
 
                 if (selectedContent != null) 
                 { 
-                    returnProductList.Add(new InventoryItem
+                    returnProductList.Add(new InventoryItemInternal
                     {
                         Product = selectedContent,
                         Count = content.Count
@@ -164,7 +164,7 @@ namespace CardShop.Models
 
             var consolidatedList = returnProductList
                 .GroupBy(x => x.Product.Code)
-                .Select(y => new InventoryItem
+                .Select(y => new InventoryItemInternal
                 {
                     Product = y.First().Product,
                     Count = y.Sum(c => c.Count)
@@ -173,15 +173,15 @@ namespace CardShop.Models
             return consolidatedList;
         }
 
-        public InventoryItem OpenProduct(Content content)
+        public InventoryItemInternal OpenProduct(Content content)
         {
-            var returnProduct = new InventoryItem();
+            var returnProduct = new InventoryItemInternal();
 
             var selectedContent = Products.FirstOrDefault(x => x.Code == content.Code) ?? Cards.FirstOrDefault(x => x.Code == content.Code);
 
             if (selectedContent != null)
             {
-                returnProduct = new InventoryItem
+                returnProduct = new InventoryItemInternal
                 {
                     Product = selectedContent,
                     Count = content.Count
@@ -202,13 +202,13 @@ namespace CardShop.Models
             return product;
         }
 
-        public List<InventoryItem> MakeRandomPicks(Content content)
+        public List<InventoryItemInternal> MakeRandomPicks(Content content)
         {
             var randomPicks = new List<Product>();
 
             if (content?.RandomPickParameters?.OverallRarities?.FirstOrDefault() == null)
             {
-                return new List<InventoryItem>();
+                return new List<InventoryItemInternal>();
             }
 
             for (int i = 0; i < content.Count; i++)
@@ -226,7 +226,7 @@ namespace CardShop.Models
                 StaticHelpers.Logger.LogError("Test");
             }
 
-            return randomPicks.Select(x => new InventoryItem { Count = 1, Product = x}).AsList();
+            return randomPicks.Select(x => new InventoryItemInternal { Count = 1, Product = x}).AsList();
         }
 
         public Card? GetCardByName(string cardName)

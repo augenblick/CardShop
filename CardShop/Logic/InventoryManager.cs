@@ -29,7 +29,7 @@ namespace CardShop.Logic
             return await _inventoryRepository.GetUserInventory(userId);
         }
 
-        public async Task<List<InventoryItem>> GetUserInventoryItems(int userId, ProductType? productTypeFilter = null)
+        public async Task<List<InventoryItemInternal>> GetUserInventoryItems(int userId, ProductType? productTypeFilter = null)
         {
             var items = InventoryItemsFromInventory(await GetUserInventory(userId));
 
@@ -46,7 +46,7 @@ namespace CardShop.Logic
             return await _inventoryRepository.UpsertMultipleInventory(inventoryRequests);
         }
 
-        public async Task<bool> AddInventory(List<InventoryItem> productsToAdd, int userId)
+        public async Task<bool> AddInventory(List<InventoryItemInternal> productsToAdd, int userId)
         {
             if (productsToAdd == null || productsToAdd.Count < 1)
             {
@@ -86,9 +86,9 @@ namespace CardShop.Logic
             return await _inventoryRepository.UpsertInventory(inventoryToAdd);
         }
 
-        public List<InventoryItem> InventoryItemsFromInventory(List<Inventory> inventory)
+        public List<InventoryItemInternal> InventoryItemsFromInventory(List<Inventory> inventory)
         {
-            var returnInventory = new List<InventoryItem>();
+            var returnInventory = new List<InventoryItemInternal>();
 
             foreach (var inventoryItem in inventory)
             {
@@ -100,7 +100,7 @@ namespace CardShop.Logic
                     break;
                 }
 
-                returnInventory.Add(new InventoryItem
+                returnInventory.Add(new InventoryItemInternal
                 {
                     Product = product,
                     Count = inventoryItem.Count
@@ -115,9 +115,9 @@ namespace CardShop.Logic
             return _inventoryRepository.DeleteUserInventory(userId);
         }
 
-        public async Task<(List<InventoryItem>, string)> OpenInventoryProducts(int userId, List<ProductReference> itemsToOpen)
+        public async Task<(List<InventoryItemInternal>, string)> OpenInventoryProducts(int userId, List<ProductReference> itemsToOpen)
         {
-            var returnList = new List<InventoryItem>();
+            var returnList = new List<InventoryItemInternal>();
             var uncommittedReturnList = new List<Inventory>();
             var errorMessage = string.Empty;
 
@@ -208,7 +208,7 @@ namespace CardShop.Logic
                     return (returnList, errorMessage);
                 }
 
-                var productContents = new List<InventoryItem>();
+                var productContents = new List<InventoryItemInternal>();
                 if (product.Contents == null || !product.Contents.Any())
                 {
                     // TODO: no contents
@@ -256,110 +256,6 @@ namespace CardShop.Logic
                         SetCode = constituentSetCode
                     });
                 }
-
-                // foreach (var card in productContentsAgain)
-                //        {
-                //            // get inventory that matches opened items
-                //            var existingInventoryMatchingOpenedItemsAgain = userInventory.FirstOrDefault(x => x.ProductCode == card.Product.Code);
-
-                    //            productsToAddToUserInventory.Add( new Inventory
-                    //            {
-                    //                // add existing count to newly added product count
-                    //                Count = card.Count + (existingInventoryMatchingOpenedItemsAgain?.Count ?? 0),
-                    //                ProductCode = card.Product.Code,
-                    //                UserId = userId,
-                    //                SetCode = Enums.CardSetHelpers.GetCardSetCode(((Card)card.Product).SetCode)
-                    //            });
-
-                    //            // maintain separate list for return to consumer (which doesn't include counts of matching inventory) 
-                    //            uncommittedReturnList.Add(new Inventory
-                    //            {
-                    //                Count = card.Count,
-                    //                ProductCode = card.Product.Code,
-                    //                UserId = userId,
-                    //                SetCode = Enums.CardSetHelpers.GetCardSetCode(((Card)card.Product).SetCode)
-                    //            });
-                    //        }
-
-
-
-                    //if (product is not BoosterPack)
-                    //{
-                    //    var productContents = _cardProductBuilder.OpenProduct(product);
-
-                    //    if (productContents == null || productContents.FirstOrDefault() == null)
-                    //    {
-                    //        errorMessage = $"Couldn't open product '{product.Code}'!";
-                    //        _logger.LogError(errorMessage);
-                    //        return (returnList, errorMessage);
-                    //    }
-
-                    //    foreach (var constituent in productContents)
-                    //    {
-                    //        // get inventory that matches opened items
-                    //        var existingInventoryMatchingOpenedItems = userInventory.FirstOrDefault(x => x.ProductCode == constituent.Product.Code);
-
-                    //        // TODO: make card setcode an enum too
-                    //        var constituentSetCode = constituent.Product is Card ? Enums.CardSetHelpers.GetCardSetCode(((Card)constituent.Product).SetCode) : constituent.Product.SetCode;
-
-                    //        productsToAddToUserInventory.Add(new Inventory
-                    //        {
-                    //            // add existing count to newly added product count
-                    //            Count = (constituent.Count * requestedCount) + (existingInventoryMatchingOpenedItems?.Count ?? 0),
-                    //            ProductCode = constituent.Product.Code,
-                    //            UserId = userId,
-                    //            SetCode = constituentSetCode
-                    //        });
-
-                    //        // maintain separate list for return to consumer (which doesn't include counts of matching inventory) 
-                    //        uncommittedReturnList.Add(new Inventory
-                    //        {
-                    //            Count = (constituent.Count * requestedCount),
-                    //            ProductCode = constituent.Product.Code,
-                    //            UserId = userId,
-                    //            SetCode = constituentSetCode
-                    //        });
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    // random draw for each pack
-                    //    for (int i = 0; i < requestedCount; i++)
-                    //    {
-                    //         var productContentsAgain = _cardProductBuilder.OpenProduct(product);
-
-                    //        if (productContentsAgain == null || productContentsAgain.FirstOrDefault() == null)
-                    //        {
-                    //            errorMessage = $"Couldn't open product '{product.Code}'!";
-                    //            _logger.LogError(errorMessage);
-                    //            return (returnList, errorMessage);
-                    //        }
-
-                    //        foreach (var card in productContentsAgain)
-                    //        {
-                    //            // get inventory that matches opened items
-                    //            var existingInventoryMatchingOpenedItemsAgain = userInventory.FirstOrDefault(x => x.ProductCode == card.Product.Code);
-
-                    //            productsToAddToUserInventory.Add( new Inventory
-                    //            {
-                    //                // add existing count to newly added product count
-                    //                Count = card.Count + (existingInventoryMatchingOpenedItemsAgain?.Count ?? 0),
-                    //                ProductCode = card.Product.Code,
-                    //                UserId = userId,
-                    //                SetCode = Enums.CardSetHelpers.GetCardSetCode(((Card)card.Product).SetCode)
-                    //            });
-
-                    //            // maintain separate list for return to consumer (which doesn't include counts of matching inventory) 
-                    //            uncommittedReturnList.Add(new Inventory
-                    //            {
-                    //                Count = card.Count,
-                    //                ProductCode = card.Product.Code,
-                    //                UserId = userId,
-                    //                SetCode = Enums.CardSetHelpers.GetCardSetCode(((Card)card.Product).SetCode)
-                    //            });
-                    //        }
-                    //    }
-                    //}
             }
 
             // add new items to user inventory

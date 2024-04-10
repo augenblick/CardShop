@@ -11,7 +11,7 @@ namespace CardShop.Interfaces
         List<CardSetCode> GetAvailableCardSets(List<string> cycleCodes);
         Product GetProduct(Inventory inventory);
         Product GetProduct(string productCode, CardSetCode cardSetCode = CardSetCode.undefined);
-        List<InventoryItem> OpenProduct(Product product, int multiplier);
+        List<InventoryItemInternal> OpenProduct(Product product, int multiplier);
         Product GetProductByProductType(ProductType productType, CardSetCode cardSetCode);
         bool TestCardSetRarityPool(CardSetCode cardSetCode, List<string> rarityCodes, int testCount, bool peekDontDraw);
         List<Product> GetAllExistingProducts();

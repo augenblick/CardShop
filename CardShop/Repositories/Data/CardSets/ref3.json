@@ -81,12 +81,15 @@
       "Rarity": "PM",
       "Count": 1,
       "OverallRarity": "PM"
+    },
+    {
+      "Rarity": "TF", // tournament foils
+      "Count": 1,
+      "OverallRarity": "TF"
     }
   ],
 
-  "cards":
-
-  [
+  "cards": [
     {
       "code": "24001",
       "destiny": 0,
@@ -5876,7 +5879,81 @@
       "uniqueness": "*",
       "warrior": false,
       "is_foil": true
-    }
+    },
     // TODO: tournament foils: Qui-Gon Jinn with lightsaber, Darth Maul with lightsaber
+    {
+      "ability": 7,
+      "armor": 0,
+      "characteristics": "lightsaber",
+      "clone_army": false,
+      "code": "12047f",
+      "deploy": 7,
+      "destiny": 1,
+      "episode_1": true,
+      "episode_7": false,
+      "force_aptitude": "Jedi Master",
+      "forfeit": 8,
+      "gametext": "Adds one battle destiny if with Maul. Permanent weapon is (*]Qui-Gon Jinn's Lightsaber (may target a character or creature for free; draw two destiny; target 'hit', and its forfeit = 0, if total destiny > defense value).",
+      "has_errata": false,
+      "image_url": "TheedPalace-Light\/large\/quigonjinnwithlightsaber.gif",
+      "lore": "Jedi Master assigned to reveal the mysteries of the Sith. His quest has led him to the planet Naboo.",
+      "maneuver": 0,
+      "model_type": "",
+      "name": "Qui-Gon Jinn With Lightsaber",
+      "nav_computer": false,
+      "permanent_weapon": true,
+      "pilot": false,
+      "politics": 0,
+      "position": 47,
+      "power": 6,
+      "presence": false,
+      "rarity_code": "TF",
+      "republic": false,
+      "separatist": false,
+      "set_code": "ref3",
+      "side_code": "light",
+      "subtype_code": "jedi-master",
+      "type_code": "character",
+      "uniqueness": "*",
+      "warrior": true,
+      "is_foil": true
+    },
+    {
+      "ability": 6,
+      "armor": 0,
+      "characteristics": "lightsaber",
+      "clone_army": false,
+      "code": "12082f",
+      "deploy": 7,
+      "destiny": 1,
+      "episode_1": true,
+      "episode_7": false,
+      "force_aptitude": "Dark Jedi",
+      "forfeit": 7,
+      "gametext": "Permanent weapon is (*]Maul's Double-Bladed Lightsaber (twice per battle, may target a character for free; draw two destiny; target 'hit', and its forfeit = 0, if total destiny > defense value).",
+      "has_errata": false,
+      "image_url": "TheedPalace-Dark\/large\/darthmaulwithlightsaber.gif",
+      "lore": "\"Yes, my Master.\"",
+      "maneuver": 0,
+      "model_type": "",
+      "name": "Darth Maul With Lightsaber",
+      "nav_computer": false,
+      "permanent_weapon": true,
+      "pilot": true,
+      "politics": 0,
+      "position": 82,
+      "power": 7,
+      "presence": false,
+      "rarity_code": "TF",
+      "republic": false,
+      "separatist": false,
+      "set_code": "ref3",
+      "side_code": "dark",
+      "subtype_code": "sith",
+      "type_code": "character",
+      "uniqueness": "*",
+      "warrior": true,
+      "is_foil": true
+    }
   ]
 }

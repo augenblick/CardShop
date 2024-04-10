@@ -27,26 +27,23 @@ namespace CardShop.Extensions
         /// </summary>
         /// <param name="inventoryList"></param>
         /// <returns></returns>
-        public static List<InventoryItem> Consolidate(this List<InventoryItem> inventoryList)
+        public static List<InventoryItemInternal> Consolidate(this List<InventoryItemInternal> inventoryList)
         {
             if (inventoryList.Count < 2) { return inventoryList; }
 
             return inventoryList.GroupBy(x => x.Product.Code)
-                                .Select(y => new InventoryItem
+                                .Select(y => new InventoryItemInternal
                                 {
                                     Product = y.First().Product,
                                     Count = y.Sum(c => c.Count)
                                 }).ToList();
         }
 
-        public static void MaskInnerContents(this List<InventoryItem> inventoryList, bool doMaskContents = true)
+        public static List<InventoryItemInternal> MaskInnerContents(this List<InventoryItemInternal> inventoryList, bool doMaskContents = true)
         {
-            return;
-            foreach(var item in inventoryList)
-            {
-                if (item?.Product.Contents == null) { continue; }
-                item.Product.Contents = null;
-            }
+            // TODO
+
+            return inventoryList;
         }
     }
 }

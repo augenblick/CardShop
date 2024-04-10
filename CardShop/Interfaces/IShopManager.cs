@@ -7,7 +7,7 @@ namespace CardShop.Interfaces
     public interface IShopManager
     {
         void Initialize();
-        Task<List<InventoryItem>> GetVerboseShopInventory(bool includeOutOfStock);
+        Task<List<InventoryItemInternal>> GetVerboseShopInventory(bool includeOutOfStock);
         bool ClearShopInventory();
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace CardShop.Interfaces
         /// <param name="userId"></param>
         /// <param name="requestedItems"></param>
         /// <returns>Purchased Items, Total Cost, Remaining Balance, Error Message</returns>
-        Task<(List<InventoryItem>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems);
+        Task<(List<InventoryItemInternal>, decimal, decimal, string)> PurchaseInventory(string username, List<ProductReference> requestedItems);
         Task<bool> AllotStartingInventoryToUser(string userName);
     }
 }

@@ -45,7 +45,7 @@ namespace CardShop.Logic
             return GetProduct(inventory.ProductCode, inventory.SetCode);
         }
 
-        public List<InventoryItem> OpenProductOld(Product product)
+        public List<InventoryItemInternal> OpenProductOld(Product product)
         {
             var cardSet = GetCardSetByCardSetCode(product.SetCode);
             var contents = cardSet.OpenProduct(product);
@@ -53,14 +53,14 @@ namespace CardShop.Logic
             return contents;
         }
 
-        public List<InventoryItem> OpenProduct(Product product, int multiplier)
+        public List<InventoryItemInternal> OpenProduct(Product product, int multiplier)
         {
             if (product == null)
             {
-                return new List<InventoryItem>();
+                return new List<InventoryItemInternal>();
             }
 
-            var returnProductList = new List<InventoryItem>();
+            var returnProductList = new List<InventoryItemInternal>();
 
             foreach(var content in product.Contents)
             {

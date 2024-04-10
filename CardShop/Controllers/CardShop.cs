@@ -51,7 +51,7 @@ namespace CardShop.Controllers
                 response.ErrorMessage = ex.Message;
             }
 
-            response.Inventory.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+            response.Inventory = response.Inventory.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
 
             return response;
         }
@@ -78,7 +78,7 @@ namespace CardShop.Controllers
                 return new PurchaseProductResponse { ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ?  "An error occurred while trying to make a purchase from the shop!" : errorMessage };
             }
 
-            items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
 
             return new PurchaseProductResponse {
                 RemainingUserBalance = remainingBalance,
@@ -106,7 +106,7 @@ namespace CardShop.Controllers
 
             _logger.LogInformation($"total time to open products = {watch.ElapsedMilliseconds}ms");
 
-            items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
 
             return new OpenInventoryProductsResponse
             {
@@ -183,25 +183,25 @@ namespace CardShop.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<InventoryItem>>> GetUserInventory()
+        public async Task<ActionResult<List<InventoryItemInternal>>> GetUserInventory()
         {
             var userName = HttpContext?.User?.Identity?.Name;
             var user = await _userManager.GetUser(userName);
 
             if (string.IsNullOrWhiteSpace(user.Username))
             {
-                return NotFound(new List<InventoryItem>());
+                return NotFound(new List<InventoryItemInternal>());
             }
 
             var currentInventory = await _inventoryManager.GetUserInventory(user.UserId);
 
             if (currentInventory == null || currentInventory.Count < 1) 
             {
-                return Ok(new List<InventoryItem>());
+                return Ok(new List<InventoryItemInternal>());
             }
 
             var items = _inventoryManager.InventoryItemsFromInventory(currentInventory);
-            items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
+            items = items.MaskInnerContents(_configuration.GetValue<bool>("MaskProductInnerContentsFromUsers", true));
 
             return Ok(items);
 
